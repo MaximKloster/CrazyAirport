@@ -32,4 +32,9 @@ public class CameraController : MonoBehaviour
 		currentCamera = 0;
 		cameras[currentCamera].SetActive(true);
 	}
+
+	public GameObject GetCurrentCamera()
+	{
+		return cameras[currentCamera];
+	}
 }
