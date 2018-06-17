@@ -8,8 +8,9 @@ public class MapTile : MonoBehaviour
 
 	[Header("Start Setup", order = 2)]
 	[SerializeField]
+	private GameHandler gameMaster;
+	[SerializeField]
 	private BuildStatus tileStatus = BuildStatus.Empty;
-
 	public BuildStatus TileStatus
 	{
 		get
@@ -20,5 +21,12 @@ public class MapTile : MonoBehaviour
 		{
 			tileStatus = value;
 		}
+	}
+	private bool dirty = false;
+
+	private void OnMouseDown()
+	{
+		if (!dirty) gameMaster.MapTileClicked();
+		else dirty = !gameMaster.TryToCleanField(); // If clean is possible the dirty will be removed
 	}
 }

@@ -9,6 +9,20 @@ public class CameraController : MonoBehaviour
 	private GameObject[] cameras;
 
 	private int currentCamera = 0;
+	private bool camRotationAllowed = true;
+
+	public bool CamRotationAllowed
+	{
+		get
+		{
+			return camRotationAllowed;
+		}
+
+		private set
+		{
+			camRotationAllowed = value;
+		}
+	}
 
 	private void Start()
 	{
@@ -19,13 +33,21 @@ public class CameraController : MonoBehaviour
 	{
 		cameras[currentCamera].SetActive(false);
 		currentCamera++;
-		if (currentCamera >= cameras.Length) currentCamera = 0;
+		if (currentCamera >= cameras.Length)
+		{
+			currentCamera = 0;
+			CamRotationAllowed = true;
+		}
+		else
+		{
+			CamRotationAllowed = false;
+		}
 		cameras[currentCamera].SetActive(true);
 	}
 
 	private void SetupCameras()
 	{
-		foreach(GameObject cam in cameras)
+		foreach (GameObject cam in cameras)
 		{
 			cam.SetActive(false);
 		}
