@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
@@ -55,8 +53,8 @@ public class CameraController : MonoBehaviour
 		cameras[currentCamera].SetActive(true);
 	}
 
-	public GameObject GetCurrentCamera()
+	public Camera GetCurrentCamera()
 	{
-		return cameras[currentCamera];
+		return cameras[currentCamera].GetComponent<Camera>();
 	}
 }

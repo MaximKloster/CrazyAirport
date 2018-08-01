@@ -1,16 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MapTile : MonoBehaviour
 {
-	public enum BuildStatus { Empty, Border, Building }
+	public enum BuildStatus { Empty, Border, Building, Road, Stop, Start, Park }
 
 	[Header("Start Setup", order = 2)]
 	[SerializeField]
 	private GameHandler gameMaster;
 	[SerializeField]
+	private ParticleSystem dirtPS;
+	[SerializeField]
+	private ParticleSystem cleanPS;
+	[SerializeField]
 	private BuildStatus tileStatus = BuildStatus.Empty;
+	[SerializeField]
+	private MeshRenderer mesh;
+	[SerializeField]
+	private Material defaultMat;
+	[SerializeField]
+	private Material buildHeighlightMat;
+	[SerializeField]
+	private Material buildPossibleMat;
+	[SerializeField]
+	private Material notBuildableMat;
 	public BuildStatus TileStatus
 	{
 		get
@@ -23,10 +35,80 @@ public class MapTile : MonoBehaviour
 		}
 	}
 	private bool dirty = false;
-
-	private void OnMouseDown()
+	public bool Dirty
 	{
-		if (!dirty) gameMaster.MapTileClicked();
-		else dirty = !gameMaster.TryToCleanField(); // If clean is possible the dirty will be removed
+		get
+		{
+			return dirty;
+		}
+
+		private set
+		{
+			dirty = value;
+		}
+	}
+	private bool isBuildable = false;
+	public bool IsBuildable
+	{
+		get
+		{
+			return isBuildable;
+		}
+
+		set
+		{
+			isBuildable = value;
+			if (isBuildable) mesh.material = buildPossibleMat;
+			else mesh.material = defaultMat;
+		}
+	}
+	private bool planeOnField = false;
+	public bool PlaneOnField
+	{
+		get
+		{
+			return planeOnField;
+		}
+
+		set
+		{
+			planeOnField = value;
+		}
+	}
+
+
+	public void PlanePathField()
+	{
+		if (!Dirty)
+		{
+			Dirty = true;
+			dirtPS.Play();
+			if (tileStatus == BuildStatus.Park) gameMaster.DeactivatedPark(true);
+		}
+	}
+
+	public void CleanUpField()
+	{
+		if (Dirty)
+		{
+			cleanPS.Play();
+			Dirty = false;
+			dirtPS.Stop();
+			if (tileStatus == BuildStatus.Park) gameMaster.DeactivatedPark(false);
+		}
+	}
+
+	public void CardOverItem(bool highlight)
+	{
+		if (highlight)
+		{
+			if (IsBuildable) mesh.material = buildHeighlightMat;
+			else mesh.material = notBuildableMat;
+		}
+		else
+		{
+			if (IsBuildable) mesh.material = buildPossibleMat;
+			else mesh.material = defaultMat;
+		}
 	}
 }

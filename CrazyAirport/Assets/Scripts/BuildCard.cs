@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -14,6 +13,20 @@ public class BuildCard : MonoBehaviour
 	private GameHandler.BuildingType cardType;
 	[SerializeField]
 	private int buildID = 0;
+	[Header("Sound", order = 2)]
+	[SerializeField]
+	private AudioClip getCardSound;
+	[SerializeField]
+	private AudioClip grabSound;
+	[SerializeField]
+	private AudioClip wrongPlacedSound;
+	[SerializeField]
+	private AudioClip buildSound;
+	[SerializeField]
+	private AudioClip backInHandSound;
+
+	private AudioSource audioSound;
+	private Animator anim;
 
 	private PointerEventData pointerData;
 	private bool grabbed = false;
@@ -40,8 +53,12 @@ public class BuildCard : MonoBehaviour
 
 	private void Start()
 	{
+		anim = GetComponent<Animator>();
+		audioSound = GetComponent<AudioSource>();
 		cardTransform = transform;
 		parent = transform.parent;
+		audioSound.clip = getCardSound;
+		audioSound.Play();
 	}
 
 	public void SetupCard(CardManager man, int slotID)
@@ -52,14 +69,23 @@ public class BuildCard : MonoBehaviour
 
 	public void SelectCard(BaseEventData data)
 	{
-		pointerData = data as PointerEventData;
-		StartCoroutine(FollowFinger());
+		if (manager.CheckIfHaveBuildPoints(cardType))
+		{
+			if (anim != null) Destroy(anim);
+			audioSound.clip = grabSound;
+			audioSound.Play();
+			pointerData = data as PointerEventData;
+			StartCoroutine(FollowFinger());
+		}
 	}
 
 	public void ReleaseCard()
 	{
-		grabbed = false;
-		manager.CardReleased(cardType, buildID, slot, pointerData.position);
+		if (grabbed)
+		{
+			grabbed = false;
+			manager.CardReleased(cardType, buildID, slot, pointerData.position);
+		}
 	}
 
 	public void ResetPosition()

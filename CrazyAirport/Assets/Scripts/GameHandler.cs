@@ -1,36 +1,64 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class GameHandler : MonoBehaviour
 {
-	public enum BuildingType { Park, Stop, Start, Land, Build, Card, Clean, Control, Road }
+	[System.Serializable]
+	public class Map
+	{
+		public MapTile[] tiles;
+	}
 
+	public enum BuildingType { Park, Stop, Start, Land, Build, Card, Clean, Control, Road }
+	public enum Buildable { None, Road, Building }
+
+	#region setup variables
 	[Header("Setup", order = 2)]
 	[SerializeField]
 	private CameraController camControl;
 	[SerializeField]
+	private LayerMask ignoreMask;
+	[SerializeField]
 	private CardManager cardMan;
+	[SerializeField]
+	private PlaneManager planeMan;
 	[SerializeField]
 	private float camYRotSpeed = 2.5f;
 	[SerializeField]
 	private float camXRotSpeed = 2.5f;
 	[SerializeField]
 	private float xCampDegree = 35;
-
+	[SerializeField]
+	private float zoomFactor = 5;
+	[SerializeField]
+	private Map[] map;
+	#endregion
+	#region ui variables
+	[Header("UI", order = 2)]
+	[SerializeField]
+	private Text buildPointsText;
+	[SerializeField]
+	private Text controlPointsText;
+	[SerializeField]
+	private Text playerPointsText;
+	#endregion
+	#region player interaction variables
 	[Header("Player Interaction", order = 2)]
 	[SerializeField]
 	private int maxPCP = 1; // PCP = Plane Control Point
 	private int currentPCP;
 	[SerializeField]
-	private int maxBCP = 1; // BCP = Building Clean Point
-	private int currentBCP;
-	[SerializeField]
 	private int maxBBP = 1; // BBP = Building Build Point
 	private int currentBBP;
 	private int playerPoints = 0;
-
+	[SerializeField]
+	private int pointsLoseFactor = 2;
+	#endregion
+	#region building variables
 	[Header("Buildings", order = 2)]
 	[SerializeField]
 	private GameObject[] stopBuildings;
@@ -50,27 +78,113 @@ public class GameHandler : MonoBehaviour
 	private GameObject buildingBuilding;
 	[SerializeField]
 	private GameObject road;
-
+	#endregion
+	#region gameplay variables
+	private int gamePoints;
+	private int pointsPerMission = 1;
 	private Vector2 mousePos;
-	float yRot = 0;
-	float xRot = 0;
+	private float yRot = 0;
+	private float xRot = 0;
+	private float autoZoomFactor = 1.5f;
+	private float defaultCamDistance = -5f;
+	private float maxYDegree = 45;
 	private Transform camTransform;
+	private Camera currentCam;
+	private bool gameEnd = false;
+	private bool waitForContinue = false;
+	private Coroutine checkTileMapCoroutine;
+	private Coroutine cameraCoroutine;
+	private MapTile highlightedTile;
+	private int[][] buildableTiles;
+	private float touchDistance = 0;
+	private bool zoom = false;
+	#endregion
+
 	private void Start()
 	{
 		GameSetup();
+		SetUpMap();
+	}
+
+	private void SetUpMap()
+	{
+		buildableTiles = new int[map.Length][];
+		int rowID = 0;
+		foreach (Map row in map)
+		{
+			buildableTiles[rowID] = new int[row.tiles.Length];
+			int tileID = 0;
+			foreach (MapTile tile in row.tiles)
+			{
+				MapTile.BuildStatus status = tile.TileStatus;
+				if (status == MapTile.BuildStatus.Building || status == MapTile.BuildStatus.Start)
+				{
+					buildableTiles[rowID][tileID] = 12;
+				}
+				else if (status == MapTile.BuildStatus.Road)
+				{
+					buildableTiles[rowID][tileID] = 11;
+				}
+				else
+				{
+					buildableTiles[rowID][tileID] = 0;
+				}
+				tileID++;
+			}
+			rowID++;
+		}
+
+		for (int i = 0; i < buildableTiles.Length; i++)
+		{
+			for (int j = 0; j < buildableTiles[i].Length; j++)
+			{
+				int type = buildableTiles[i][j];
+				if (type > 10) CheckAndSetAroundTiles(i, j, type % 10);
+			}
+		}
+	}
+
+	private void CheckAndSetAroundTiles(int row, int tile, int type)
+	{
+		if (row - 1 >= 0)
+		{
+			int value = buildableTiles[row - 1][tile];
+			if (value < 3 && value != type) buildableTiles[row - 1][tile] += type;
+		}
+		if (row + 1 < buildableTiles.Length)
+		{
+			int value = buildableTiles[row + 1][tile];
+			if (value < 3 && value != type) buildableTiles[row + 1][tile] += type;
+		}
+		if (tile - 1 >= 0)
+		{
+			int value = buildableTiles[row][tile - 1];
+			if (value < 3 && value != type) buildableTiles[row][tile - 1] += type;
+		}
+		if (tile + 1 < buildableTiles[row].Length)
+		{
+			int value = buildableTiles[row][tile + 1];
+			if (value < 3 && value != type) buildableTiles[row][tile + 1] += type;
+		}
 	}
 
 	// Check if the Type of Building can be build at the spot
 	public bool TryToBuildAt(Vector2 pos, BuildingType type, int buildID)
 	{
+		StopCoroutine(checkTileMapCoroutine);
 		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
 		Vector3 worldPoint;
 		RaycastHit hit;
+		if (highlightedTile != null)
+		{
+			highlightedTile.CardOverItem(false);
+			highlightedTile = null;
+		}
 
 		if (camControl.CamRotationAllowed)
 		{
 			worldPoint = cam.ScreenToWorldPoint(new Vector3(pos.x, pos.y, 250));
-			if (Physics.Raycast(cam.transform.position, worldPoint, out hit, 10))
+			if (Physics.Raycast(cam.transform.position, worldPoint, out hit, 10, ignoreMask))
 			{
 				return BuildBuilding(hit, type, buildID);
 			}
@@ -79,11 +193,13 @@ public class GameHandler : MonoBehaviour
 		{
 			Ray ray = cam.ScreenPointToRay(new Vector3(pos.x, pos.y, 250));
 			//Debug.DrawRay(ray.origin, cam.transform.forward, Color.red, 10);
-			if (Physics.Raycast(ray.origin, cam.transform.forward, out hit, 10))
+			if (Physics.Raycast(ray.origin, cam.transform.forward, out hit, 10, ignoreMask))
 			{
 				return BuildBuilding(hit, type, buildID);
 			}
 		}
+		// if no hit
+		HighlightBuildableTiles(false);
 		return false;
 	}
 
@@ -92,56 +208,101 @@ public class GameHandler : MonoBehaviour
 		MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
 		if (mapTile != null)
 		{
-			if (mapTile.TileStatus == MapTile.BuildStatus.Empty)
+			int z = (int)mapTile.transform.position.z;
+			int x = (int)mapTile.transform.position.x;
+			if (mapTile.TileStatus == MapTile.BuildStatus.Empty && mapTile.IsBuildable)
 			{
-
-				// TODO Check here if it is close to a building / street depending on what should be build
-
-				mapTile.TileStatus = MapTile.BuildStatus.Building;
 				Transform buildingParent = mapTile.gameObject.transform;
-
 				switch (type)
 				{
 					case BuildingType.Road:
 						Instantiate(road, buildingParent);
+						mapTile.TileStatus = MapTile.BuildStatus.Road;
+						buildableTiles[z][x] = 11;
+						CheckAndSetAroundTiles(z, x, 1);
 						break;
 					case BuildingType.Start:
 						Instantiate(startingBuildings[buildID], buildingParent);
+						mapTile.TileStatus = MapTile.BuildStatus.Start;
+						buildableTiles[z][x] = 12;
+						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Stop:
 						Instantiate(stopBuildings[buildID], buildingParent);
+						mapTile.TileStatus = MapTile.BuildStatus.Stop;
+						buildableTiles[z][x] = 12;
+						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Land:
 						Instantiate(landingBuildings[buildID], buildingParent);
+						mapTile.TileStatus = MapTile.BuildStatus.Road;
+						buildableTiles[z][x] = 12;
+						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Park:
 						Instantiate(parkBuildings[buildID], buildingParent);
+						mapTile.TileStatus = MapTile.BuildStatus.Park;
+						pointsPerMission++;
+						buildableTiles[z][x] = 12;
+						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Control:
 						Instantiate(controlBuildings[buildID], buildingParent);
+						mapTile.TileStatus = MapTile.BuildStatus.Building;
+						maxPCP++;
+						buildableTiles[z][x] = 12;
+						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Clean:
 						Instantiate(cleaningBuildings[buildID], buildingParent);
+						mapTile.TileStatus = MapTile.BuildStatus.Building;
+						cardMan.CleansGain++;
+						buildableTiles[z][x] = 12;
+						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Card:
 						Instantiate(cardBuilding, buildingParent);
+						mapTile.TileStatus = MapTile.BuildStatus.Building;
+						cardMan.CardsGain++;
+						buildableTiles[z][x] = 12;
+						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Build:
 						Instantiate(buildingBuilding, buildingParent);
+						mapTile.TileStatus = MapTile.BuildStatus.Building;
+						maxBBP++;
+						buildableTiles[z][x] = 12;
+						CheckAndSetAroundTiles(z, x, 2);
 						break;
 				}
+				HighlightBuildableTiles(false);
+				currentBBP--;
+				buildPointsText.text = currentBBP.ToString();
 				return true;
 			}
 		}
+		HighlightBuildableTiles(false);
 		return false;
 	}
 
 	private void GameSetup()
 	{
 		camTransform = camControl.gameObject.transform;
+		if (camControl.CamRotationAllowed)
+		{
+			currentCam = camControl.GetCurrentCamera();
+			SetCurrentCamPos();
+		}
+		playerPointsText.text = "0";
+		RefreshInteractionPoints();
+	}
+
+	private void RefreshInteractionPoints()
+	{
 		currentBBP = maxBBP;
-		currentBCP = maxBCP;
 		currentPCP = maxPCP;
+		buildPointsText.text = currentBBP.ToString();
+		controlPointsText.text = currentPCP.ToString();
 	}
 
 	public void ResetGame()
@@ -151,17 +312,121 @@ public class GameHandler : MonoBehaviour
 
 	public void FinishedTurn()
 	{
-		cardMan.NextRound();
+		if (gameEnd || waitForContinue) return;
+		waitForContinue = true;
+		planeMan.NextRound();
+	}
+
+	public void ReadyToContinue()
+	{
+		SupportRound();
+		waitForContinue = false;
+	}
+
+	public void EndGame()
+	{
+		gameEnd = true;
 	}
 
 	private void SupportRound()
 	{
-
+		cardMan.NextRound();
+		RefreshInteractionPoints();
 	}
 
-	public void MapTileClicked()
+	private void OnMouseDown()
 	{
-		if (camControl.CamRotationAllowed) StartCoroutine(RotateCamera());
+		if (!IsPointerOverUIObject())
+		{
+			if (cameraCoroutine == null && camControl.CamRotationAllowed)
+			{
+				currentCam = camControl.GetCurrentCamera();
+				cameraCoroutine = StartCoroutine(RotateCamera());
+			}
+		}
+	}
+
+	private void ZoomCamera()
+	{
+		float currentDistance = Vector2.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+		float distanceChange = touchDistance - currentDistance;
+		currentCam.fieldOfView = Mathf.Clamp(currentCam.fieldOfView + distanceChange * Time.deltaTime * zoomFactor, 30, 70);
+		//defaultCamDistance = Mathf.Clamp(defaultCamDistance - distanceChange * Time.deltaTime, -8, -2);
+		//SetCurrentCamPos();
+		touchDistance = Vector2.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+	}
+
+	private bool IsPointerOverUIObject()
+	{
+		PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+		eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+		return results.Count > 0;
+	}
+
+	private IEnumerator CheckTileMapHeighlight()
+	{
+		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
+		Vector3 worldPoint;
+		RaycastHit hit;
+		while (true)
+		{
+			Vector2 mouse = Input.mousePosition;
+			if (camControl.CamRotationAllowed)
+			{
+				worldPoint = cam.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, 250));
+				if (Physics.Raycast(cam.transform.position, worldPoint, out hit, 10, ignoreMask))
+				{
+					MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
+					if (mapTile != null)
+					{
+						if (mapTile.TileStatus != MapTile.BuildStatus.Building)
+						{
+							if (mapTile != highlightedTile)
+							{
+								if (highlightedTile != null) highlightedTile.CardOverItem(false);
+								highlightedTile = mapTile;
+								highlightedTile.CardOverItem(true);
+							}
+						}
+						else if (highlightedTile != null) ResetHighLight();
+					}
+					else if (highlightedTile != null) ResetHighLight();
+				}
+				else if (highlightedTile != null) ResetHighLight();
+			}
+			else
+			{
+				Ray ray = cam.ScreenPointToRay(new Vector3(mouse.x, mouse.y, 250));
+				if (Physics.Raycast(ray.origin, cam.transform.forward, out hit, 10, ignoreMask))
+				{
+					MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
+					if (mapTile != null)
+					{
+						if (mapTile.TileStatus != MapTile.BuildStatus.Building)
+						{
+							if (mapTile != highlightedTile)
+							{
+								if (highlightedTile != null) highlightedTile.CardOverItem(false);
+								highlightedTile = mapTile;
+								highlightedTile.CardOverItem(true);
+							}
+						}
+						else if (highlightedTile != null) ResetHighLight();
+					}
+					else if (highlightedTile != null) ResetHighLight();
+				}
+				else if (highlightedTile != null) ResetHighLight();
+			}
+			yield return null;
+		}
+	}
+
+	private void ResetHighLight()
+	{
+		highlightedTile.CardOverItem(false);
+		highlightedTile = null;
 	}
 
 	private IEnumerator RotateCamera()
@@ -169,25 +434,213 @@ public class GameHandler : MonoBehaviour
 		mousePos = Input.mousePosition;
 		while (Input.GetMouseButton(0))
 		{
-			Vector2 newPos = Input.mousePosition;
-			yRot += (mousePos.x - newPos.x) * Time.deltaTime * camYRotSpeed;
-			//camTransform.Rotate(camTransform.up, -yRot);
-			xRot = Mathf.Clamp(xRot + (mousePos.y - newPos.y) * Time.deltaTime * camXRotSpeed, -xCampDegree, xCampDegree);
+			if (Input.touchCount > 1)
+			{
+				if (zoom) ZoomCamera();
+				else
+				{
+					touchDistance = Vector2.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+					zoom = true;
+				}
+			}
+			else
+			{
+				if(zoom) zoom = false;
+				Vector2 newPos = Input.mousePosition;
+				yRot += (mousePos.x - newPos.x) * Time.deltaTime * camYRotSpeed;
+				xRot = Mathf.Clamp(xRot + (mousePos.y - newPos.y) * Time.deltaTime * camXRotSpeed, -xCampDegree, xCampDegree);
+				camTransform.rotation = Quaternion.Euler(xRot, -yRot, 0);
 
-			camTransform.rotation = Quaternion.Euler(xRot, -yRot, 0);
-			//camTransform.Rotate(camTransform.right, xRot);
-			mousePos = newPos;
+				SetCurrentCamPos();
+				mousePos = newPos;
+			}
+
 			yield return null;
+		}
+		cameraCoroutine = null;
+		zoom = false;
+	}
+
+	private void SetCurrentCamPos()
+	{
+		float zCam = defaultCamDistance + (autoZoomFactor * (1 - (xRot + xCampDegree) / (xCampDegree * 2)));
+		float calculatedYRot = CalculateYRot();
+		if (calculatedYRot <= maxYDegree)
+		{
+			zCam -= autoZoomFactor * calculatedYRot / maxYDegree;
+		}
+		else if (calculatedYRot >= (180 - maxYDegree))
+		{
+			zCam -= autoZoomFactor * Mathf.Abs(calculatedYRot - 180) / maxYDegree;
+		}
+		else zCam -= autoZoomFactor;
+
+		Vector3 newCamPos = new Vector3(currentCam.transform.localPosition.x, currentCam.transform.localPosition.y, zCam);
+		currentCam.transform.localPosition = newCamPos;
+	}
+
+	private float CalculateYRot()
+	{
+		float value = Mathf.Abs(yRot) % 360;
+		if (value > 180) value -= 360;
+		return Mathf.Abs(value);
+	}
+
+	private void HighlightBuildableTiles(bool highlight, bool road = false)
+	{
+		if (highlight)
+		{
+			for (int i = 0; i < buildableTiles.Length; i++)
+			{
+				for (int j = 0; j < buildableTiles[i].Length; j++)
+				{
+					if (road)
+					{
+						if (buildableTiles[i][j] == 1 || buildableTiles[i][j] == 3)
+						{
+							if (!map[i].tiles[j].PlaneOnField) map[i].tiles[j].IsBuildable = true;
+						}
+					}
+					else
+					{
+						if (buildableTiles[i][j] < 4)
+						{
+							if (!map[i].tiles[j].PlaneOnField) map[i].tiles[j].IsBuildable = true;
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < buildableTiles.Length; i++)
+			{
+				for (int j = 0; j < buildableTiles[i].Length; j++)
+				{
+					if (map[i].tiles[j].IsBuildable) map[i].tiles[j].IsBuildable = false;
+				}
+			}
 		}
 	}
 
-	public bool TryToCleanField()
+	public bool CheckIfHaveBuildPoints(BuildingType cardType)
 	{
-		if (currentBCP > 0)
+		if (gameEnd) return false;
+
+		if (currentBBP > 0)
 		{
-			currentBCP--;
+			if (cardType == BuildingType.Road) HighlightBuildableTiles(true, true);
+			else HighlightBuildableTiles(true);
+			checkTileMapCoroutine = StartCoroutine(CheckTileMapHeighlight());
 			return true;
 		}
 		else return false;
+
+	}
+
+	public bool CheckIfHaveControlPoints()
+	{
+		if (gameEnd) return false;
+
+		if (currentPCP > 0)
+		{
+			currentPCP--;
+			controlPointsText.text = currentPCP.ToString();
+			return true;
+		}
+		else return false;
+	}
+
+	public void InteractionPlaneReset()
+	{
+		currentPCP++;
+		controlPointsText.text = currentPCP.ToString();
+	}
+
+	public void MissionComplete()
+	{
+		playerPoints += pointsPerMission;
+		playerPointsText.text = playerPoints.ToString();
+	}
+
+	public void DeactivatedPark(bool deactivate)
+	{
+		if (deactivate) pointsPerMission--;
+		else pointsPerMission++;
+	}
+
+	public void HighlightDirtyFields()
+	{
+		for (int i = 0; i < map.Length; i++)
+		{
+			for (int j = 0; j < map[i].tiles.Length; j++)
+			{
+				if (!map[i].tiles[j].PlaneOnField && map[i].tiles[j].Dirty) map[i].tiles[j].IsBuildable = true;
+			}
+		}
+
+		checkTileMapCoroutine = StartCoroutine(CheckTileMapHeighlight());
+	}
+
+	private void DeHighlightDirtyFields()
+	{
+		for (int i = 0; i < buildableTiles.Length; i++)
+		{
+			for (int j = 0; j < buildableTiles[i].Length; j++)
+			{
+				if (map[i].tiles[j].Dirty) map[i].tiles[j].IsBuildable = false;
+			}
+		}
+	}
+
+	public bool TryCleanField(Vector2 pos)
+	{
+		DeHighlightDirtyFields();
+		StopCoroutine(checkTileMapCoroutine);
+		if (highlightedTile != null)
+		{
+			highlightedTile.CardOverItem(false);
+			highlightedTile = null;
+		}
+
+		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
+		Vector3 worldPoint;
+		RaycastHit hit;
+
+		if (camControl.CamRotationAllowed)
+		{
+			worldPoint = cam.ScreenToWorldPoint(new Vector3(pos.x, pos.y, 250));
+			if (Physics.Raycast(cam.transform.position, worldPoint, out hit, 10, ignoreMask))
+			{
+				MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
+				if (mapTile != null && mapTile.Dirty)
+				{
+					mapTile.CleanUpField();
+					return true;
+				}
+			}
+			return false;
+		}
+		else
+		{
+			Ray ray = cam.ScreenPointToRay(new Vector3(pos.x, pos.y, 250));
+			//Debug.DrawRay(ray.origin, cam.transform.forward, Color.red, 10);
+			if (Physics.Raycast(ray.origin, cam.transform.forward, out hit, 10, ignoreMask))
+			{
+				MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
+				if (mapTile != null && mapTile.Dirty)
+				{
+					mapTile.CleanUpField();
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	public void PlaneOutOfMap(int speed)
+	{
+		playerPoints -= pointsLoseFactor * speed;
+		playerPointsText.text = playerPoints.ToString();
 	}
 }
