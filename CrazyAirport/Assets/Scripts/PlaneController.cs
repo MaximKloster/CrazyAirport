@@ -172,7 +172,10 @@ public class PlaneController : MonoBehaviour
 			yield return new WaitForSeconds(0.5f);
 			Destroy(gameObject);
 		}
-		else notInteractable = false;
+		else
+		{
+			notInteractable = false;
+		}
 	}
 
 	// check the map tile for landing or stop field
@@ -194,6 +197,8 @@ public class PlaneController : MonoBehaviour
 					case MapTile.BuildStatus.Stop:
 						if (mapTile.Dirty) return;
 						StopCoroutine(movementCoroutine);
+						planeOnField = mapTile;
+						mapTile.PlaneOnField = true;
 						movementCoroutine = StartCoroutine(StopAtField(mapTile.gameObject.transform.position));
 						mapTile.PlanePathField();
 						break;

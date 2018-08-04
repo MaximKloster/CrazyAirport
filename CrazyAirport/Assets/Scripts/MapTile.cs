@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class MapTile : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class MapTile : MonoBehaviour
 	[SerializeField]
 	private ParticleSystem dirtPS;
 	[SerializeField]
-	private ParticleSystem cleanPS;
+	private ParticleSystem constructPS;
 	[SerializeField]
 	private BuildStatus tileStatus = BuildStatus.Empty;
 	[SerializeField]
@@ -76,7 +77,6 @@ public class MapTile : MonoBehaviour
 		}
 	}
 
-
 	public void PlanePathField()
 	{
 		if (!Dirty)
@@ -91,7 +91,6 @@ public class MapTile : MonoBehaviour
 	{
 		if (Dirty)
 		{
-			cleanPS.Play();
 			Dirty = false;
 			dirtPS.Stop();
 			if (tileStatus == BuildStatus.Park) gameMaster.DeactivatedPark(false);

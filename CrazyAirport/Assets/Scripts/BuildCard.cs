@@ -21,8 +21,6 @@ public class BuildCard : MonoBehaviour
 	[SerializeField]
 	private AudioClip wrongPlacedSound;
 	[SerializeField]
-	private AudioClip buildSound;
-	[SerializeField]
 	private AudioClip backInHandSound;
 
 	private AudioSource audioSound;

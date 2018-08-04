@@ -54,6 +54,7 @@ public class PlaneManager : MonoBehaviour
 				{
 					maxSpawnPlaneSize = 2;
 					level++;
+					gameMaster.ReachedLevelOne();
 				}
 				break;
 			case 1:
@@ -64,7 +65,7 @@ public class PlaneManager : MonoBehaviour
 				}
 				break;
 			case 2:
-				if (turn > 15) // turns [5] 11 to 15
+				if (turn > 15) // check turns [5] 11 to 15
 				{
 					maxSpawnPlaneAmount = 2;
 					maxSpawnPlaneSize = 2;
@@ -72,7 +73,7 @@ public class PlaneManager : MonoBehaviour
 				}
 				break;
 			case 3:
-				if(turn > 20) // turns [5] 16 to 20
+				if (turn > 20) // check turns [5] 16 to 20
 				{
 					maxSpawnPlaneAmount = 2;
 					maxSpawnPlaneSize = 3;
@@ -80,7 +81,7 @@ public class PlaneManager : MonoBehaviour
 				}
 				break;
 			case 4:
-				if(turn > 25) // turns [5] 21 to 25
+				if (turn > 25) // check turns [5] 21 to 25
 				{
 					maxSpawnPlaneAmount = 3;
 					maxSpawnPlaneSize = 2;
@@ -88,7 +89,7 @@ public class PlaneManager : MonoBehaviour
 				}
 				break;
 			case 5:
-				if(turn > 30) // turns [5] 26 to 30
+				if (turn > 30) // check turns [5] 26 to 30
 				{
 					maxSpawnPlaneAmount = 3;
 					maxSpawnPlaneSize = 3;
@@ -100,8 +101,11 @@ public class PlaneManager : MonoBehaviour
 
 	private IEnumerator HandleTurn()
 	{
-		MoveAllPlanes();
-		yield return new WaitForSeconds(1.25f);
+		if (turn > 1)
+		{
+			MoveAllPlanes();
+			yield return new WaitForSeconds(1.25f);
+		}
 		SpawnPlane();
 		gameMaster.ReadyToContinue();
 	}
@@ -129,14 +133,16 @@ public class PlaneManager : MonoBehaviour
 	{
 		CalculateLevel();
 
+		int[] tempSP = new int[3] { -1, -1, -1 };
+
 		for (int i = 0; i < maxSpawnPlaneAmount; i++)
 		{
 			int sp;
 			do
 			{
 				sp = Random.Range(0, allSpawnpoints.Length);
-			} while (sp == lastSpawnPoints[0] || sp == lastSpawnPoints[1] || sp == lastSpawnPoints[2]);
-			lastSpawnPoints[i] = sp;
+			} while (sp == lastSpawnPoints[0] || sp == lastSpawnPoints[1] || sp == lastSpawnPoints[2] || sp == tempSP[0] || sp == tempSP[1] || sp == tempSP[2]);
+			tempSP[i] = sp;
 
 			int planeType = Random.Range(0, maxSpawnPlaneSize);
 			GameObject planeObject = Instantiate(planePrefab[planeType], allSpawnpoints[sp].transform.position, allSpawnpoints[sp].transform.rotation, transform);
@@ -144,6 +150,8 @@ public class PlaneManager : MonoBehaviour
 			plane.PlaneSetup(this, mapBorders, showFeedback);
 			allPlanes.Add(plane);
 		}
+
+		lastSpawnPoints = tempSP;
 	}
 
 	public void PlaneLanded(PlaneController plane)
@@ -156,7 +164,6 @@ public class PlaneManager : MonoBehaviour
 	{
 		endGame = true;
 		gameMaster.EndGame();
-		// TODO make game ending here
 	}
 
 	public void OutOfMap(PlaneController plane, int speed)

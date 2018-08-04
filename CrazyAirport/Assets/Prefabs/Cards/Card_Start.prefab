@@ -231,13 +231,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildingName: Startapult
-  description: Flugzeuge von hier aus starten
+  description: Planes can take off here
   cardType: 2
   buildID: 0
   getCardSound: {fileID: 8300000, guid: 972e88340c64e4e4788b8f60e85cc0df, type: 3}
   grabSound: {fileID: 8300000, guid: 959b64aea028c9148bd91cc051bc203e, type: 3}
   wrongPlacedSound: {fileID: 0}
-  buildSound: {fileID: 0}
   backInHandSound: {fileID: 0}
 --- !u!222 &222093415977773370
 CanvasRenderer:

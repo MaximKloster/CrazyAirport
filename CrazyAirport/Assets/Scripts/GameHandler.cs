@@ -40,11 +40,17 @@ public class GameHandler : MonoBehaviour
 	#region ui variables
 	[Header("UI", order = 2)]
 	[SerializeField]
+	private GameObject gameOverScreen;
+	[SerializeField]
 	private Text buildPointsText;
 	[SerializeField]
 	private Text controlPointsText;
 	[SerializeField]
 	private Text playerPointsText;
+	[SerializeField]
+	private GameObject playerGainPointsGO;
+	[SerializeField]
+	private Text playerGainPointsText;
 	#endregion
 	#region player interaction variables
 	[Header("Player Interaction", order = 2)]
@@ -98,12 +104,47 @@ public class GameHandler : MonoBehaviour
 	private int[][] buildableTiles;
 	private float touchDistance = 0;
 	private bool zoom = false;
+	private int pointsThisRound = 0;
+	#endregion
+	#region particle
+	[SerializeField]
+	private ParticleSystem sparksPS;
+	[SerializeField]
+	private ParticleSystem cleanPS;
+	#endregion
+	#region sound
+	[Header("Sound", order = 2)]
+	private AudioSource audioSource;
+	[SerializeField]
+	private AudioClip constructionClip;
+	[SerializeField]
+	private AudioClip cleaningClip;
 	#endregion
 
 	private void Start()
 	{
+		playerGainPointsGO.SetActive(false);
+		gameOverScreen.SetActive(false);
+		audioSource = GetComponent<AudioSource>();
 		GameSetup();
 		SetUpMap();
+	}
+
+	public void ReachedLevelOne()
+	{
+		cardMan.ReachedLevelOne();
+	}
+
+	private void PlayBuildParticle(Vector3 pos)
+	{
+		sparksPS.transform.position = new Vector3(pos.x, sparksPS.transform.position.y, pos.z);
+		sparksPS.Play();
+	}
+
+	private void PlayCleanParticle(Vector3 pos)
+	{
+		cleanPS.transform.position = new Vector3(pos.x, cleanPS.transform.position.y, pos.z);
+		cleanPS.Play();
 	}
 
 	private void SetUpMap()
@@ -171,15 +212,10 @@ public class GameHandler : MonoBehaviour
 	// Check if the Type of Building can be build at the spot
 	public bool TryToBuildAt(Vector2 pos, BuildingType type, int buildID)
 	{
-		StopCoroutine(checkTileMapCoroutine);
+		ResetHighLight();
 		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
 		Vector3 worldPoint;
 		RaycastHit hit;
-		if (highlightedTile != null)
-		{
-			highlightedTile.CardOverItem(false);
-			highlightedTile = null;
-		}
 
 		if (camControl.CamRotationAllowed)
 		{
@@ -212,7 +248,10 @@ public class GameHandler : MonoBehaviour
 			int x = (int)mapTile.transform.position.x;
 			if (mapTile.TileStatus == MapTile.BuildStatus.Empty && mapTile.IsBuildable)
 			{
+				audioSource.clip = constructionClip;
+				audioSource.Play();
 				Transform buildingParent = mapTile.gameObject.transform;
+				PlayBuildParticle(buildingParent.position);
 				switch (type)
 				{
 					case BuildingType.Road:
@@ -319,13 +358,18 @@ public class GameHandler : MonoBehaviour
 
 	public void ReadyToContinue()
 	{
-		SupportRound();
-		waitForContinue = false;
+		StartCoroutine(PlayPointGain());
 	}
 
 	public void EndGame()
 	{
 		gameEnd = true;
+		gameOverScreen.SetActive(true);
+	}
+
+	public void QuitGame()
+	{
+		Application.Quit();
 	}
 
 	private void SupportRound()
@@ -425,8 +469,12 @@ public class GameHandler : MonoBehaviour
 
 	private void ResetHighLight()
 	{
-		highlightedTile.CardOverItem(false);
-		highlightedTile = null;
+		StopCoroutine(checkTileMapCoroutine);
+		if (highlightedTile != null)
+		{
+			highlightedTile.CardOverItem(false);
+			highlightedTile = null;
+		}
 	}
 
 	private IEnumerator RotateCamera()
@@ -535,7 +583,6 @@ public class GameHandler : MonoBehaviour
 			return true;
 		}
 		else return false;
-
 	}
 
 	public bool CheckIfHaveControlPoints()
@@ -559,8 +606,37 @@ public class GameHandler : MonoBehaviour
 
 	public void MissionComplete()
 	{
-		playerPoints += pointsPerMission;
-		playerPointsText.text = playerPoints.ToString();
+		pointsThisRound += pointsPerMission;
+	}
+
+	private IEnumerator PlayPointGain()
+	{
+		if (pointsThisRound != 0)
+		{
+			if (pointsThisRound > 0)
+			{
+				playerGainPointsText.color = Color.green;
+				playerGainPointsText.text = "+"+pointsThisRound.ToString();
+			}
+			else
+			{
+				playerGainPointsText.color = Color.red;
+				playerGainPointsText.text = "-" + pointsThisRound.ToString();
+			}
+			
+			playerGainPointsGO.SetActive(true);
+			yield return new WaitForSeconds(0.3f);
+			playerGainPointsGO.SetActive(false);
+			playerPoints += pointsThisRound;
+			playerPointsText.text = playerPoints.ToString();
+			pointsThisRound = 0;
+		}
+
+		if (!gameEnd)
+		{
+			SupportRound();
+			waitForContinue = false;
+		}
 	}
 
 	public void DeactivatedPark(bool deactivate)
@@ -578,7 +654,6 @@ public class GameHandler : MonoBehaviour
 				if (!map[i].tiles[j].PlaneOnField && map[i].tiles[j].Dirty) map[i].tiles[j].IsBuildable = true;
 			}
 		}
-
 		checkTileMapCoroutine = StartCoroutine(CheckTileMapHeighlight());
 	}
 
@@ -596,12 +671,7 @@ public class GameHandler : MonoBehaviour
 	public bool TryCleanField(Vector2 pos)
 	{
 		DeHighlightDirtyFields();
-		StopCoroutine(checkTileMapCoroutine);
-		if (highlightedTile != null)
-		{
-			highlightedTile.CardOverItem(false);
-			highlightedTile = null;
-		}
+		ResetHighLight();
 
 		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
 		Vector3 worldPoint;
@@ -613,8 +683,11 @@ public class GameHandler : MonoBehaviour
 			if (Physics.Raycast(cam.transform.position, worldPoint, out hit, 10, ignoreMask))
 			{
 				MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
-				if (mapTile != null && mapTile.Dirty)
+				if (mapTile != null && mapTile.Dirty && !mapTile.PlaneOnField)
 				{
+					audioSource.clip = cleaningClip;
+					audioSource.Play();
+					PlayCleanParticle(mapTile.transform.position);
 					mapTile.CleanUpField();
 					return true;
 				}
@@ -640,7 +713,8 @@ public class GameHandler : MonoBehaviour
 
 	public void PlaneOutOfMap(int speed)
 	{
-		playerPoints -= pointsLoseFactor * speed;
-		playerPointsText.text = playerPoints.ToString();
+		pointsThisRound -= pointsLoseFactor * speed;
+		//playerPoints -= pointsLoseFactor * speed;
+		//playerPointsText.text = playerPoints.ToString();
 	}
 }

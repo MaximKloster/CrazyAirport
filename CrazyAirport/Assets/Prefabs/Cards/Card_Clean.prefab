@@ -156,14 +156,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e2ba45ea6ea8b4cbac45eb04fedece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildingName: "Windm\xFChle"
-  description: Generiert +1 Reinigung
+  buildingName: Windmill
+  description: +1 CleanUp and +1 max Handhold
   cardType: 6
   buildID: 0
   getCardSound: {fileID: 8300000, guid: 972e88340c64e4e4788b8f60e85cc0df, type: 3}
   grabSound: {fileID: 8300000, guid: 959b64aea028c9148bd91cc051bc203e, type: 3}
   wrongPlacedSound: {fileID: 0}
-  buildSound: {fileID: 0}
   backInHandSound: {fileID: 0}
 --- !u!114 &114629162612406062
 MonoBehaviour:

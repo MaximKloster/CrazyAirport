@@ -31,7 +31,7 @@ public class CardManager : MonoBehaviour
 	#region setup variables
 	[Header("Setup", order = 2)]
 	[SerializeField]
-	private Transform[] builCardSlots;
+	private Transform[] buildCardSlots;
 	[SerializeField]
 	private Transform[] cleanCardSlots;
 	[SerializeField]
@@ -58,6 +58,7 @@ public class CardManager : MonoBehaviour
 	private int cardsGain = 1;
 	private int cleansGain = 1;
 	private bool showInfo = false;
+	private bool hasBonusCard = false;
 	public int CardsGain
 	{
 		get
@@ -68,6 +69,8 @@ public class CardManager : MonoBehaviour
 		set
 		{
 			cardsGain = value;
+			buildCardSlots[buildCardSlots.Length - 1].gameObject.SetActive(true);
+			hasBonusCard = true;
 		}
 	}
 	public int CleansGain
@@ -93,18 +96,35 @@ public class CardManager : MonoBehaviour
 		{
 			info.SetActive(false);
 		}
+		buildCardSlots[buildCardSlots.Length - 1].gameObject.SetActive(false);
 		audioSound = GetComponent<AudioSource>();
 		currentLevel = PlayerPrefs.GetInt("Level");
 		deck = GenerateDeck();
 		StartCoroutine(SetUpStartCards());
 	}
 
+	public void ReachedLevelOne()
+	{
+		List<GameObject> allCards = deck;
+		List<GameObject> newDeck = new List<GameObject>();
+		allCards.AddRange(collection: stopCards);
+		while (allCards.Count > 0)
+		{
+			int rand = Random.Range(0, allCards.Count);
+			newDeck.Add(allCards[rand]);
+			allCards.RemoveAt(rand);
+		}
+		deck.Clear();
+		deck = newDeck;
+	}
+
 	// Instantiate the Hand Cards and give them the reference to the card manager for cummunication and its slot ID
 	private IEnumerator SetUpStartCards()
 	{
-		handCards = new GameObject[builCardSlots.Length];
-		for (int i = 0; i < builCardSlots.Length; i++)
+		handCards = new GameObject[buildCardSlots.Length];
+		for (int i = 0; i < buildCardSlots.Length; i++)
 		{
+			if (i == (buildCardSlots.Length -1) && !hasBonusCard) break;
 			TakeCardInHand(i);
 			yield return new WaitForSeconds(gainCardDelay);
 		}
@@ -132,7 +152,7 @@ public class CardManager : MonoBehaviour
 		allCards.Add(buildCard);
 		allCards.Add(cardCard);
 		allCards.AddRange(collection: parkCards);
-		allCards.AddRange(collection: stopCards);
+		//allCards.AddRange(collection: stopCards);
 		allCards.AddRange(collection: controlCards);
 		if (currentLevel > 0) allCards.AddRange(collection: startCards);
 		allCards.AddRange(collection: landCards);
@@ -160,7 +180,7 @@ public class CardManager : MonoBehaviour
 	// Take the next card from the deck and instantiate in the hand
 	private void TakeCardInHand(int id)
 	{
-		handCards[id] = Instantiate(deck[0], builCardSlots[id]);
+		handCards[id] = Instantiate(deck[0], buildCardSlots[id]);
 		handCards[id].GetComponent<BuildCard>().SetupCard(this, id);
 		deck.RemoveAt(0);
 		SetUpCardInfo(id);
@@ -184,8 +204,10 @@ public class CardManager : MonoBehaviour
 		{
 			for (int a = 0; a < CardsGain; a++)
 			{
-				for (int i = 0; i < builCardSlots.Length; i++)
+				for (int i = 0; i < buildCardSlots.Length; i++)
 				{
+					if (i == (buildCardSlots.Length - 1) && !hasBonusCard) break;
+
 					if (handCards[i] == null)
 					{
 						TakeCardInHand(i);

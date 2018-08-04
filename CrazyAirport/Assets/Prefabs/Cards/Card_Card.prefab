@@ -157,13 +157,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildingName: Looping
-  description: +1 Baukarte ziehen
+  description: +1 Gain Card and +1 max. Handcard
   cardType: 5
   buildID: 0
   getCardSound: {fileID: 8300000, guid: 972e88340c64e4e4788b8f60e85cc0df, type: 3}
   grabSound: {fileID: 8300000, guid: 959b64aea028c9148bd91cc051bc203e, type: 3}
   wrongPlacedSound: {fileID: 0}
-  buildSound: {fileID: 0}
   backInHandSound: {fileID: 0}
 --- !u!114 &114523619933607400
 MonoBehaviour:

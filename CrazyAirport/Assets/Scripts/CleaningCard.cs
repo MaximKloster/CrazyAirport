@@ -18,8 +18,6 @@ public class CleaningCard : MonoBehaviour
 	[SerializeField]
 	private AudioClip wrongPlacedSound;
 	[SerializeField]
-	private AudioClip cleaningSound;
-	[SerializeField]
 	private AudioClip backInHandSound;
 	private AudioSource audioSound;
 	private Animator anim;
