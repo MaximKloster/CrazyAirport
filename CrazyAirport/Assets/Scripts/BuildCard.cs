@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 
 public class BuildCard : MonoBehaviour
 {
+	#region card setup variables
 	[Header("Card Setup", order = 2)]
 	[SerializeField]
 	private string buildingName = "";
@@ -13,6 +14,8 @@ public class BuildCard : MonoBehaviour
 	private GameHandler.BuildingType cardType;
 	[SerializeField]
 	private int buildID = 0;
+	#endregion
+	#region sound variables
 	[Header("Sound", order = 2)]
 	[SerializeField]
 	private AudioClip getCardSound;
@@ -22,8 +25,8 @@ public class BuildCard : MonoBehaviour
 	private AudioClip wrongPlacedSound;
 	[SerializeField]
 	private AudioClip backInHandSound;
-
 	private AudioSource audioSound;
+	#endregion
 	private Animator anim;
 
 	private PointerEventData pointerData;

@@ -10,6 +10,8 @@ public class CleaningCard : MonoBehaviour
 	private Transform parent;
 	private int id;
 	private CardManager cardMan;
+	private Animator anim;
+	#region sound variables
 	[Header("Sound", order = 2)]
 	[SerializeField]
 	private AudioClip getCardSound;
@@ -20,8 +22,8 @@ public class CleaningCard : MonoBehaviour
 	[SerializeField]
 	private AudioClip backInHandSound;
 	private AudioSource audioSound;
-	private Animator anim;
-
+	#endregion
+	
 	private void Start()
 	{
 		anim = GetComponent<Animator>();

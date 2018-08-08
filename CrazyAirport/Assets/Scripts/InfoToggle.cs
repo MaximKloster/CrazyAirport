@@ -9,12 +9,7 @@ public class InfoToggle : MonoBehaviour
 	private CardManager cardMan;
 
 	private int state = 0;
-	// Use this for initialization
-	void Start()
-	{
 
-	}
-	
 	public void Clicked()
 	{
 		state++;
@@ -22,14 +17,14 @@ public class InfoToggle : MonoBehaviour
 		switch(state)
 		{
 			case 0:
-				planeMan.ShowMovementFeedback();
+				cardMan.ShowCardInfo();
 				break;
 			case 1:
 				planeMan.ShowMovementFeedback();
 				cardMan.ShowCardInfo();
 				break;
 			case 2:
-				cardMan.ShowCardInfo();
+				planeMan.ShowMovementFeedback();
 				break;
 
 		}

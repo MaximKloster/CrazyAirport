@@ -139,6 +139,7 @@ public class CardManager : MonoBehaviour
 				yield return new WaitForSeconds(gainCardDelay);
 			}
 		}
+		gameMaster.SupportFinished();
 	}
 
 	// Take all cards and generate a random deck of this cards
@@ -226,7 +227,7 @@ public class CardManager : MonoBehaviour
 				yield return new WaitForSeconds(gainCardDelay);
 			}
 		}
-
+		gameMaster.SupportFinished();
 	}
 
 	/** Handle what to do with the released card

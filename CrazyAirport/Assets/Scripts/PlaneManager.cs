@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlaneManager : MonoBehaviour
 {
+	#region setup variables
 	[Header("Setup", order = 2)]
 	[SerializeField]
 	private GameHandler gameMaster;
@@ -13,17 +14,29 @@ public class PlaneManager : MonoBehaviour
 	private GameObject[] planePrefab;
 	[SerializeField]
 	private Vector4 mapBorders;
+	#endregion
+	#region gameplay variables
 	private List<PlaneController> allPlanes;
-	private int[] lastSpawnPoints = new int[3] { -1, -1, -1 }; // check if a plane was last time here started, so to do not use again in next round
+	private int[] lastSpawnPoints = new int[4] { -1, -1, -1, -1 }; // check if a plane was last time here started, so to do not use again in next round
 	private int turn = 0;
 	private int maxSpawnPlaneSize = 1;
 	private int maxSpawnPlaneAmount = 1;
 	private int level = 0;
-	private bool showFeedback = false;
+	private bool showFeedback = true;
 	private bool endGame = false;
+	#endregion
+	#region sound variables
+	[Header("Sound", order = 2)]
+	[SerializeField]
+	private AudioClip radarClip;
+	[SerializeField]
+	private AudioClip planeMoveClip;
+	private AudioSource audioSource;
+	#endregion
 	// Use this for initialization
 	void Start()
 	{
+		audioSource = GetComponent<AudioSource>();
 		turn = 0;
 		level = 0;
 		allPlanes = new List<PlaneController>();
@@ -96,6 +109,22 @@ public class PlaneManager : MonoBehaviour
 					level++;
 				}
 				break;
+			case 6:
+				if(turn > 37) // check turns [7] 31 to 37
+				{
+					maxSpawnPlaneAmount = 4;
+					maxSpawnPlaneSize = 2;
+					level++;
+				}
+				break;
+			case 7:
+				if (turn > 45) // check turns [8] 38 to 45
+				{
+					maxSpawnPlaneAmount = 4;
+					maxSpawnPlaneSize = 3;
+					level++;
+				}
+				break;
 		}
 	}
 
@@ -112,7 +141,7 @@ public class PlaneManager : MonoBehaviour
 
 	public bool TryToRotatePlane()
 	{
-		return gameMaster.CheckIfHaveControlPoints();
+		return (gameMaster.CheckIfHaveControlPoints());
 	}
 
 	public void PlaneIsRotatedToDefault()
@@ -122,6 +151,8 @@ public class PlaneManager : MonoBehaviour
 
 	private void MoveAllPlanes()
 	{
+		audioSource.clip = planeMoveClip;
+		audioSource.Play();
 		foreach (PlaneController plane in allPlanes)
 		{
 			plane.Move();
@@ -132,8 +163,9 @@ public class PlaneManager : MonoBehaviour
 	private void SpawnPlane()
 	{
 		CalculateLevel();
-
-		int[] tempSP = new int[3] { -1, -1, -1 };
+		audioSource.clip = radarClip;
+		audioSource.Play();
+		int[] tempSP = new int[4] { -1, -1, -1, -1 };
 
 		for (int i = 0; i < maxSpawnPlaneAmount; i++)
 		{
@@ -141,7 +173,7 @@ public class PlaneManager : MonoBehaviour
 			do
 			{
 				sp = Random.Range(0, allSpawnpoints.Length);
-			} while (sp == lastSpawnPoints[0] || sp == lastSpawnPoints[1] || sp == lastSpawnPoints[2] || sp == tempSP[0] || sp == tempSP[1] || sp == tempSP[2]);
+			} while (sp == lastSpawnPoints[0] || sp == lastSpawnPoints[1] || sp == lastSpawnPoints[2] || sp == lastSpawnPoints[3] || sp == tempSP[0] || sp == tempSP[1] || sp == tempSP[2] || sp == tempSP[3]);
 			tempSP[i] = sp;
 
 			int planeType = Random.Range(0, maxSpawnPlaneSize);

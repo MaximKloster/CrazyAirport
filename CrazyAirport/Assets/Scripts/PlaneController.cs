@@ -28,7 +28,7 @@ public class PlaneController : MonoBehaviour
 	private int fieldsMovement = 1;
 	[SerializeField]
 	[Range(0.1f, 10)]
-	private float landingSpeed = 1;
+	private float landingSpeed = 1.2f;
 	[SerializeField]
 	[Range(0.1f, 10)]
 	private float crashRotationSpeed = 7.5f;
@@ -38,7 +38,7 @@ public class PlaneController : MonoBehaviour
 	private Vector4 borders;
 	bool landing = false;
 	#endregion
-
+	#region gameplay variables
 	private PlaneRotation planeRotation = PlaneRotation.NONE;
 	private Transform planeTransform;
 	private bool notInteractable = true;
@@ -47,6 +47,8 @@ public class PlaneController : MonoBehaviour
 	private MapTile planeOnField;
 	private Vector3 checkPointPos;
 	private int movesDone = 0;
+	private AudioSource audioSource;
+	#endregion
 
 	private void OnDrawGizmos()
 	{
@@ -56,6 +58,7 @@ public class PlaneController : MonoBehaviour
 
 	void Start()
 	{
+		audioSource = GetComponent<AudioSource>();
 		planeTransform = transform;
 	}
 
@@ -88,16 +91,19 @@ public class PlaneController : MonoBehaviour
 				{
 					planeRotation = PlaneRotation.RIGHT;
 					planeTransform.Rotate(planeTransform.up, 90);
+					audioSource.Play();
 				}
 				break;
 			case PlaneRotation.RIGHT:
 				planeRotation = PlaneRotation.LEFT;
 				planeTransform.Rotate(planeTransform.up, -180);
+				audioSource.Play();
 				break;
 			case PlaneRotation.LEFT:
 				planeRotation = PlaneRotation.NONE;
 				planeMan.PlaneIsRotatedToDefault();
 				planeTransform.Rotate(planeTransform.up, 90);
+				audioSource.Play();
 				break;
 		}
 	}
@@ -162,7 +168,7 @@ public class PlaneController : MonoBehaviour
 		if (landing) movementFeedback.SetActive(false);
 		while (Fly(newPos))
 		{
-			if (landing) planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime), planeMesh.transform.position.z);
+			if (landing) planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime * fieldsMovement), planeMesh.transform.position.z);
 			yield return null;
 		}
 
@@ -195,12 +201,14 @@ public class PlaneController : MonoBehaviour
 						mapTile.PlanePathField();
 						break;
 					case MapTile.BuildStatus.Stop:
-						if (mapTile.Dirty) return;
-						StopCoroutine(movementCoroutine);
-						planeOnField = mapTile;
-						mapTile.PlaneOnField = true;
-						movementCoroutine = StartCoroutine(StopAtField(mapTile.gameObject.transform.position));
-						mapTile.PlanePathField();
+						if (!mapTile.Dirty)
+						{
+							StopCoroutine(movementCoroutine);
+							planeOnField = mapTile;
+							mapTile.PlaneOnField = true;
+							movementCoroutine = StartCoroutine(StopAtField(mapTile.gameObject.transform.position));
+							mapTile.PlanePathField();
+						}
 						break;
 				}
 
@@ -241,7 +249,7 @@ public class PlaneController : MonoBehaviour
 		planeMan.Crash();
 		groundMarker.SetActive(false);
 		explosionPS.Play();
-		while (planeMesh.transform.position.y > 0)
+		while (planeMesh.transform.position.y > -0.24f)
 		{
 			planeMesh.transform.Rotate(planeMesh.transform.up, crashRotationSpeed);
 			planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (crashFallSpeed * Time.deltaTime), planeMesh.transform.position.z);

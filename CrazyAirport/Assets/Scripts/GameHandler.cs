@@ -97,7 +97,7 @@ public class GameHandler : MonoBehaviour
 	private Transform camTransform;
 	private Camera currentCam;
 	private bool gameEnd = false;
-	private bool waitForContinue = false;
+	private bool waitForContinue = true;
 	private Coroutine checkTileMapCoroutine;
 	private Coroutine cameraCoroutine;
 	private MapTile highlightedTile;
@@ -111,6 +111,7 @@ public class GameHandler : MonoBehaviour
 	private ParticleSystem sparksPS;
 	[SerializeField]
 	private ParticleSystem cleanPS;
+	float cleanYRot = 0;
 	#endregion
 	#region sound
 	[Header("Sound", order = 2)]
@@ -119,10 +120,13 @@ public class GameHandler : MonoBehaviour
 	private AudioClip constructionClip;
 	[SerializeField]
 	private AudioClip cleaningClip;
+	[SerializeField]
+	private AudioClip wrongPlacedClip;
 	#endregion
 
 	private void Start()
 	{
+		waitForContinue = true;
 		playerGainPointsGO.SetActive(false);
 		gameOverScreen.SetActive(false);
 		audioSource = GetComponent<AudioSource>();
@@ -144,6 +148,7 @@ public class GameHandler : MonoBehaviour
 	private void PlayCleanParticle(Vector3 pos)
 	{
 		cleanPS.transform.position = new Vector3(pos.x, cleanPS.transform.position.y, pos.z);
+		cleanPS.transform.Rotate(cleanPS.transform.up, cleanYRot);
 		cleanPS.Play();
 	}
 
@@ -236,6 +241,8 @@ public class GameHandler : MonoBehaviour
 		}
 		// if no hit
 		HighlightBuildableTiles(false);
+		audioSource.clip = wrongPlacedClip;
+		audioSource.Play();
 		return false;
 	}
 
@@ -250,6 +257,7 @@ public class GameHandler : MonoBehaviour
 			{
 				audioSource.clip = constructionClip;
 				audioSource.Play();
+				mapTile.DeactivateMesh();
 				Transform buildingParent = mapTile.gameObject.transform;
 				PlayBuildParticle(buildingParent.position);
 				switch (type)
@@ -267,10 +275,12 @@ public class GameHandler : MonoBehaviour
 						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Stop:
-						Instantiate(stopBuildings[buildID], buildingParent);
+						GameObject stop = Instantiate(stopBuildings[buildID], buildingParent);
+						GetRenderMesh stopMesh = stop.GetComponent<GetRenderMesh>();
 						mapTile.TileStatus = MapTile.BuildStatus.Stop;
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);
+						mapTile.SetNewRenderMesh(stopMesh.GetMesh());
 						break;
 					case BuildingType.Land:
 						Instantiate(landingBuildings[buildID], buildingParent);
@@ -279,11 +289,13 @@ public class GameHandler : MonoBehaviour
 						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Park:
-						Instantiate(parkBuildings[buildID], buildingParent);
+						GameObject park = Instantiate(parkBuildings[buildID], buildingParent);
+						GetRenderMesh parkMesh = park.GetComponent<GetRenderMesh>();
 						mapTile.TileStatus = MapTile.BuildStatus.Park;
 						pointsPerMission++;
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);
+						mapTile.SetNewRenderMesh(parkMesh.GetMesh());
 						break;
 					case BuildingType.Control:
 						Instantiate(controlBuildings[buildID], buildingParent);
@@ -321,6 +333,8 @@ public class GameHandler : MonoBehaviour
 			}
 		}
 		HighlightBuildableTiles(false);
+		audioSource.clip = wrongPlacedClip;
+		audioSource.Play();
 		return false;
 	}
 
@@ -364,6 +378,12 @@ public class GameHandler : MonoBehaviour
 	public void EndGame()
 	{
 		gameEnd = true;
+		StartCoroutine(ShowEndScreenAfterTime());
+	}
+
+	private IEnumerator ShowEndScreenAfterTime()
+	{
+		yield return new WaitForSeconds(2.5f);
 		gameOverScreen.SetActive(true);
 	}
 
@@ -376,6 +396,11 @@ public class GameHandler : MonoBehaviour
 	{
 		cardMan.NextRound();
 		RefreshInteractionPoints();
+	}
+
+	public void SupportFinished()
+	{
+		waitForContinue = false;
 	}
 
 	private void OnMouseDown()
@@ -493,7 +518,7 @@ public class GameHandler : MonoBehaviour
 			}
 			else
 			{
-				if(zoom) zoom = false;
+				if (zoom) zoom = false;
 				Vector2 newPos = Input.mousePosition;
 				yRot += (mousePos.x - newPos.x) * Time.deltaTime * camYRotSpeed;
 				xRot = Mathf.Clamp(xRot + (mousePos.y - newPos.y) * Time.deltaTime * camXRotSpeed, -xCampDegree, xCampDegree);
@@ -616,14 +641,14 @@ public class GameHandler : MonoBehaviour
 			if (pointsThisRound > 0)
 			{
 				playerGainPointsText.color = Color.green;
-				playerGainPointsText.text = "+"+pointsThisRound.ToString();
+				playerGainPointsText.text = "+" + pointsThisRound.ToString();
 			}
 			else
 			{
 				playerGainPointsText.color = Color.red;
 				playerGainPointsText.text = "-" + pointsThisRound.ToString();
 			}
-			
+
 			playerGainPointsGO.SetActive(true);
 			yield return new WaitForSeconds(0.3f);
 			playerGainPointsGO.SetActive(false);
@@ -635,7 +660,6 @@ public class GameHandler : MonoBehaviour
 		if (!gameEnd)
 		{
 			SupportRound();
-			waitForContinue = false;
 		}
 	}
 
@@ -687,11 +711,15 @@ public class GameHandler : MonoBehaviour
 				{
 					audioSource.clip = cleaningClip;
 					audioSource.Play();
+					cleanPS.transform.Rotate(cleanPS.transform.up, -cleanYRot);
+					cleanYRot = camControl.transform.rotation.eulerAngles.y;
 					PlayCleanParticle(mapTile.transform.position);
 					mapTile.CleanUpField();
 					return true;
 				}
 			}
+			audioSource.clip = wrongPlacedClip;
+			audioSource.Play();
 			return false;
 		}
 		else
@@ -703,10 +731,15 @@ public class GameHandler : MonoBehaviour
 				MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
 				if (mapTile != null && mapTile.Dirty)
 				{
+					audioSource.clip = cleaningClip;
+					audioSource.Play();
+					PlayCleanParticle(mapTile.transform.position);
 					mapTile.CleanUpField();
 					return true;
 				}
 			}
+			audioSource.clip = wrongPlacedClip;
+			audioSource.Play();
 			return false;
 		}
 	}

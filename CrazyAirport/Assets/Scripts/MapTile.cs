@@ -4,14 +4,12 @@ using UnityEngine;
 public class MapTile : MonoBehaviour
 {
 	public enum BuildStatus { Empty, Border, Building, Road, Stop, Start, Park }
-
+	#region setup variables
 	[Header("Start Setup", order = 2)]
 	[SerializeField]
 	private GameHandler gameMaster;
 	[SerializeField]
 	private ParticleSystem dirtPS;
-	[SerializeField]
-	private ParticleSystem constructPS;
 	[SerializeField]
 	private BuildStatus tileStatus = BuildStatus.Empty;
 	[SerializeField]
@@ -24,6 +22,7 @@ public class MapTile : MonoBehaviour
 	private Material buildPossibleMat;
 	[SerializeField]
 	private Material notBuildableMat;
+	#endregion
 	public BuildStatus TileStatus
 	{
 		get
@@ -109,5 +108,15 @@ public class MapTile : MonoBehaviour
 			if (IsBuildable) mesh.material = buildPossibleMat;
 			else mesh.material = defaultMat;
 		}
+	}
+
+	public void DeactivateMesh()
+	{
+		mesh.gameObject.SetActive(false);
+	}
+
+	public void SetNewRenderMesh(MeshRenderer newMesh)
+	{
+		mesh = newMesh;
 	}
 }
