@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 82879572414650474}
   - component: {fileID: 95809731348058410}
   m_Layer: 5
-  m_Name: Card_Cleaning
+  m_Name: Token_Cleaningwind
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,7 +159,6 @@ MonoBehaviour:
   getCardSound: {fileID: 8300000, guid: 972e88340c64e4e4788b8f60e85cc0df, type: 3}
   grabSound: {fileID: 8300000, guid: e4e83f24592646c4c8ebc5690315c841, type: 3}
   wrongPlacedSound: {fileID: 0}
-  cleaningSound: {fileID: 0}
   backInHandSound: {fileID: 0}
 --- !u!114 &114708019095211290
 MonoBehaviour:
@@ -227,7 +226,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 014435dafa47ffe4482a93289652be22, type: 3}
+  m_Sprite: {fileID: 21300000, guid: abf39e33c911b884fa47f71d58c2d572, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

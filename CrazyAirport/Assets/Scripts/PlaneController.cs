@@ -125,7 +125,7 @@ public class PlaneController : MonoBehaviour
 			planeOnField = null;
 		}
 		Vector3 newPos = planeTransform.position + planeTransform.forward * fieldsMovement;
-		checkPointPos = planeTransform.position + planeTransform.forward * 0.51f;
+		checkPointPos = planeTransform.position + planeTransform.forward * 0.525f;
 		movesDone = 0;
 		while (Fly(newPos))
 		{

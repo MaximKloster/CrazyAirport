@@ -257,7 +257,7 @@ public class GameHandler : MonoBehaviour
 			{
 				audioSource.clip = constructionClip;
 				audioSource.Play();
-				mapTile.DeactivateMesh();
+				mapTile.DeactivateGroundMesh();
 				Transform buildingParent = mapTile.gameObject.transform;
 				PlayBuildParticle(buildingParent.position);
 				switch (type)
@@ -275,12 +275,10 @@ public class GameHandler : MonoBehaviour
 						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Stop:
-						GameObject stop = Instantiate(stopBuildings[buildID], buildingParent);
-						GetRenderMesh stopMesh = stop.GetComponent<GetRenderMesh>();
+						Instantiate(stopBuildings[buildID], buildingParent);
 						mapTile.TileStatus = MapTile.BuildStatus.Stop;
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);
-						mapTile.SetNewRenderMesh(stopMesh.GetMesh());
 						break;
 					case BuildingType.Land:
 						Instantiate(landingBuildings[buildID], buildingParent);
@@ -289,13 +287,11 @@ public class GameHandler : MonoBehaviour
 						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Park:
-						GameObject park = Instantiate(parkBuildings[buildID], buildingParent);
-						GetRenderMesh parkMesh = park.GetComponent<GetRenderMesh>();
+						Instantiate(parkBuildings[buildID], buildingParent);
 						mapTile.TileStatus = MapTile.BuildStatus.Park;
 						pointsPerMission++;
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);
-						mapTile.SetNewRenderMesh(parkMesh.GetMesh());
 						break;
 					case BuildingType.Control:
 						Instantiate(controlBuildings[buildID], buildingParent);

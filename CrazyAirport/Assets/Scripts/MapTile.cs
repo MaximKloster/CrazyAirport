@@ -13,15 +13,13 @@ public class MapTile : MonoBehaviour
 	[SerializeField]
 	private BuildStatus tileStatus = BuildStatus.Empty;
 	[SerializeField]
-	private MeshRenderer mesh;
+	private GameObject ground;
 	[SerializeField]
-	private Material defaultMat;
+	private MeshRenderer highlightMesh;
 	[SerializeField]
 	private Material buildHeighlightMat;
 	[SerializeField]
 	private Material buildPossibleMat;
-	[SerializeField]
-	private Material notBuildableMat;
 	#endregion
 	public BuildStatus TileStatus
 	{
@@ -58,8 +56,12 @@ public class MapTile : MonoBehaviour
 		set
 		{
 			isBuildable = value;
-			if (isBuildable) mesh.material = buildPossibleMat;
-			else mesh.material = defaultMat;
+			if (isBuildable)
+			{
+				highlightMesh.gameObject.SetActive(true);
+				highlightMesh.material = buildPossibleMat;
+			}
+			else highlightMesh.gameObject.SetActive(false);
 		}
 	}
 	private bool planeOnField = false;
@@ -74,6 +76,11 @@ public class MapTile : MonoBehaviour
 		{
 			planeOnField = value;
 		}
+	}
+
+	private void Start()
+	{
+		highlightMesh.gameObject.SetActive(false);
 	}
 
 	public void PlanePathField()
@@ -98,25 +105,12 @@ public class MapTile : MonoBehaviour
 
 	public void CardOverItem(bool highlight)
 	{
-		if (highlight)
-		{
-			if (IsBuildable) mesh.material = buildHeighlightMat;
-			else mesh.material = notBuildableMat;
-		}
-		else
-		{
-			if (IsBuildable) mesh.material = buildPossibleMat;
-			else mesh.material = defaultMat;
-		}
+		if (highlight && IsBuildable) highlightMesh.material = buildHeighlightMat;
+		else if(IsBuildable) highlightMesh.material = buildPossibleMat;
 	}
 
-	public void DeactivateMesh()
+	public void DeactivateGroundMesh()
 	{
-		mesh.gameObject.SetActive(false);
-	}
-
-	public void SetNewRenderMesh(MeshRenderer newMesh)
-	{
-		mesh = newMesh;
+		ground.SetActive(false);
 	}
 }
