@@ -7,6 +7,8 @@ public class BuildCard : MonoBehaviour
 	#region card setup variables
 	[Header("Card Setup", order = 2)]
 	[SerializeField]
+	private CanvasGroup canGroup;
+	[SerializeField]
 	private string buildingName = "";
 	[SerializeField]
 	private string description = "";
@@ -27,14 +29,16 @@ public class BuildCard : MonoBehaviour
 	private AudioClip backInHandSound;
 	private AudioSource audioSound;
 	#endregion
-	private Animator anim;
 
+	private Animator anim;
 	private PointerEventData pointerData;
 	private bool grabbed = false;
 	private Transform cardTransform;
 	private Transform parent;
 	private CardManager manager;
 	private int slot;
+	private bool showInfo = false;
+	private float infoShowBorder;
 
 	public string BuildingName
 	{
@@ -52,6 +56,32 @@ public class BuildCard : MonoBehaviour
 		}
 	}
 
+	public GameHandler.BuildingType CardType
+	{
+		get
+		{
+			return cardType;
+		}
+
+		private set
+		{
+			cardType = value;
+		}
+	}
+
+	public int BuildID
+	{
+		get
+		{
+			return buildID;
+		}
+
+		private set
+		{
+			buildID = value;
+		}
+	}
+
 	private void Start()
 	{
 		anim = GetComponent<Animator>();
@@ -62,17 +92,19 @@ public class BuildCard : MonoBehaviour
 		audioSound.Play();
 	}
 
-	public void SetupCard(CardManager man, int slotID)
+	public void SetupCard(CardManager man, int slotID, float border)
 	{
+		infoShowBorder = border;
 		manager = man;
 		slot = slotID;
 	}
 
 	public void SelectCard(BaseEventData data)
 	{
-		if (manager.CheckIfHaveBuildPoints(cardType))
+		if (manager.CheckIfHaveBuildPoints(this))
 		{
 			if (anim != null) Destroy(anim);
+			showInfo = true;
 			audioSound.clip = grabSound;
 			audioSound.Play();
 			pointerData = data as PointerEventData;
@@ -80,12 +112,18 @@ public class BuildCard : MonoBehaviour
 		}
 	}
 
+	public void SetVisibility(bool visible)
+	{
+		if (visible) canGroup.alpha = 1;
+		else canGroup.alpha = 0;
+	}
+
 	public void ReleaseCard()
 	{
 		if (grabbed)
 		{
 			grabbed = false;
-			manager.CardReleased(cardType, buildID, slot, pointerData.position);
+			manager.CardReleased(CardType, BuildID, slot, pointerData.position);
 		}
 	}
 
@@ -99,6 +137,16 @@ public class BuildCard : MonoBehaviour
 		grabbed = true;
 		while (grabbed)
 		{
+			if(showInfo && cardTransform.position.y > infoShowBorder)
+			{
+				manager.CardOutOfBorder(true);
+				showInfo = false;
+			}
+			else if(!showInfo && cardTransform.position.y < infoShowBorder)
+			{
+				manager.CardOutOfBorder(false);
+				showInfo = true;
+			}
 			cardTransform.position = pointerData.position;
 			yield return null;
 		}

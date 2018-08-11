@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114105968683966932}
   - component: {fileID: 82879572414650474}
   - component: {fileID: 95809731348058410}
+  - component: {fileID: 225081135462305770}
   m_Layer: 5
   m_Name: Token_Cleaningwind
   m_TagString: Untagged
@@ -156,6 +157,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a73a8b6b27f5f4b4b8848708565addc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tokenName: Cleaning Wind
+  discription: Reactivates dirty fields. Fields that are dirty lose their bonus while
+    they are dirty.
+  canGroup: {fileID: 225081135462305770}
   getCardSound: {fileID: 8300000, guid: 972e88340c64e4e4788b8f60e85cc0df, type: 3}
   grabSound: {fileID: 8300000, guid: e4e83f24592646c4c8ebc5690315c841, type: 3}
   wrongPlacedSound: {fileID: 0}
@@ -258,3 +263,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &225081135462305770
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1422120777938564}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

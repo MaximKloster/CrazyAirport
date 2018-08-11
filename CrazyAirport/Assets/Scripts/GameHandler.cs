@@ -13,11 +13,15 @@ public class GameHandler : MonoBehaviour
 		public MapTile[] tiles;
 	}
 
-	public enum BuildingType { Park, Stop, Start, Land, Build, Card, Clean, Control, Road }
+	public enum BuildingType { Park, Stop, Start, Land, Build, Card, Clean, Control, Road, None }
 	public enum Buildable { None, Road, Building }
 
 	#region setup variables
 	[Header("Setup", order = 2)]
+	[SerializeField]
+	private Text versionText;
+	[SerializeField]
+	private GameObject cardObject;
 	[SerializeField]
 	private CameraController camControl;
 	[SerializeField]
@@ -105,6 +109,8 @@ public class GameHandler : MonoBehaviour
 	private float touchDistance = 0;
 	private bool zoom = false;
 	private int pointsThisRound = 0;
+	private BuildCard cardInHand;
+	private CleaningCard tokenInHand;
 	#endregion
 	#region particle
 	[SerializeField]
@@ -126,6 +132,8 @@ public class GameHandler : MonoBehaviour
 
 	private void Start()
 	{
+		cardObject.SetActive(false);
+		versionText.text = "V" + Application.version;
 		waitForContinue = true;
 		playerGainPointsGO.SetActive(false);
 		gameOverScreen.SetActive(false);
@@ -217,7 +225,8 @@ public class GameHandler : MonoBehaviour
 	// Check if the Type of Building can be build at the spot
 	public bool TryToBuildAt(Vector2 pos, BuildingType type, int buildID)
 	{
-		ResetHighLight();
+		ResetHighLight(type);
+		if(checkTileMapCoroutine != null) StopCoroutine(checkTileMapCoroutine);
 		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
 		Vector3 worldPoint;
 		RaycastHit hit;
@@ -430,7 +439,7 @@ public class GameHandler : MonoBehaviour
 		return results.Count > 0;
 	}
 
-	private IEnumerator CheckTileMapHeighlight()
+	private IEnumerator CheckTileMapHeighlight(BuildingType type)
 	{
 		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
 		Vector3 worldPoint;
@@ -446,20 +455,22 @@ public class GameHandler : MonoBehaviour
 					MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
 					if (mapTile != null)
 					{
-						if (mapTile.TileStatus != MapTile.BuildStatus.Building)
+						if (mapTile.TileStatus != MapTile.BuildStatus.Building && mapTile.TileStatus != MapTile.BuildStatus.Road)
 						{
-							if (mapTile != highlightedTile)
+							if (mapTile.IsBuildable)
 							{
-								if (highlightedTile != null) highlightedTile.CardOverItem(false);
-								highlightedTile = mapTile;
-								highlightedTile.CardOverItem(true);
+								if (mapTile != highlightedTile)
+								{
+									HighlightTile(mapTile, type);
+								}
 							}
+							else if (highlightedTile != null) ResetHighLight(type);
 						}
-						else if (highlightedTile != null) ResetHighLight();
+						else if (highlightedTile != null) ResetHighLight(type);
 					}
-					else if (highlightedTile != null) ResetHighLight();
+					else if (highlightedTile != null) ResetHighLight(type);
 				}
-				else if (highlightedTile != null) ResetHighLight();
+				else if (highlightedTile != null) ResetHighLight(type);
 			}
 			else
 			{
@@ -469,32 +480,47 @@ public class GameHandler : MonoBehaviour
 					MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
 					if (mapTile != null)
 					{
-						if (mapTile.TileStatus != MapTile.BuildStatus.Building)
+						if (mapTile.TileStatus != MapTile.BuildStatus.Building && mapTile.TileStatus != MapTile.BuildStatus.Road)
 						{
-							if (mapTile != highlightedTile)
+							if (mapTile.IsBuildable)
 							{
-								if (highlightedTile != null) highlightedTile.CardOverItem(false);
-								highlightedTile = mapTile;
-								highlightedTile.CardOverItem(true);
+								if (mapTile != highlightedTile)
+								{
+									HighlightTile(mapTile, type);
+								}
 							}
+							else if (highlightedTile != null) ResetHighLight(type);
 						}
-						else if (highlightedTile != null) ResetHighLight();
+						else if (highlightedTile != null) ResetHighLight(type);
 					}
-					else if (highlightedTile != null) ResetHighLight();
+					else if (highlightedTile != null) ResetHighLight(type);
 				}
-				else if (highlightedTile != null) ResetHighLight();
+				else if (highlightedTile != null) ResetHighLight(type);
 			}
 			yield return null;
 		}
 	}
 
-	private void ResetHighLight()
+	public void HighlightTile(MapTile mapTile, BuildingType type)
 	{
-		StopCoroutine(checkTileMapCoroutine);
+		if (highlightedTile != null) highlightedTile.CardOverItem(false);
+		highlightedTile = mapTile;
+		highlightedTile.CardOverItem(true);
+		if (type == BuildingType.None) tokenInHand.SetVisibility(false);
+		else cardInHand.SetVisibility(false);
+		cardObject.SetActive(true);
+		cardObject.transform.position = new Vector3(mapTile.transform.position.x, mapTile.transform.position.y + 0.2f, mapTile.transform.position.z);
+	}
+
+	private void ResetHighLight(BuildingType type)
+	{
 		if (highlightedTile != null)
 		{
+			if (type == BuildingType.None) tokenInHand.SetVisibility(true);
+			else cardInHand.SetVisibility(true);
 			highlightedTile.CardOverItem(false);
 			highlightedTile = null;
+			cardObject.SetActive(false);
 		}
 	}
 
@@ -592,15 +618,17 @@ public class GameHandler : MonoBehaviour
 		}
 	}
 
-	public bool CheckIfHaveBuildPoints(BuildingType cardType)
+	public bool CheckIfHaveBuildPoints(BuildCard card)
 	{
-		if (gameEnd) return false;
+		if (gameEnd || waitForContinue) return false;
 
 		if (currentBBP > 0)
 		{
-			if (cardType == BuildingType.Road) HighlightBuildableTiles(true, true);
+			cardObject.GetComponent<CardObject>().SetUp(card.CardType, card.BuildID);
+			cardInHand = card;
+			if (card.CardType == BuildingType.Road) HighlightBuildableTiles(true, true);
 			else HighlightBuildableTiles(true);
-			checkTileMapCoroutine = StartCoroutine(CheckTileMapHeighlight());
+			checkTileMapCoroutine = StartCoroutine(CheckTileMapHeighlight(card.CardType));
 			return true;
 		}
 		else return false;
@@ -608,7 +636,7 @@ public class GameHandler : MonoBehaviour
 
 	public bool CheckIfHaveControlPoints()
 	{
-		if (gameEnd) return false;
+		if (gameEnd || waitForContinue) return false;
 
 		if (currentPCP > 0)
 		{
@@ -665,8 +693,9 @@ public class GameHandler : MonoBehaviour
 		else pointsPerMission++;
 	}
 
-	public void HighlightDirtyFields()
+	public void HighlightDirtyFields(CleaningCard token)
 	{
+		tokenInHand = token;
 		for (int i = 0; i < map.Length; i++)
 		{
 			for (int j = 0; j < map[i].tiles.Length; j++)
@@ -674,7 +703,8 @@ public class GameHandler : MonoBehaviour
 				if (!map[i].tiles[j].PlaneOnField && map[i].tiles[j].Dirty) map[i].tiles[j].IsBuildable = true;
 			}
 		}
-		checkTileMapCoroutine = StartCoroutine(CheckTileMapHeighlight());
+		cardObject.GetComponent<CardObject>().SetUp(BuildingType.None);
+		checkTileMapCoroutine = StartCoroutine(CheckTileMapHeighlight(BuildingType.None));
 	}
 
 	private void DeHighlightDirtyFields()
@@ -691,7 +721,8 @@ public class GameHandler : MonoBehaviour
 	public bool TryCleanField(Vector2 pos)
 	{
 		DeHighlightDirtyFields();
-		ResetHighLight();
+		ResetHighLight(BuildingType.None);
+		if (checkTileMapCoroutine != null) StopCoroutine(checkTileMapCoroutine);
 
 		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
 		Vector3 worldPoint;
@@ -743,7 +774,5 @@ public class GameHandler : MonoBehaviour
 	public void PlaneOutOfMap(int speed)
 	{
 		pointsThisRound -= pointsLoseFactor * speed;
-		//playerPoints -= pointsLoseFactor * speed;
-		//playerPointsText.text = playerPoints.ToString();
 	}
 }

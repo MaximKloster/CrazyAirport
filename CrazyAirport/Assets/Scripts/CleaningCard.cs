@@ -4,6 +4,12 @@ using UnityEngine.EventSystems;
 
 public class CleaningCard : MonoBehaviour
 {
+	[SerializeField]
+	private string tokenName = "";
+	[SerializeField]
+	private string discription = "";
+	[SerializeField]
+	private CanvasGroup canGroup;
 	private PointerEventData pointerData;
 	private bool grabbed = false;
 	private Transform cardTransform;
@@ -11,6 +17,8 @@ public class CleaningCard : MonoBehaviour
 	private int id;
 	private CardManager cardMan;
 	private Animator anim;
+	private bool showInfo = false;
+	private float infoShowBorder;
 	#region sound variables
 	[Header("Sound", order = 2)]
 	[SerializeField]
@@ -23,7 +31,23 @@ public class CleaningCard : MonoBehaviour
 	private AudioClip backInHandSound;
 	private AudioSource audioSound;
 	#endregion
-	
+
+	public string TokenName
+	{
+		get
+		{
+			return tokenName;
+		}
+	}
+
+	public string Discription
+	{
+		get
+		{
+			return discription;
+		}
+	}
+
 	private void Start()
 	{
 		anim = GetComponent<Animator>();
@@ -34,8 +58,9 @@ public class CleaningCard : MonoBehaviour
 		audioSound.Play();
 	}
 
-	public void SetUp(CardManager manager, int slotID)
+	public void SetUp(CardManager manager, int slotID, float border)
 	{
+		infoShowBorder = border;
 		cardMan = manager;
 		id = slotID;
 	}
@@ -46,7 +71,7 @@ public class CleaningCard : MonoBehaviour
 		audioSound.clip = grabSound;
 		audioSound.Play();
 		pointerData = data as PointerEventData;
-		cardMan.CleanCardSelected();
+		cardMan.CleanCardSelected(this);
 		StartCoroutine(FollowFinger());
 	}
 
@@ -64,11 +89,27 @@ public class CleaningCard : MonoBehaviour
 		cardTransform.position = parent.position;
 	}
 
+	public void SetVisibility(bool visible)
+	{
+		if (visible) canGroup.alpha = 1;
+		else canGroup.alpha = 0;
+	}
+
 	private IEnumerator FollowFinger()
 	{
 		grabbed = true;
 		while (grabbed)
 		{
+			if (showInfo && cardTransform.position.y > infoShowBorder)
+			{
+				cardMan.CardOutOfBorder(true);
+				showInfo = false;
+			}
+			else if (!showInfo && cardTransform.position.y < infoShowBorder)
+			{
+				cardMan.CardOutOfBorder(false);
+				showInfo = true;
+			}
 			cardTransform.position = pointerData.position;
 			yield return null;
 		}

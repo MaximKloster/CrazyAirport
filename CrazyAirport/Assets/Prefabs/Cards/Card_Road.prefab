@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114201579017014392}
   - component: {fileID: 82975128642546214}
   - component: {fileID: 95824422884958148}
+  - component: {fileID: 225772992193806972}
   m_Layer: 5
   m_Name: Card_Road
   m_TagString: Untagged
@@ -211,7 +212,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: a5d24cc3837104d46a9fd12e876a7f41, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 86c4d8eca6410274ab06ae1a9c77ae7c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -230,8 +231,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e2ba45ea6ea8b4cbac45eb04fedece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildingName: Runway
-  description: Planes can land here
+  canGroup: {fileID: 225772992193806972}
+  buildingName: Street
+  description: Planes will land here if they are at the end of the movement on this
+    field.
   cardType: 8
   buildID: 0
   getCardSound: {fileID: 8300000, guid: 972e88340c64e4e4788b8f60e85cc0df, type: 3}
@@ -262,3 +265,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &225772992193806972
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1970146740083302}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

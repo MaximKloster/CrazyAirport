@@ -810,7 +810,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294966783
   fieldsMovement: 3
-  landingSpeed: 1
+  landingSpeed: 1.25
   crashRotationSpeed: 7.5
   crashFallSpeed: 0.4
 --- !u!198 &198003770748704454

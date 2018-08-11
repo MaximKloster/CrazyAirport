@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114709280351676648}
   - component: {fileID: 82238415668048116}
   - component: {fileID: 95391094811302226}
+  - component: {fileID: 225589176659153958}
   m_Layer: 5
   m_Name: Card_Control
   m_TagString: Untagged
@@ -156,8 +157,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e2ba45ea6ea8b4cbac45eb04fedece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canGroup: {fileID: 225589176659153958}
   buildingName: Control Tower
-  description: +1 Plane Control
+  description: You can control one more plane each round. Rotate a plane back to get
+    the control point back.
   cardType: 7
   buildID: 0
   getCardSound: {fileID: 8300000, guid: 972e88340c64e4e4788b8f60e85cc0df, type: 3}
@@ -183,7 +186,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 86c07cfd97cb7f94f8d9272ece018be2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8bb3eb9a9bd505e4e93d7a64d4200e02, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -262,3 +265,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &225589176659153958
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1807588183320776}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

@@ -33,6 +33,11 @@ public class PlaneManager : MonoBehaviour
 	private AudioClip planeMoveClip;
 	private AudioSource audioSource;
 	#endregion
+	#region debug
+	[Header("Debug", order = 2)]
+	[SerializeField]
+	private bool onlyPlanes3 = false;
+	#endregion
 	// Use this for initialization
 	void Start()
 	{
@@ -110,7 +115,7 @@ public class PlaneManager : MonoBehaviour
 				}
 				break;
 			case 6:
-				if(turn > 37) // check turns [7] 31 to 37
+				if (turn > 37) // check turns [7] 31 to 37
 				{
 					maxSpawnPlaneAmount = 4;
 					maxSpawnPlaneSize = 2;
@@ -176,7 +181,9 @@ public class PlaneManager : MonoBehaviour
 			} while (sp == lastSpawnPoints[0] || sp == lastSpawnPoints[1] || sp == lastSpawnPoints[2] || sp == lastSpawnPoints[3] || sp == tempSP[0] || sp == tempSP[1] || sp == tempSP[2] || sp == tempSP[3]);
 			tempSP[i] = sp;
 
-			int planeType = Random.Range(0, maxSpawnPlaneSize);
+			int planeType;
+			if (onlyPlanes3) planeType = 2;
+			else planeType = Random.Range(0, maxSpawnPlaneSize);
 			GameObject planeObject = Instantiate(planePrefab[planeType], allSpawnpoints[sp].transform.position, allSpawnpoints[sp].transform.rotation, transform);
 			PlaneController plane = planeObject.GetComponent<PlaneController>();
 			plane.PlaneSetup(this, mapBorders, showFeedback);

@@ -83,7 +83,6 @@ public class PlaneController : MonoBehaviour
 	private void OnMouseDown()
 	{
 		if (notInteractable) return;
-
 		switch (planeRotation)
 		{
 			case PlaneRotation.NONE:
@@ -119,13 +118,13 @@ public class PlaneController : MonoBehaviour
 	// plane moves as long as reached his destination
 	private IEnumerator MoveToNextField()
 	{
-		if(planeOnField != null)
+		if (planeOnField != null)
 		{
 			planeOnField.PlaneOnField = false;
 			planeOnField = null;
 		}
 		Vector3 newPos = planeTransform.position + planeTransform.forward * fieldsMovement;
-		checkPointPos = planeTransform.position + planeTransform.forward * 0.525f;
+		checkPointPos = planeTransform.position + planeTransform.forward * 0.5f;
 		movesDone = 0;
 		while (Fly(newPos))
 		{
@@ -149,11 +148,13 @@ public class PlaneController : MonoBehaviour
 		{
 			bool checkFielAfterMove = false;
 			if (currentFlyDistance > Vector3.Distance(planeTransform.position, checkPointPos)) checkFielAfterMove = true;
-			planeTransform.position = planeTransform.position + planeTransform.forward * fieldsMovement * Time.deltaTime;
+
+			if (landing) planeTransform.position = planeTransform.position + planeTransform.forward * Time.deltaTime;
+			else planeTransform.position = planeTransform.position + planeTransform.forward * fieldsMovement * Time.deltaTime;
 
 			if (checkFielAfterMove)
 			{
-				checkPointPos = planeTransform.position + planeTransform.forward;
+				checkPointPos = checkPointPos + planeTransform.forward;
 				movesDone++;
 				if (movesDone == fieldsMovement) CheckMapTile(true);
 				else CheckMapTile();
@@ -168,12 +169,13 @@ public class PlaneController : MonoBehaviour
 		if (landing) movementFeedback.SetActive(false);
 		while (Fly(newPos))
 		{
-			if (landing) planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime * fieldsMovement), planeMesh.transform.position.z);
+			if (landing) planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime), planeMesh.transform.position.z);
 			yield return null;
 		}
 
 		if (landing)
 		{
+			planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime), planeMesh.transform.position.z);
 			planeMan.PlaneLanded(this);
 			yield return new WaitForSeconds(0.5f);
 			Destroy(gameObject);
@@ -188,7 +190,7 @@ public class PlaneController : MonoBehaviour
 	private void CheckMapTile(bool checkLanding = false)
 	{
 		RaycastHit hit;
-		if (Physics.Raycast(planeMesh.transform.position, -planeTransform.up, out hit,1, ignoreMask))
+		if (Physics.Raycast(planeMesh.transform.position, -planeTransform.up, out hit, 1, ignoreMask))
 		{
 			MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
 			if (mapTile != null)
@@ -249,7 +251,7 @@ public class PlaneController : MonoBehaviour
 		planeMan.Crash();
 		groundMarker.SetActive(false);
 		explosionPS.Play();
-		while (planeMesh.transform.position.y > -0.24f)
+		while (planeMesh.transform.position.y > -0.12f)
 		{
 			planeMesh.transform.Rotate(planeMesh.transform.up, crashRotationSpeed);
 			planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (crashFallSpeed * Time.deltaTime), planeMesh.transform.position.z);

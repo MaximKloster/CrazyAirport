@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114356162255894490}
   - component: {fileID: 82853207035561592}
   - component: {fileID: 95286394886233284}
+  - component: {fileID: 225217993487032342}
   m_Layer: 5
   m_Name: Card_Start
   m_TagString: Untagged
@@ -230,8 +231,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e2ba45ea6ea8b4cbac45eb04fedece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canGroup: {fileID: 225217993487032342}
   buildingName: Startapult
-  description: Planes can take off here
+  description: Planes can take off from here, just drag & drop a starting plane on
+    this field.
   cardType: 2
   buildID: 0
   getCardSound: {fileID: 8300000, guid: 972e88340c64e4e4788b8f60e85cc0df, type: 3}
@@ -262,3 +265,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &225217993487032342
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1907495136195334}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
