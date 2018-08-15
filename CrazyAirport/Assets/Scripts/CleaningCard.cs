@@ -30,6 +30,19 @@ public class CleaningCard : MonoBehaviour
 	[SerializeField]
 	private AudioClip backInHandSound;
 	private AudioSource audioSound;
+	private bool allowSound = true;
+	public bool AllowSound
+	{
+		get
+		{
+			return allowSound;
+		}
+
+		set
+		{
+			allowSound = value;
+		}
+	}
 	#endregion
 
 	public string TokenName
@@ -54,12 +67,16 @@ public class CleaningCard : MonoBehaviour
 		audioSound = GetComponent<AudioSource>();
 		cardTransform = transform;
 		parent = transform.parent;
-		audioSound.clip = getCardSound;
-		audioSound.Play();
+		if (AllowSound)
+		{
+			audioSound.clip = getCardSound;
+			audioSound.Play();
+		}
 	}
 
-	public void SetUp(CardManager manager, int slotID, float border)
+	public void SetUp(CardManager manager, int slotID, float border, bool sound)
 	{
+		AllowSound = sound;
 		infoShowBorder = border;
 		cardMan = manager;
 		id = slotID;
@@ -68,8 +85,11 @@ public class CleaningCard : MonoBehaviour
 	public void SelectCard(BaseEventData data)
 	{
 		if (anim != null) Destroy(anim);
-		audioSound.clip = grabSound;
-		audioSound.Play();
+		if (AllowSound)
+		{
+			audioSound.clip = grabSound;
+			audioSound.Play();
+		}
 		pointerData = data as PointerEventData;
 		cardMan.CleanCardSelected(this);
 		StartCoroutine(FollowFinger());

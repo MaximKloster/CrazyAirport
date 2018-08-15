@@ -28,6 +28,19 @@ public class BuildCard : MonoBehaviour
 	[SerializeField]
 	private AudioClip backInHandSound;
 	private AudioSource audioSound;
+	private bool allowSound = true;
+	public bool AllowSound
+	{
+		get
+		{
+			return allowSound;
+		}
+
+		set
+		{
+			allowSound = value;
+		}
+	}
 	#endregion
 
 	private Animator anim;
@@ -88,12 +101,16 @@ public class BuildCard : MonoBehaviour
 		audioSound = GetComponent<AudioSource>();
 		cardTransform = transform;
 		parent = transform.parent;
-		audioSound.clip = getCardSound;
-		audioSound.Play();
+		if (AllowSound)
+		{
+			audioSound.clip = getCardSound;
+			audioSound.Play();
+		}
 	}
 
-	public void SetupCard(CardManager man, int slotID, float border)
+	public void SetupCard(CardManager man, int slotID, float border, bool sound)
 	{
+		AllowSound = sound;
 		infoShowBorder = border;
 		manager = man;
 		slot = slotID;
@@ -105,8 +122,11 @@ public class BuildCard : MonoBehaviour
 		{
 			if (anim != null) Destroy(anim);
 			showInfo = true;
-			audioSound.clip = grabSound;
-			audioSound.Play();
+			if (AllowSound)
+			{
+				audioSound.clip = grabSound;
+				audioSound.Play();
+			}
 			pointerData = data as PointerEventData;
 			StartCoroutine(FollowFinger());
 		}
@@ -124,6 +144,10 @@ public class BuildCard : MonoBehaviour
 		{
 			grabbed = false;
 			manager.CardReleased(CardType, BuildID, slot, pointerData.position);
+		}
+		else
+		{
+			manager.DisableInfo();
 		}
 	}
 

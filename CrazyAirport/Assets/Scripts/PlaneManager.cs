@@ -23,7 +23,27 @@ public class PlaneManager : MonoBehaviour
 	private int maxSpawnPlaneAmount = 1;
 	private int level = 0;
 	private bool showFeedback = true;
+	public bool ShowFeedback
+	{
+		get
+		{
+			return showFeedback;
+		}
+
+		set
+		{
+			showFeedback = value;
+			if (allPlanes != null)
+			{
+				foreach (PlaneController plane in allPlanes)
+				{
+					plane.ShowMovementFeedback(showFeedback);
+				}
+			}
+		}
+	}
 	private bool endGame = false;
+	private int currentLevel; // TODO need later for starting planes
 	#endregion
 	#region sound variables
 	[Header("Sound", order = 2)]
@@ -32,6 +52,26 @@ public class PlaneManager : MonoBehaviour
 	[SerializeField]
 	private AudioClip planeMoveClip;
 	private AudioSource audioSource;
+	private bool allowSound;
+	public bool AllowSound
+	{
+		get
+		{
+			return allowSound;
+		}
+
+		set
+		{
+			allowSound = value;
+			if (allPlanes != null)
+			{
+				foreach (PlaneController plane in allPlanes)
+				{
+					plane.AllowSound = allowSound;
+				}
+			}
+		}
+	}
 	#endregion
 	#region debug
 	[Header("Debug", order = 2)]
@@ -41,6 +81,7 @@ public class PlaneManager : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		currentLevel = PlayerPrefs.GetInt("Level");
 		audioSource = GetComponent<AudioSource>();
 		turn = 0;
 		level = 0;
@@ -56,10 +97,10 @@ public class PlaneManager : MonoBehaviour
 	public void ShowMovementFeedback()
 	{
 		if (endGame) return;
-		showFeedback = !showFeedback;
+		ShowFeedback = !ShowFeedback;
 		foreach (PlaneController plane in allPlanes)
 		{
-			plane.ShowMovementFeedback(showFeedback);
+			plane.ShowMovementFeedback(ShowFeedback);
 		}
 	}
 
@@ -156,8 +197,11 @@ public class PlaneManager : MonoBehaviour
 
 	private void MoveAllPlanes()
 	{
-		audioSource.clip = planeMoveClip;
-		audioSource.Play();
+		if (AllowSound)
+		{
+			audioSource.clip = planeMoveClip;
+			audioSource.Play();
+		}
 		foreach (PlaneController plane in allPlanes)
 		{
 			plane.Move();
@@ -168,8 +212,11 @@ public class PlaneManager : MonoBehaviour
 	private void SpawnPlane()
 	{
 		CalculateLevel();
-		audioSource.clip = radarClip;
-		audioSource.Play();
+		if (AllowSound)
+		{
+			audioSource.clip = radarClip;
+			audioSource.Play();
+		}
 		int[] tempSP = new int[4] { -1, -1, -1, -1 };
 
 		for (int i = 0; i < maxSpawnPlaneAmount; i++)
@@ -186,7 +233,7 @@ public class PlaneManager : MonoBehaviour
 			else planeType = Random.Range(0, maxSpawnPlaneSize);
 			GameObject planeObject = Instantiate(planePrefab[planeType], allSpawnpoints[sp].transform.position, allSpawnpoints[sp].transform.rotation, transform);
 			PlaneController plane = planeObject.GetComponent<PlaneController>();
-			plane.PlaneSetup(this, mapBorders, showFeedback);
+			plane.PlaneSetup(this, mapBorders, ShowFeedback, AllowSound);
 			allPlanes.Add(plane);
 		}
 
@@ -199,9 +246,17 @@ public class PlaneManager : MonoBehaviour
 		gameMaster.MissionComplete();
 	}
 
-	public void Crash()
+	public bool CrashStarted(Vector3 pos, Vector3 dir)
 	{
+		if (endGame) return false;
+		
 		endGame = true;
+		gameMaster.PlayCrashCloseUp(pos, dir);
+		return true;
+	}
+
+	public void CrashFinished()
+	{
 		gameMaster.EndGame();
 	}
 

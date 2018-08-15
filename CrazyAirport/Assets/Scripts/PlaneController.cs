@@ -47,7 +47,23 @@ public class PlaneController : MonoBehaviour
 	private MapTile planeOnField;
 	private Vector3 checkPointPos;
 	private int movesDone = 0;
+	private bool callCrashFinished = false;
+	#endregion
+	#region sound variables
 	private AudioSource audioSource;
+	private bool allowSound;
+	public bool AllowSound
+	{
+		get
+		{
+			return allowSound;
+		}
+
+		set
+		{
+			allowSound = value;
+		}
+	}
 	#endregion
 
 	private void OnDrawGizmos()
@@ -67,8 +83,9 @@ public class PlaneController : MonoBehaviour
 		movementFeedback.SetActive(show);
 	}
 
-	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show)
+	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show, bool sound)
 	{
+		AllowSound = sound;
 		planeMan = manager;
 		borders = mapBorders;
 		movementFeedback.SetActive(show);
@@ -76,6 +93,7 @@ public class PlaneController : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
+		callCrashFinished = planeMan.CrashStarted(planeTransform.position, planeTransform.forward);
 		StartCoroutine(CrashAnimation());
 	}
 
@@ -90,19 +108,19 @@ public class PlaneController : MonoBehaviour
 				{
 					planeRotation = PlaneRotation.RIGHT;
 					planeTransform.Rotate(planeTransform.up, 90);
-					audioSource.Play();
+					if (AllowSound) audioSource.Play();
 				}
 				break;
 			case PlaneRotation.RIGHT:
 				planeRotation = PlaneRotation.LEFT;
 				planeTransform.Rotate(planeTransform.up, -180);
-				audioSource.Play();
+				if (AllowSound) audioSource.Play();
 				break;
 			case PlaneRotation.LEFT:
 				planeRotation = PlaneRotation.NONE;
 				planeMan.PlaneIsRotatedToDefault();
 				planeTransform.Rotate(planeTransform.up, 90);
-				audioSource.Play();
+				if (AllowSound) audioSource.Play();
 				break;
 		}
 	}
@@ -248,18 +266,17 @@ public class PlaneController : MonoBehaviour
 		StopCoroutine(movementCoroutine);
 		GetComponent<Collider>().enabled = false;
 		movementFeedback.SetActive(false);
-		planeMan.Crash();
 		groundMarker.SetActive(false);
 		explosionPS.Play();
 		while (planeMesh.transform.position.y > -0.12f)
 		{
 			planeMesh.transform.Rotate(planeMesh.transform.up, crashRotationSpeed);
 			planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (crashFallSpeed * Time.deltaTime), planeMesh.transform.position.z);
-			//planeMesh.transform.localScale
 			yield return null;
 		}
 		burnPS.Play();
 		smokePS.Play();
+		if (callCrashFinished) planeMan.CrashFinished();
 	}
 
 	// if gets outsite the map start the fly away animation

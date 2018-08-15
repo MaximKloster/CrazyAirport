@@ -61,8 +61,8 @@ public class CardManager : MonoBehaviour
 	#endregion
 	#region gameplay variables
 	private List<GameObject> deck;
-	private GameObject[] handCards;
-	private GameObject[] handCleanCards;
+	private BuildCard[] handCards;
+	private CleaningCard[] handCleanCards;
 	private int currentLevel;
 	private int cardsGain = 1;
 	private int cleansGain = 1;
@@ -96,8 +96,35 @@ public class CardManager : MonoBehaviour
 	#endregion
 	#region sound variables
 	private AudioSource audioSound;
+	private bool allowSound;
+	public bool AllowSound
+	{
+		get
+		{
+			return allowSound;
+		}
+
+		set
+		{
+			allowSound = value;
+			if (handCards != null)
+			{
+				foreach (BuildCard card in handCards)
+				{
+					if (card != null) card.AllowSound = allowSound;
+				}
+			}
+			if (handCleanCards != null)
+			{
+				foreach (CleaningCard clean in handCleanCards)
+				{
+					if (clean != null) clean.AllowSound = allowSound;
+				}
+			}
+		}
+	}
 	#endregion
-	
+
 	void Start()
 	{
 		yBorder = cardBorder.position.y;
@@ -127,7 +154,7 @@ public class CardManager : MonoBehaviour
 	// Instantiate the Hand Cards and give them the reference to the card manager for cummunication and its slot ID
 	private IEnumerator SetUpStartCards()
 	{
-		handCleanCards = new GameObject[cleanCardSlots.Length];
+		handCleanCards = new CleaningCard[cleanCardSlots.Length];
 		for (int i = 0; i < CleansGain; i++)
 		{
 			if (handCleanCards[i] == null)
@@ -137,10 +164,10 @@ public class CardManager : MonoBehaviour
 			}
 		}
 
-		handCards = new GameObject[buildCardSlots.Length];
+		handCards = new BuildCard[buildCardSlots.Length];
 		for (int i = 0; i < buildCardSlots.Length; i++)
 		{
-			if (i == (buildCardSlots.Length -1) && !hasBonusCard) break;
+			if (i == (buildCardSlots.Length - 1) && !hasBonusCard) break;
 			TakeCardInHand(i);
 			yield return new WaitForSeconds(gainCardDelay);
 		}
@@ -160,7 +187,7 @@ public class CardManager : MonoBehaviour
 		allCards.Add(cardCard);
 		allCards.AddRange(collection: parkCards);
 		allCards.AddRange(collection: controlCards);
-		if (currentLevel > 0) allCards.AddRange(collection: startCards);
+		if (currentLevel > 1) allCards.AddRange(collection: startCards);
 		allCards.AddRange(collection: landCards);
 		allCards.AddRange(collection: cleanCards);
 
@@ -179,61 +206,62 @@ public class CardManager : MonoBehaviour
 	// Take clean cards for the gain clean amount but not more than the clean amount (clean gain amount = max hand held amount)
 	private void GetCleanCard(int i)
 	{
-		handCleanCards[i] = Instantiate(cleaningCard, cleanCardSlots[i]);
-		handCleanCards[i].GetComponent<CleaningCard>().SetUp(this, i, yBorder);
+		GameObject card = Instantiate(cleaningCard, cleanCardSlots[i]);
+		handCleanCards[i] = card.GetComponent<CleaningCard>();
+		handCleanCards[i].SetUp(this, i, yBorder, AllowSound);
 	}
 
 	// Take the next card from the deck and instantiate in the hand
 	private void TakeCardInHand(int id)
 	{
-		handCards[id] = Instantiate(deck[0], buildCardSlots[id]);
-		handCards[id].GetComponent<BuildCard>().SetupCard(this, id, yBorder);
+		GameObject card = Instantiate(deck[0], buildCardSlots[id]);
+		handCards[id] = card.GetComponent<BuildCard>();
+		handCards[id].SetupCard(this, id, yBorder, AllowSound);
 		deck.RemoveAt(0);
 	}
 
 	public bool CheckIfHaveBuildPoints(BuildCard card)
 	{
-		if(gameMaster.CheckIfHaveBuildPoints(card))
+		infoText.text = card.Description;
+		infoName.text = card.BuildingName;
+		tokenImage.SetActive(false);
+		infoCard.SetActive(true);
+		card.transform.parent.transform.SetAsLastSibling();
+
+		bool build = gameMaster.CheckIfHaveBuildPoints(card);
+		
+		switch (card.CardType)
 		{
-			tokenImage.SetActive(false);
-			switch (card.CardType)
-			{
-				case GameHandler.BuildingType.Road:
-					infoImage.sprite = allInfoSprites[0];
-					break;
-				case GameHandler.BuildingType.Land:
-					infoImage.sprite = allInfoSprites[1];
-					break;
-				case GameHandler.BuildingType.Park:
-					if(card.BuildID == 0) infoImage.sprite = allInfoSprites[3];
-					else infoImage.sprite = allInfoSprites[2];
-					break;
-				case GameHandler.BuildingType.Stop:
-					infoImage.sprite = allInfoSprites[4];
-					break;
-				case GameHandler.BuildingType.Clean:
-					infoImage.sprite = allInfoSprites[5];
-					break;
-				case GameHandler.BuildingType.Build:
-					infoImage.sprite = allInfoSprites[6];
-					break;
-				case GameHandler.BuildingType.Control:
-					infoImage.sprite = allInfoSprites[7];
-					break;
-				case GameHandler.BuildingType.Card:
-					infoImage.sprite = allInfoSprites[8];
-					break;
-				case GameHandler.BuildingType.Start:
-					infoImage.sprite = allInfoSprites[9];
-					break;
-			}
-			
-			infoText.text = card.Description;
-			infoName.text = card.BuildingName;
-			infoCard.SetActive(true);
-			return true;
+			case GameHandler.BuildingType.Road:
+				infoImage.sprite = allInfoSprites[0];
+				break;
+			case GameHandler.BuildingType.Land:
+				infoImage.sprite = allInfoSprites[1];
+				break;
+			case GameHandler.BuildingType.Park:
+				if (card.BuildID == 0) infoImage.sprite = allInfoSprites[3];
+				else infoImage.sprite = allInfoSprites[2];
+				break;
+			case GameHandler.BuildingType.Stop:
+				infoImage.sprite = allInfoSprites[4];
+				break;
+			case GameHandler.BuildingType.Clean:
+				infoImage.sprite = allInfoSprites[5];
+				break;
+			case GameHandler.BuildingType.Build:
+				infoImage.sprite = allInfoSprites[6];
+				break;
+			case GameHandler.BuildingType.Control:
+				infoImage.sprite = allInfoSprites[7];
+				break;
+			case GameHandler.BuildingType.Card:
+				infoImage.sprite = allInfoSprites[8];
+				break;
+			case GameHandler.BuildingType.Start:
+				infoImage.sprite = allInfoSprites[9];
+				break;
 		}
-		return false;
+		return build;
 	}
 
 	public void NextRound()
@@ -284,12 +312,17 @@ public class CardManager : MonoBehaviour
 
 		if (gameMaster.TryToBuildAt(pos, type, buildID))
 		{
-			Destroy(handCards[slotID]);
+			Destroy(handCards[slotID].gameObject);
 		}
 		else
 		{
-			handCards[slotID].GetComponent<BuildCard>().ResetPosition();
+			handCards[slotID].ResetPosition();
 		}
+	}
+
+	public void DisableInfo()
+	{
+		if (infoCard.activeSelf) infoCard.SetActive(false);
 	}
 
 	public void CleanCardReleased(Vector2 pos, int slotID)
@@ -298,11 +331,11 @@ public class CardManager : MonoBehaviour
 
 		if (gameMaster.TryCleanField(pos))
 		{
-			Destroy(handCleanCards[slotID]);
+			Destroy(handCleanCards[slotID].gameObject);
 		}
 		else
 		{
-			handCleanCards[slotID].GetComponent<CleaningCard>().ResetPosition();
+			handCleanCards[slotID].ResetPosition();
 		}
 	}
 
@@ -324,6 +357,6 @@ public class CardManager : MonoBehaviour
 	// play sound if a menu button was clicked
 	public void MenuButtonClicked()
 	{
-		audioSound.Play();
+		if (AllowSound) audioSound.Play();
 	}
 }

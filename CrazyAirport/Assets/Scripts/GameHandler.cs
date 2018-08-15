@@ -90,16 +90,6 @@ public class GameHandler : MonoBehaviour
 	private GameObject road;
 	#endregion
 	#region gameplay variables
-	private int gamePoints;
-	private int pointsPerMission = 1;
-	private Vector2 mousePos;
-	private float yRot = 0;
-	private float xRot = 0;
-	private float autoZoomFactor = 1.5f;
-	private float defaultCamDistance = -5f;
-	private float maxYDegree = 45;
-	private Transform camTransform;
-	private Camera currentCam;
 	private bool gameEnd = false;
 	private bool waitForContinue = true;
 	private Coroutine checkTileMapCoroutine;
@@ -112,14 +102,30 @@ public class GameHandler : MonoBehaviour
 	private BuildCard cardInHand;
 	private CleaningCard tokenInHand;
 	#endregion
-	#region particle
+	#region camera veriables
+	private int gamePoints;
+	private int pointsPerMission = 1;
+	private Vector2 mousePos;
+	private float yRot = 0;
+	private float xRot = 0;
+	private float autoZoomFactor = 1.5f;
+	private float defaultCamDistance = -5f;
+	private float maxYDegree = 45;
+	private Transform camTransform;
+	private Camera currentCam;
+	private bool closeUpScene = false;
+	private float closeUpSpeed = 8;
+	private float closeUpZoom = 0.07f;
+	private float zoomDistance = 2;
+	#endregion
+	#region particle variables
 	[SerializeField]
 	private ParticleSystem sparksPS;
 	[SerializeField]
 	private ParticleSystem cleanPS;
 	float cleanYRot = 0;
 	#endregion
-	#region sound
+	#region sound variables
 	[Header("Sound", order = 2)]
 	private AudioSource audioSource;
 	[SerializeField]
@@ -128,36 +134,40 @@ public class GameHandler : MonoBehaviour
 	private AudioClip cleaningClip;
 	[SerializeField]
 	private AudioClip wrongPlacedClip;
+	private bool allowSound;
+	public bool AllowSound
+	{
+		get
+		{
+			return allowSound;
+		}
+
+		set
+		{
+			allowSound = value;
+		}
+	}
 	#endregion
 
+	#region Setup Functions
 	private void Start()
 	{
-		cardObject.SetActive(false);
 		versionText.text = "V" + Application.version;
-		waitForContinue = true;
-		playerGainPointsGO.SetActive(false);
-		gameOverScreen.SetActive(false);
 		audioSource = GetComponent<AudioSource>();
 		GameSetup();
 		SetUpMap();
 	}
 
-	public void ReachedLevelOne()
+	private void GameSetup()
 	{
-		cardMan.ReachedLevelOne();
-	}
-
-	private void PlayBuildParticle(Vector3 pos)
-	{
-		sparksPS.transform.position = new Vector3(pos.x, sparksPS.transform.position.y, pos.z);
-		sparksPS.Play();
-	}
-
-	private void PlayCleanParticle(Vector3 pos)
-	{
-		cleanPS.transform.position = new Vector3(pos.x, cleanPS.transform.position.y, pos.z);
-		cleanPS.transform.Rotate(cleanPS.transform.up, cleanYRot);
-		cleanPS.Play();
+		cardObject.SetActive(false);
+		waitForContinue = true;
+		playerGainPointsGO.SetActive(false);
+		gameOverScreen.SetActive(false);
+		camTransform = camControl.gameObject.transform;
+		LoadCameraSettings();
+		playerPointsText.text = "0";
+		RefreshInteractionPoints();
 	}
 
 	private void SetUpMap()
@@ -197,6 +207,294 @@ public class GameHandler : MonoBehaviour
 			}
 		}
 	}
+	#endregion
+	#region Communication Functions
+	public void ReachedLevelOne()
+	{
+		cardMan.ReachedLevelOne();
+	}
+
+	public void ResetGame()
+	{
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+	}
+
+	public void FinishedTurn()
+	{
+		if (gameEnd || waitForContinue) return;
+		waitForContinue = true;
+		planeMan.NextRound();
+	}
+
+	public void ReadyToContinue()
+	{
+		StartCoroutine(PlayPointGain());
+	}
+
+	public void PlayCrashCloseUp(Vector3 pos, Vector3 dir)
+	{
+		gameEnd = true;
+		SaveCameraSettings();
+		closeUpScene = true;
+		StartCoroutine(PlayCloseUpScene(pos, dir));
+	}
+
+	public void EndGame()
+	{
+		StartCoroutine(ShowEndScreenAfterTime());
+	}
+
+	public void BackToMainMenu()
+	{
+		SceneManager.LoadScene("Start");
+	}
+
+	private void SupportRound()
+	{
+		cardMan.NextRound();
+		RefreshInteractionPoints();
+	}
+
+	public void SupportFinished()
+	{
+		waitForContinue = false;
+	}
+
+	public void MissionComplete()
+	{
+		pointsThisRound += pointsPerMission;
+	}
+
+	public void PlaneOutOfMap(int speed)
+	{
+		pointsThisRound -= pointsLoseFactor * speed;
+	}
+	#endregion
+	#region Camera Functions
+	private void OnMouseDown()
+	{
+		if (gameEnd) return;
+		if (!IsPointerOverUIObject())
+		{
+			if (cameraCoroutine == null && camControl.CamRotationAllowed)
+			{
+				currentCam = camControl.GetCurrentCamera();
+				cameraCoroutine = StartCoroutine(RotateCamera());
+			}
+		}
+	}
+
+	private IEnumerator RotateCamera()
+	{
+		mousePos = Input.mousePosition;
+		while (Input.GetMouseButton(0))
+		{
+			if (Input.touchCount > 1)
+			{
+				if (zoom) ZoomCamera();
+				else
+				{
+					touchDistance = Vector2.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+					zoom = true;
+				}
+			}
+			else
+			{
+				if (zoom) zoom = false;
+				Vector2 newPos = Input.mousePosition;
+				yRot += (mousePos.x - newPos.x) * Time.deltaTime * camYRotSpeed;
+				xRot = Mathf.Clamp(xRot + (mousePos.y - newPos.y) * Time.deltaTime * camXRotSpeed, -xCampDegree, xCampDegree);
+				camTransform.rotation = Quaternion.Euler(xRot, -yRot, 0);
+				SetCurrentCamPos();
+				mousePos = newPos;
+			}
+
+			yield return null;
+		}
+		cameraCoroutine = null;
+		zoom = false;
+	}
+
+	private void ZoomCamera()
+	{
+		float currentDistance = Vector2.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+		float distanceChange = touchDistance - currentDistance;
+		currentCam.fieldOfView = Mathf.Clamp(currentCam.fieldOfView + distanceChange * Time.deltaTime * zoomFactor, 30, 70);
+		touchDistance = Vector2.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
+	}
+
+	private void SetCurrentCamPos()
+	{
+		float zCam = defaultCamDistance + (autoZoomFactor * (1 - (xRot + xCampDegree) / (xCampDegree * 2)));
+		float calculatedYRot = CalculateYRot();
+		if (calculatedYRot <= maxYDegree)
+		{
+			zCam -= autoZoomFactor * calculatedYRot / maxYDegree;
+		}
+		else if (calculatedYRot >= (180 - maxYDegree))
+		{
+			zCam -= autoZoomFactor * Mathf.Abs(calculatedYRot - 180) / maxYDegree;
+		}
+		else zCam -= autoZoomFactor;
+
+		Vector3 newCamPos = new Vector3(currentCam.transform.localPosition.x, currentCam.transform.localPosition.y, zCam);
+		currentCam.transform.localPosition = newCamPos;
+	}
+
+	private float CalculateYRot()
+	{
+		float value = Mathf.Abs(yRot) % 360;
+		if (value > 180) value -= 360;
+		return Mathf.Abs(value);
+	}
+
+	public void SaveCameraSettings()
+	{
+		if (closeUpScene) return;
+		PlayerPrefs.SetFloat("YRot", yRot);
+		PlayerPrefs.SetFloat("XRot", xRot);
+		PlayerPrefs.SetFloat("Zoom", currentCam.fieldOfView);
+		PlayerPrefs.SetFloat("CamZPos", currentCam.transform.localPosition.z);
+	}
+
+	private void LoadCameraSettings()
+	{
+		xRot = PlayerPrefs.GetFloat("XRot");
+		yRot = PlayerPrefs.GetFloat("YRot");
+		currentCam = camControl.GetCurrentCamera();
+		currentCam.fieldOfView = Mathf.Clamp(PlayerPrefs.GetFloat("Zoom"), 30, 70);
+		Vector3 newCamPos = new Vector3(currentCam.transform.localPosition.x, currentCam.transform.localPosition.y, PlayerPrefs.GetFloat("CamZPos"));
+		currentCam.transform.localPosition = newCamPos;
+		camTransform.rotation = Quaternion.Euler(xRot, -yRot, 0);
+		SetCurrentCamPos();
+	}
+
+	private IEnumerator PlayCloseUpScene(Vector3 pos, Vector3 dir)
+	{
+		currentCam = camControl.GetCurrentCamera();
+		
+		if (!camControl.CamRotationAllowed)
+		{
+			Vector3 endPos = new Vector3(pos.x, currentCam.transform.position.y, pos.z);
+			Vector3 movement = (endPos - currentCam.transform.position).normalized;
+
+			while (Vector3.Distance(currentCam.transform.position, endPos) > 0 || currentCam.orthographicSize > 2)
+			{
+				Vector3 tickMove = movement * Time.deltaTime * closeUpSpeed;
+
+				if (tickMove.magnitude > Vector3.Distance(currentCam.transform.position, endPos))
+				{
+					currentCam.transform.position = endPos;
+					currentCam.orthographicSize = Mathf.Clamp(currentCam.orthographicSize - closeUpZoom, 2, 4);
+				}
+				else
+				{
+					currentCam.transform.position += tickMove;
+					currentCam.orthographicSize = Mathf.Clamp(currentCam.orthographicSize - closeUpZoom, 2, 4);
+				}
+				yield return null;
+			}
+		}
+		else
+		{
+			float xPos = 0, yPos = 3, zPos = 0;
+			bool positionX = true, positionZ = true, positionY = true;
+			while (positionX || positionZ || positionY)
+			{
+				
+
+				float yDis = pos.y - camTransform.position.y;
+				if (yDis < -3)
+				{
+					if (positionY) positionY = false;
+					yPos = 3;
+				}
+				else
+				{
+					yPos = camTransform.position.y + yDis * Time.deltaTime;
+				}
+
+				if (dir.x < -0.1f || dir.x > 0.1f)
+				{
+					float xDis = pos.x - camTransform.position.x;
+					if (Mathf.Abs(xDis) > 0) xPos = camTransform.position.x + xDis * Time.deltaTime;
+					else
+					{
+						if (positionX) positionX = false;
+						xPos = pos.x;
+					}
+
+					float zDis = pos.z - camTransform.position.z;
+					if (Mathf.Abs(zDis) > zoomDistance)
+					{
+						if (zDis > zoomDistance) zPos = Mathf.Clamp(camTransform.position.z + zDis * Time.deltaTime, camTransform.position.z, pos.z - zoomDistance);
+						else zPos = Mathf.Clamp(camTransform.position.z + zDis * Time.deltaTime, pos.z + zoomDistance, camTransform.position.z);
+					}
+					else if (Mathf.Abs(zDis) < zoomDistance)
+					{
+						if (zDis > 0) zPos = Mathf.Clamp(camTransform.position.z - zDis * Time.deltaTime, pos.z - zoomDistance, camTransform.position.z);
+						else zPos = Mathf.Clamp(camTransform.position.z - zDis * Time.deltaTime, camTransform.position.z, pos.z + zoomDistance);
+					}
+					else
+					{
+						if (positionZ) positionZ = false;
+						zPos = camTransform.position.z;
+					}
+				}
+				else
+				{
+					float xDis = pos.x - camTransform.position.x;
+					if (Mathf.Abs(xDis) > zoomDistance)
+					{
+						if (xDis > zoomDistance) xPos = Mathf.Clamp(camTransform.position.x + xDis * Time.deltaTime, camTransform.position.x, pos.x - zoomDistance);
+						else xPos = Mathf.Clamp(camTransform.position.x + xDis * Time.deltaTime, pos.x + zoomDistance, camTransform.position.x);
+					}
+					else if (Mathf.Abs(xDis) < zoomDistance)
+					{
+						if (xDis > 0) xPos = Mathf.Clamp(camTransform.position.x - xDis * Time.deltaTime, pos.x - zoomDistance, camTransform.position.x);
+						else xPos = Mathf.Clamp(camTransform.position.x - xDis * Time.deltaTime, camTransform.position.x, pos.x + zoomDistance);
+					}
+					else
+					{
+						if (positionX) positionX = false;
+						xPos = camTransform.position.x;
+					}
+
+					float zDis = pos.z - camTransform.position.z;
+					if (Mathf.Abs(zDis) > 0) zPos = camTransform.position.z + zDis * Time.deltaTime;
+					else
+					{
+						if (positionZ) positionZ = false;
+						zPos = pos.z;
+					}
+
+				}
+				camTransform.position = new Vector3(xPos, yPos, zPos);
+
+				currentCam.fieldOfView = Mathf.Clamp(currentCam.fieldOfView - 0.3f, 30, 70);
+				currentCam.transform.rotation = Quaternion.RotateTowards(currentCam.transform.rotation, Quaternion.LookRotation(pos - currentCam.transform.position), Time.deltaTime *15);
+				if (Vector3.Dot(camTransform.forward, dir) > 0.05f) camTransform.RotateAround(pos, Vector3.up, Time.deltaTime * 100);
+				else if(Vector3.Dot(camTransform.forward, dir) < -0.05f) camTransform.RotateAround(pos, Vector3.up, -Time.deltaTime * 100);
+
+				yield return null;
+			}
+		}
+		
+	}
+	#endregion
+
+	private void PlayBuildParticle(Vector3 pos)
+	{
+		sparksPS.transform.position = new Vector3(pos.x, sparksPS.transform.position.y, pos.z);
+		sparksPS.Play();
+	}
+
+	private void PlayCleanParticle(Vector3 pos)
+	{
+		cleanPS.transform.position = new Vector3(pos.x, cleanPS.transform.position.y, pos.z);
+		cleanPS.transform.Rotate(cleanPS.transform.up, cleanYRot);
+		cleanPS.Play();
+	}
 
 	private void CheckAndSetAroundTiles(int row, int tile, int type)
 	{
@@ -226,7 +524,7 @@ public class GameHandler : MonoBehaviour
 	public bool TryToBuildAt(Vector2 pos, BuildingType type, int buildID)
 	{
 		ResetHighLight(type);
-		if(checkTileMapCoroutine != null) StopCoroutine(checkTileMapCoroutine);
+		if (checkTileMapCoroutine != null) StopCoroutine(checkTileMapCoroutine);
 		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
 		Vector3 worldPoint;
 		RaycastHit hit;
@@ -250,8 +548,11 @@ public class GameHandler : MonoBehaviour
 		}
 		// if no hit
 		HighlightBuildableTiles(false);
-		audioSource.clip = wrongPlacedClip;
-		audioSource.Play();
+		if (AllowSound)
+		{
+			audioSource.clip = wrongPlacedClip;
+			audioSource.Play();
+		}
 		return false;
 	}
 
@@ -264,8 +565,11 @@ public class GameHandler : MonoBehaviour
 			int x = (int)mapTile.transform.position.x;
 			if (mapTile.TileStatus == MapTile.BuildStatus.Empty && mapTile.IsBuildable)
 			{
-				audioSource.clip = constructionClip;
-				audioSource.Play();
+				if (AllowSound)
+				{
+					audioSource.clip = constructionClip;
+					audioSource.Play();
+				}
 				mapTile.DeactivateGroundMesh();
 				Transform buildingParent = mapTile.gameObject.transform;
 				PlayBuildParticle(buildingParent.position);
@@ -338,21 +642,12 @@ public class GameHandler : MonoBehaviour
 			}
 		}
 		HighlightBuildableTiles(false);
-		audioSource.clip = wrongPlacedClip;
-		audioSource.Play();
-		return false;
-	}
-
-	private void GameSetup()
-	{
-		camTransform = camControl.gameObject.transform;
-		if (camControl.CamRotationAllowed)
+		if (AllowSound)
 		{
-			currentCam = camControl.GetCurrentCamera();
-			SetCurrentCamPos();
+			audioSource.clip = wrongPlacedClip;
+			audioSource.Play();
 		}
-		playerPointsText.text = "0";
-		RefreshInteractionPoints();
+		return false;
 	}
 
 	private void RefreshInteractionPoints()
@@ -363,71 +658,13 @@ public class GameHandler : MonoBehaviour
 		controlPointsText.text = currentPCP.ToString();
 	}
 
-	public void ResetGame()
-	{
-		SceneManager.LoadScene("Game");
-	}
-
-	public void FinishedTurn()
-	{
-		if (gameEnd || waitForContinue) return;
-		waitForContinue = true;
-		planeMan.NextRound();
-	}
-
-	public void ReadyToContinue()
-	{
-		StartCoroutine(PlayPointGain());
-	}
-
-	public void EndGame()
-	{
-		gameEnd = true;
-		StartCoroutine(ShowEndScreenAfterTime());
-	}
-
 	private IEnumerator ShowEndScreenAfterTime()
 	{
-		yield return new WaitForSeconds(2.5f);
+		yield return new WaitForSeconds(1f);
+		string currentLevel = SceneManager.GetActiveScene().name;
+		int highScore = PlayerPrefs.GetInt(currentLevel);
+		if (playerPoints > highScore) PlayerPrefs.SetInt(currentLevel, playerPoints);
 		gameOverScreen.SetActive(true);
-	}
-
-	public void QuitGame()
-	{
-		Application.Quit();
-	}
-
-	private void SupportRound()
-	{
-		cardMan.NextRound();
-		RefreshInteractionPoints();
-	}
-
-	public void SupportFinished()
-	{
-		waitForContinue = false;
-	}
-
-	private void OnMouseDown()
-	{
-		if (!IsPointerOverUIObject())
-		{
-			if (cameraCoroutine == null && camControl.CamRotationAllowed)
-			{
-				currentCam = camControl.GetCurrentCamera();
-				cameraCoroutine = StartCoroutine(RotateCamera());
-			}
-		}
-	}
-
-	private void ZoomCamera()
-	{
-		float currentDistance = Vector2.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
-		float distanceChange = touchDistance - currentDistance;
-		currentCam.fieldOfView = Mathf.Clamp(currentCam.fieldOfView + distanceChange * Time.deltaTime * zoomFactor, 30, 70);
-		//defaultCamDistance = Mathf.Clamp(defaultCamDistance - distanceChange * Time.deltaTime, -8, -2);
-		//SetCurrentCamPos();
-		touchDistance = Vector2.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
 	}
 
 	private bool IsPointerOverUIObject()
@@ -524,63 +761,6 @@ public class GameHandler : MonoBehaviour
 		}
 	}
 
-	private IEnumerator RotateCamera()
-	{
-		mousePos = Input.mousePosition;
-		while (Input.GetMouseButton(0))
-		{
-			if (Input.touchCount > 1)
-			{
-				if (zoom) ZoomCamera();
-				else
-				{
-					touchDistance = Vector2.Distance(Input.GetTouch(0).position, Input.GetTouch(1).position);
-					zoom = true;
-				}
-			}
-			else
-			{
-				if (zoom) zoom = false;
-				Vector2 newPos = Input.mousePosition;
-				yRot += (mousePos.x - newPos.x) * Time.deltaTime * camYRotSpeed;
-				xRot = Mathf.Clamp(xRot + (mousePos.y - newPos.y) * Time.deltaTime * camXRotSpeed, -xCampDegree, xCampDegree);
-				camTransform.rotation = Quaternion.Euler(xRot, -yRot, 0);
-
-				SetCurrentCamPos();
-				mousePos = newPos;
-			}
-
-			yield return null;
-		}
-		cameraCoroutine = null;
-		zoom = false;
-	}
-
-	private void SetCurrentCamPos()
-	{
-		float zCam = defaultCamDistance + (autoZoomFactor * (1 - (xRot + xCampDegree) / (xCampDegree * 2)));
-		float calculatedYRot = CalculateYRot();
-		if (calculatedYRot <= maxYDegree)
-		{
-			zCam -= autoZoomFactor * calculatedYRot / maxYDegree;
-		}
-		else if (calculatedYRot >= (180 - maxYDegree))
-		{
-			zCam -= autoZoomFactor * Mathf.Abs(calculatedYRot - 180) / maxYDegree;
-		}
-		else zCam -= autoZoomFactor;
-
-		Vector3 newCamPos = new Vector3(currentCam.transform.localPosition.x, currentCam.transform.localPosition.y, zCam);
-		currentCam.transform.localPosition = newCamPos;
-	}
-
-	private float CalculateYRot()
-	{
-		float value = Mathf.Abs(yRot) % 360;
-		if (value > 180) value -= 360;
-		return Mathf.Abs(value);
-	}
-
 	private void HighlightBuildableTiles(bool highlight, bool road = false)
 	{
 		if (highlight)
@@ -651,11 +831,6 @@ public class GameHandler : MonoBehaviour
 	{
 		currentPCP++;
 		controlPointsText.text = currentPCP.ToString();
-	}
-
-	public void MissionComplete()
-	{
-		pointsThisRound += pointsPerMission;
 	}
 
 	private IEnumerator PlayPointGain()
@@ -736,8 +911,11 @@ public class GameHandler : MonoBehaviour
 				MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
 				if (mapTile != null && mapTile.Dirty && !mapTile.PlaneOnField)
 				{
-					audioSource.clip = cleaningClip;
-					audioSource.Play();
+					if (AllowSound)
+					{
+						audioSource.clip = cleaningClip;
+						audioSource.Play();
+					}
 					cleanPS.transform.Rotate(cleanPS.transform.up, -cleanYRot);
 					cleanYRot = camControl.transform.rotation.eulerAngles.y;
 					PlayCleanParticle(mapTile.transform.position);
@@ -745,8 +923,11 @@ public class GameHandler : MonoBehaviour
 					return true;
 				}
 			}
-			audioSource.clip = wrongPlacedClip;
-			audioSource.Play();
+			if (AllowSound)
+			{
+				audioSource.clip = wrongPlacedClip;
+				audioSource.Play();
+			}
 			return false;
 		}
 		else
@@ -758,21 +939,22 @@ public class GameHandler : MonoBehaviour
 				MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
 				if (mapTile != null && mapTile.Dirty)
 				{
-					audioSource.clip = cleaningClip;
-					audioSource.Play();
+					if (AllowSound)
+					{
+						audioSource.clip = cleaningClip;
+						audioSource.Play();
+					}
 					PlayCleanParticle(mapTile.transform.position);
 					mapTile.CleanUpField();
 					return true;
 				}
 			}
-			audioSource.clip = wrongPlacedClip;
-			audioSource.Play();
+			if (AllowSound)
+			{
+				audioSource.clip = wrongPlacedClip;
+				audioSource.Play();
+			}
 			return false;
 		}
-	}
-
-	public void PlaneOutOfMap(int speed)
-	{
-		pointsThisRound -= pointsLoseFactor * speed;
 	}
 }
