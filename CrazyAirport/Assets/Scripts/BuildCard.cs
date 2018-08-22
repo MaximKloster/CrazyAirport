@@ -23,10 +23,6 @@ public class BuildCard : MonoBehaviour
 	private AudioClip getCardSound;
 	[SerializeField]
 	private AudioClip grabSound;
-	[SerializeField]
-	private AudioClip wrongPlacedSound;
-	[SerializeField]
-	private AudioClip backInHandSound;
 	private AudioSource audioSound;
 	private bool allowSound = true;
 	public bool AllowSound
@@ -52,6 +48,7 @@ public class BuildCard : MonoBehaviour
 	private int slot;
 	private bool showInfo = false;
 	private float infoShowBorder;
+	private float cardMovementSpeed = 10;
 
 	public string BuildingName
 	{
@@ -153,7 +150,19 @@ public class BuildCard : MonoBehaviour
 
 	public void ResetPosition()
 	{
-		cardTransform.position = parent.position;
+		StartCoroutine(MoveCardBack());
+	}
+
+	private IEnumerator MoveCardBack()
+	{
+		Vector3 movement = parent.position - cardTransform.position;
+		while (Vector3.Distance(cardTransform.position, parent.position) > 0)
+		{
+			Vector3 tick = movement * Time.deltaTime * cardMovementSpeed;
+			if (tick.magnitude > (parent.position - cardTransform.position).magnitude) cardTransform.position = parent.position;
+			else cardTransform.position += tick;
+			yield return null;
+		}
 	}
 
 	private IEnumerator FollowFinger()

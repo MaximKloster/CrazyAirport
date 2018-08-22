@@ -716,5 +716,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotator: {fileID: 4775756678409538}
   rotType: 0
-  rotationSpeed: 25
+  rotationSpeed: 30
   useRandomSpeed: 0

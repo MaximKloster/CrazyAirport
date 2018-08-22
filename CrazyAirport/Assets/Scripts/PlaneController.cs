@@ -18,6 +18,8 @@ public class PlaneController : MonoBehaviour
 	private GameObject planeMesh;
 	[SerializeField]
 	private GameObject movementFeedback;
+	[SerializeField]
+	private Animator moveFBAnim;
 	#endregion
 	#region plane variables
 	[Header("Variables", order = 2)]
@@ -50,6 +52,12 @@ public class PlaneController : MonoBehaviour
 	private bool callCrashFinished = false;
 	#endregion
 	#region sound variables
+	[SerializeField]
+	private AudioClip planeRotateClip;
+	[SerializeField]
+	private AudioClip planeCrashClip;
+	[SerializeField]
+	private AudioClip planeOnGroundClip;
 	private AudioSource audioSource;
 	private bool allowSound;
 	public bool AllowSound
@@ -74,7 +82,9 @@ public class PlaneController : MonoBehaviour
 
 	void Start()
 	{
+		movementFeedback.transform.parent = null;
 		audioSource = GetComponent<AudioSource>();
+		audioSource.clip = planeRotateClip;
 		planeTransform = transform;
 	}
 
@@ -93,7 +103,15 @@ public class PlaneController : MonoBehaviour
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		callCrashFinished = planeMan.CrashStarted(planeTransform.position, planeTransform.forward);
+		if (planeMan.CrashStarted(planeTransform.position, planeTransform.forward))
+		{
+			callCrashFinished = true;
+			if (AllowSound)
+			{
+				audioSource.clip = planeCrashClip;
+				audioSource.Play();
+			}
+		}
 		StartCoroutine(CrashAnimation());
 	}
 
@@ -108,18 +126,21 @@ public class PlaneController : MonoBehaviour
 				{
 					planeRotation = PlaneRotation.RIGHT;
 					planeTransform.Rotate(planeTransform.up, 90);
+					movementFeedback.transform.Rotate(planeTransform.up, 90);
 					if (AllowSound) audioSource.Play();
 				}
 				break;
 			case PlaneRotation.RIGHT:
 				planeRotation = PlaneRotation.LEFT;
 				planeTransform.Rotate(planeTransform.up, -180);
+				movementFeedback.transform.Rotate(planeTransform.up, -180);
 				if (AllowSound) audioSource.Play();
 				break;
 			case PlaneRotation.LEFT:
 				planeRotation = PlaneRotation.NONE;
 				planeMan.PlaneIsRotatedToDefault();
 				planeTransform.Rotate(planeTransform.up, 90);
+				movementFeedback.transform.Rotate(planeTransform.up, 90);
 				if (AllowSound) audioSource.Play();
 				break;
 		}
@@ -130,6 +151,7 @@ public class PlaneController : MonoBehaviour
 	{
 		notInteractable = true;
 		planeRotation = PlaneRotation.NONE;
+		if (moveFBAnim != null) moveFBAnim.SetTrigger("Move");
 		movementCoroutine = StartCoroutine(MoveToNextField());
 	}
 
@@ -142,12 +164,13 @@ public class PlaneController : MonoBehaviour
 			planeOnField = null;
 		}
 		Vector3 newPos = planeTransform.position + planeTransform.forward * fieldsMovement;
-		checkPointPos = planeTransform.position + planeTransform.forward * 0.5f;
+		checkPointPos = planeTransform.position + planeTransform.forward * 0.51f;
 		movesDone = 0;
 		while (Fly(newPos))
 		{
 			yield return null;
 		}
+		movementFeedback.transform.position = planeTransform.position;
 		CheckBorders();
 	}
 
@@ -184,7 +207,7 @@ public class PlaneController : MonoBehaviour
 	// fly as long the plane reached the stop or landing field it stops the MoveToNextField coroutine
 	private IEnumerator StopAtField(Vector3 newPos)
 	{
-		if (landing) movementFeedback.SetActive(false);
+		//if (landing) movementFeedback.SetActive(false);
 		while (Fly(newPos))
 		{
 			if (landing) planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime), planeMesh.transform.position.z);
@@ -195,6 +218,7 @@ public class PlaneController : MonoBehaviour
 		{
 			planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime), planeMesh.transform.position.z);
 			planeMan.PlaneLanded(this);
+			Destroy(movementFeedback.gameObject);
 			yield return new WaitForSeconds(0.5f);
 			Destroy(gameObject);
 		}
@@ -265,7 +289,7 @@ public class PlaneController : MonoBehaviour
 	{
 		StopCoroutine(movementCoroutine);
 		GetComponent<Collider>().enabled = false;
-		movementFeedback.SetActive(false);
+		Destroy(movementFeedback.gameObject);
 		groundMarker.SetActive(false);
 		explosionPS.Play();
 		while (planeMesh.transform.position.y > -0.12f)
@@ -276,6 +300,11 @@ public class PlaneController : MonoBehaviour
 		}
 		burnPS.Play();
 		smokePS.Play();
+		if (AllowSound)
+		{
+			audioSource.clip = planeOnGroundClip;
+			audioSource.Play();
+		}
 		if (callCrashFinished) planeMan.CrashFinished();
 	}
 

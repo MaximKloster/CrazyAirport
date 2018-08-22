@@ -19,8 +19,6 @@ public class GameHandler : MonoBehaviour
 	#region setup variables
 	[Header("Setup", order = 2)]
 	[SerializeField]
-	private Text versionText;
-	[SerializeField]
 	private GameObject cardObject;
 	[SerializeField]
 	private CameraController camControl;
@@ -39,7 +37,15 @@ public class GameHandler : MonoBehaviour
 	[SerializeField]
 	private float zoomFactor = 5;
 	[SerializeField]
+	[Range(20, 120)]
+	private float minFOW = 30;
+	[SerializeField]
+	[Range(70, 150)]
+	private float maxFOW = 70;
+	[SerializeField]
 	private Map[] map;
+	[SerializeField]
+	private float showEndsreenDelay = 3;
 	#endregion
 	#region ui variables
 	[Header("UI", order = 2)]
@@ -55,6 +61,12 @@ public class GameHandler : MonoBehaviour
 	private GameObject playerGainPointsGO;
 	[SerializeField]
 	private Text playerGainPointsText;
+	[SerializeField]
+	private GameObject playerLoseBP;
+	[SerializeField]
+	private GameObject playerChangeCP;
+	[SerializeField]
+	private Text playerChangeCPText;
 	#endregion
 	#region player interaction variables
 	[Header("Player Interaction", order = 2)]
@@ -116,7 +128,8 @@ public class GameHandler : MonoBehaviour
 	private bool closeUpScene = false;
 	private float closeUpSpeed = 8;
 	private float closeUpZoom = 0.07f;
-	private float zoomDistance = 2;
+	private float zoomDistance = 1f;
+	private float closeUpMoveSpeed = 1.75f;
 	#endregion
 	#region particle variables
 	[SerializeField]
@@ -127,13 +140,17 @@ public class GameHandler : MonoBehaviour
 	#endregion
 	#region sound variables
 	[Header("Sound", order = 2)]
-	private AudioSource audioSource;
 	[SerializeField]
 	private AudioClip constructionClip;
 	[SerializeField]
 	private AudioClip cleaningClip;
 	[SerializeField]
 	private AudioClip wrongPlacedClip;
+	[SerializeField]
+	private AudioClip successClip;
+	[SerializeField]
+	private AudioClip failClip;
+	private AudioSource audioSource;
 	private bool allowSound;
 	public bool AllowSound
 	{
@@ -152,7 +169,6 @@ public class GameHandler : MonoBehaviour
 	#region Setup Functions
 	private void Start()
 	{
-		versionText.text = "V" + Application.version;
 		audioSource = GetComponent<AudioSource>();
 		GameSetup();
 		SetUpMap();
@@ -163,6 +179,8 @@ public class GameHandler : MonoBehaviour
 		cardObject.SetActive(false);
 		waitForContinue = true;
 		playerGainPointsGO.SetActive(false);
+		playerLoseBP.SetActive(false);
+		playerChangeCP.SetActive(false);
 		gameOverScreen.SetActive(false);
 		camTransform = camControl.gameObject.transform;
 		LoadCameraSettings();
@@ -228,12 +246,15 @@ public class GameHandler : MonoBehaviour
 
 	public void ReadyToContinue()
 	{
-		StartCoroutine(PlayPointGain());
+		if(!gameEnd) StartCoroutine(PlayPointGain());
 	}
 
 	public void PlayCrashCloseUp(Vector3 pos, Vector3 dir)
 	{
 		gameEnd = true;
+		string currentLevel = SceneManager.GetActiveScene().name;
+		int highScore = PlayerPrefs.GetInt(currentLevel);
+		if (playerPoints > highScore) PlayerPrefs.SetInt(currentLevel, playerPoints);
 		SaveCameraSettings();
 		closeUpScene = true;
 		StartCoroutine(PlayCloseUpScene(pos, dir));
@@ -242,6 +263,11 @@ public class GameHandler : MonoBehaviour
 	public void EndGame()
 	{
 		StartCoroutine(ShowEndScreenAfterTime());
+	}
+
+	public void QuitGame()
+	{
+		Application.Quit();
 	}
 
 	public void BackToMainMenu()
@@ -268,6 +294,47 @@ public class GameHandler : MonoBehaviour
 	public void PlaneOutOfMap(int speed)
 	{
 		pointsThisRound -= pointsLoseFactor * speed;
+	}
+
+	public bool CheckIfHaveBuildPoints(BuildCard card)
+	{
+		if (gameEnd || waitForContinue) return false;
+
+		if (currentBBP > 0)
+		{
+			cardObject.GetComponent<CardObject>().SetUp(card.CardType, card.BuildID);
+			cardInHand = card;
+			if (card.CardType == BuildingType.Road) HighlightBuildableTiles(true, true);
+			else HighlightBuildableTiles(true);
+			checkTileMapCoroutine = StartCoroutine(CheckTileMapHeighlight(card.CardType));
+			return true;
+		}
+		else return false;
+	}
+
+	public bool CheckIfHaveControlPoints()
+	{
+		if (gameEnd || waitForContinue) return false;
+
+		if (currentPCP > 0)
+		{
+			currentPCP--;
+			StartCoroutine(PlayerChagenCP(false));
+			return true;
+		}
+		else return false;
+	}
+
+	public void InteractionPlaneReset()
+	{
+		currentPCP++;
+		StartCoroutine(PlayerChagenCP(true));
+	}
+
+	public void DeactivatedPark(bool deactivate)
+	{
+		if (deactivate) pointsPerMission--;
+		else pointsPerMission++;
 	}
 	#endregion
 	#region Camera Functions
@@ -362,7 +429,8 @@ public class GameHandler : MonoBehaviour
 		xRot = PlayerPrefs.GetFloat("XRot");
 		yRot = PlayerPrefs.GetFloat("YRot");
 		currentCam = camControl.GetCurrentCamera();
-		currentCam.fieldOfView = Mathf.Clamp(PlayerPrefs.GetFloat("Zoom"), 30, 70);
+		float tempFOW = PlayerPrefs.GetFloat("Zoom");
+		currentCam.fieldOfView = tempFOW > minFOW ? maxFOW : tempFOW;
 		Vector3 newCamPos = new Vector3(currentCam.transform.localPosition.x, currentCam.transform.localPosition.y, PlayerPrefs.GetFloat("CamZPos"));
 		currentCam.transform.localPosition = newCamPos;
 		camTransform.rotation = Quaternion.Euler(xRot, -yRot, 0);
@@ -372,7 +440,7 @@ public class GameHandler : MonoBehaviour
 	private IEnumerator PlayCloseUpScene(Vector3 pos, Vector3 dir)
 	{
 		currentCam = camControl.GetCurrentCamera();
-		
+
 		if (!camControl.CamRotationAllowed)
 		{
 			Vector3 endPos = new Vector3(pos.x, currentCam.transform.position.y, pos.z);
@@ -401,7 +469,7 @@ public class GameHandler : MonoBehaviour
 			bool positionX = true, positionZ = true, positionY = true;
 			while (positionX || positionZ || positionY)
 			{
-				
+
 
 				float yDis = pos.y - camTransform.position.y;
 				if (yDis < -3)
@@ -417,7 +485,7 @@ public class GameHandler : MonoBehaviour
 				if (dir.x < -0.1f || dir.x > 0.1f)
 				{
 					float xDis = pos.x - camTransform.position.x;
-					if (Mathf.Abs(xDis) > 0) xPos = camTransform.position.x + xDis * Time.deltaTime;
+					if (Mathf.Abs(xDis) > 0) xPos = camTransform.position.x + xDis * Time.deltaTime * closeUpMoveSpeed;
 					else
 					{
 						if (positionX) positionX = false;
@@ -427,13 +495,13 @@ public class GameHandler : MonoBehaviour
 					float zDis = pos.z - camTransform.position.z;
 					if (Mathf.Abs(zDis) > zoomDistance)
 					{
-						if (zDis > zoomDistance) zPos = Mathf.Clamp(camTransform.position.z + zDis * Time.deltaTime, camTransform.position.z, pos.z - zoomDistance);
-						else zPos = Mathf.Clamp(camTransform.position.z + zDis * Time.deltaTime, pos.z + zoomDistance, camTransform.position.z);
+						if (zDis > zoomDistance) zPos = Mathf.Clamp(camTransform.position.z + zDis * Time.deltaTime * closeUpMoveSpeed, camTransform.position.z, pos.z - zoomDistance);
+						else zPos = Mathf.Clamp(camTransform.position.z + zDis * Time.deltaTime * closeUpMoveSpeed, pos.z + zoomDistance, camTransform.position.z);
 					}
 					else if (Mathf.Abs(zDis) < zoomDistance)
 					{
-						if (zDis > 0) zPos = Mathf.Clamp(camTransform.position.z - zDis * Time.deltaTime, pos.z - zoomDistance, camTransform.position.z);
-						else zPos = Mathf.Clamp(camTransform.position.z - zDis * Time.deltaTime, camTransform.position.z, pos.z + zoomDistance);
+						if (zDis > 0) zPos = Mathf.Clamp(camTransform.position.z - zDis * Time.deltaTime * closeUpMoveSpeed, pos.z - zoomDistance, camTransform.position.z);
+						else zPos = Mathf.Clamp(camTransform.position.z - zDis * Time.deltaTime * closeUpMoveSpeed, camTransform.position.z, pos.z + zoomDistance);
 					}
 					else
 					{
@@ -446,13 +514,13 @@ public class GameHandler : MonoBehaviour
 					float xDis = pos.x - camTransform.position.x;
 					if (Mathf.Abs(xDis) > zoomDistance)
 					{
-						if (xDis > zoomDistance) xPos = Mathf.Clamp(camTransform.position.x + xDis * Time.deltaTime, camTransform.position.x, pos.x - zoomDistance);
-						else xPos = Mathf.Clamp(camTransform.position.x + xDis * Time.deltaTime, pos.x + zoomDistance, camTransform.position.x);
+						if (xDis > zoomDistance) xPos = Mathf.Clamp(camTransform.position.x + xDis * Time.deltaTime * closeUpMoveSpeed, camTransform.position.x, pos.x - zoomDistance);
+						else xPos = Mathf.Clamp(camTransform.position.x + xDis * Time.deltaTime * closeUpMoveSpeed, pos.x + zoomDistance, camTransform.position.x);
 					}
 					else if (Mathf.Abs(xDis) < zoomDistance)
 					{
-						if (xDis > 0) xPos = Mathf.Clamp(camTransform.position.x - xDis * Time.deltaTime, pos.x - zoomDistance, camTransform.position.x);
-						else xPos = Mathf.Clamp(camTransform.position.x - xDis * Time.deltaTime, camTransform.position.x, pos.x + zoomDistance);
+						if (xDis > 0) xPos = Mathf.Clamp(camTransform.position.x - xDis * Time.deltaTime * closeUpMoveSpeed, pos.x - zoomDistance, camTransform.position.x);
+						else xPos = Mathf.Clamp(camTransform.position.x - xDis * Time.deltaTime * closeUpMoveSpeed, camTransform.position.x, pos.x + zoomDistance);
 					}
 					else
 					{
@@ -461,7 +529,7 @@ public class GameHandler : MonoBehaviour
 					}
 
 					float zDis = pos.z - camTransform.position.z;
-					if (Mathf.Abs(zDis) > 0) zPos = camTransform.position.z + zDis * Time.deltaTime;
+					if (Mathf.Abs(zDis) > 0) zPos = camTransform.position.z + zDis * Time.deltaTime * closeUpMoveSpeed;
 					else
 					{
 						if (positionZ) positionZ = false;
@@ -472,17 +540,17 @@ public class GameHandler : MonoBehaviour
 				camTransform.position = new Vector3(xPos, yPos, zPos);
 
 				currentCam.fieldOfView = Mathf.Clamp(currentCam.fieldOfView - 0.3f, 30, 70);
-				currentCam.transform.rotation = Quaternion.RotateTowards(currentCam.transform.rotation, Quaternion.LookRotation(pos - currentCam.transform.position), Time.deltaTime *15);
-				if (Vector3.Dot(camTransform.forward, dir) > 0.05f) camTransform.RotateAround(pos, Vector3.up, Time.deltaTime * 100);
-				else if(Vector3.Dot(camTransform.forward, dir) < -0.05f) camTransform.RotateAround(pos, Vector3.up, -Time.deltaTime * 100);
+				currentCam.transform.rotation = Quaternion.RotateTowards(currentCam.transform.rotation, Quaternion.LookRotation(pos - currentCam.transform.position), Time.deltaTime * 15);
+				if (Vector3.Dot(camTransform.forward, dir) > 0.05f) camTransform.RotateAround(pos, Vector3.up, Time.deltaTime * 50);
+				else if (Vector3.Dot(camTransform.forward, dir) < -0.05f) camTransform.RotateAround(pos, Vector3.up, -Time.deltaTime * 50);
 
 				yield return null;
 			}
 		}
-		
+
 	}
 	#endregion
-
+	#region Build & Clean Functions
 	private void PlayBuildParticle(Vector3 pos)
 	{
 		sparksPS.transform.position = new Vector3(pos.x, sparksPS.transform.position.y, pos.z);
@@ -637,7 +705,7 @@ public class GameHandler : MonoBehaviour
 				}
 				HighlightBuildableTiles(false);
 				currentBBP--;
-				buildPointsText.text = currentBBP.ToString();
+				StartCoroutine(PlayerLoseBP());
 				return true;
 			}
 		}
@@ -649,33 +717,8 @@ public class GameHandler : MonoBehaviour
 		}
 		return false;
 	}
-
-	private void RefreshInteractionPoints()
-	{
-		currentBBP = maxBBP;
-		currentPCP = maxPCP;
-		buildPointsText.text = currentBBP.ToString();
-		controlPointsText.text = currentPCP.ToString();
-	}
-
-	private IEnumerator ShowEndScreenAfterTime()
-	{
-		yield return new WaitForSeconds(1f);
-		string currentLevel = SceneManager.GetActiveScene().name;
-		int highScore = PlayerPrefs.GetInt(currentLevel);
-		if (playerPoints > highScore) PlayerPrefs.SetInt(currentLevel, playerPoints);
-		gameOverScreen.SetActive(true);
-	}
-
-	private bool IsPointerOverUIObject()
-	{
-		PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
-		eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-		List<RaycastResult> results = new List<RaycastResult>();
-		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
-		return results.Count > 0;
-	}
-
+	#endregion
+	#region Highlight Functions
 	private IEnumerator CheckTileMapHeighlight(BuildingType type)
 	{
 		Camera cam = camControl.GetCurrentCamera().GetComponent<Camera>();
@@ -798,76 +841,6 @@ public class GameHandler : MonoBehaviour
 		}
 	}
 
-	public bool CheckIfHaveBuildPoints(BuildCard card)
-	{
-		if (gameEnd || waitForContinue) return false;
-
-		if (currentBBP > 0)
-		{
-			cardObject.GetComponent<CardObject>().SetUp(card.CardType, card.BuildID);
-			cardInHand = card;
-			if (card.CardType == BuildingType.Road) HighlightBuildableTiles(true, true);
-			else HighlightBuildableTiles(true);
-			checkTileMapCoroutine = StartCoroutine(CheckTileMapHeighlight(card.CardType));
-			return true;
-		}
-		else return false;
-	}
-
-	public bool CheckIfHaveControlPoints()
-	{
-		if (gameEnd || waitForContinue) return false;
-
-		if (currentPCP > 0)
-		{
-			currentPCP--;
-			controlPointsText.text = currentPCP.ToString();
-			return true;
-		}
-		else return false;
-	}
-
-	public void InteractionPlaneReset()
-	{
-		currentPCP++;
-		controlPointsText.text = currentPCP.ToString();
-	}
-
-	private IEnumerator PlayPointGain()
-	{
-		if (pointsThisRound != 0)
-		{
-			if (pointsThisRound > 0)
-			{
-				playerGainPointsText.color = Color.green;
-				playerGainPointsText.text = "+" + pointsThisRound.ToString();
-			}
-			else
-			{
-				playerGainPointsText.color = Color.red;
-				playerGainPointsText.text = "-" + pointsThisRound.ToString();
-			}
-
-			playerGainPointsGO.SetActive(true);
-			yield return new WaitForSeconds(0.3f);
-			playerGainPointsGO.SetActive(false);
-			playerPoints += pointsThisRound;
-			playerPointsText.text = playerPoints.ToString();
-			pointsThisRound = 0;
-		}
-
-		if (!gameEnd)
-		{
-			SupportRound();
-		}
-	}
-
-	public void DeactivatedPark(bool deactivate)
-	{
-		if (deactivate) pointsPerMission--;
-		else pointsPerMission++;
-	}
-
 	public void HighlightDirtyFields(CleaningCard token)
 	{
 		tokenInHand = token;
@@ -956,5 +929,96 @@ public class GameHandler : MonoBehaviour
 			}
 			return false;
 		}
+	}
+	#endregion
+	#region UI Functions
+	private void RefreshInteractionPoints()
+	{
+		currentBBP = maxBBP;
+		currentPCP = maxPCP;
+		buildPointsText.text = currentBBP.ToString();
+		controlPointsText.text = currentPCP.ToString();
+	}
+
+	private IEnumerator ShowEndScreenAfterTime()
+	{
+		yield return new WaitForSeconds(showEndsreenDelay);
+		gameOverScreen.SetActive(true);
+	}
+
+	private IEnumerator PlayPointGain()
+	{
+		if (pointsThisRound != 0)
+		{
+			if (pointsThisRound > 0)
+			{
+				if (AllowSound)
+				{
+					audioSource.clip = successClip;
+					audioSource.Play();
+				}
+				playerGainPointsText.color = Color.green;
+				playerGainPointsText.text = "+" + pointsThisRound.ToString();
+			}
+			else
+			{
+
+				if (AllowSound)
+				{
+					audioSource.clip = failClip;
+					audioSource.Play();
+				}
+				playerGainPointsText.color = Color.red;
+				playerGainPointsText.text = "-" + pointsThisRound.ToString();
+			}
+
+			playerGainPointsGO.SetActive(true);
+			yield return new WaitForSeconds(0.3f);
+			playerGainPointsGO.SetActive(false);
+			playerPoints += pointsThisRound;
+			playerPointsText.text = playerPoints.ToString();
+			pointsThisRound = 0;
+		}
+
+		if (!gameEnd)
+		{
+			SupportRound();
+		}
+	}
+
+	private IEnumerator PlayerLoseBP()
+	{
+		playerLoseBP.SetActive(true);
+		yield return new WaitForSeconds(0.25f);
+		playerLoseBP.SetActive(false);
+		buildPointsText.text = currentBBP.ToString();
+	}
+
+	private IEnumerator PlayerChagenCP(bool gain)
+	{
+		if (gain)
+		{
+			playerChangeCPText.color = Color.blue;
+			playerChangeCPText.text = "+1";
+		}
+		else
+		{
+			playerChangeCPText.color = Color.red;
+			playerChangeCPText.text = "-1";
+		}
+		playerChangeCP.SetActive(true);
+		yield return new WaitForSeconds(0.25f);
+		playerChangeCP.SetActive(false);
+		controlPointsText.text = currentPCP.ToString();
+	}
+	#endregion
+
+	private bool IsPointerOverUIObject()
+	{
+		PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+		eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		List<RaycastResult> results = new List<RaycastResult>();
+		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+		return results.Count > 0;
 	}
 }

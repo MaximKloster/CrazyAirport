@@ -10,7 +10,7 @@ public class BuildingRotator : MonoBehaviour
 	[SerializeField]
 	private RotationType rotType = RotationType.Z;
 	[SerializeField]
-	[Range(5, 25)]
+	[Range(5, 100)]
 	private float rotationSpeed = 10;
 	[SerializeField]
 	private bool useRandomSpeed = true;

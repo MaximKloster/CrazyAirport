@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class SettingsMenu : MonoBehaviour
 {
 	[SerializeField]
+	private GameObject nuke;
+	[SerializeField]
 	private CardManager cardMan;
 	[SerializeField]
 	private GameHandler gameMaster;
@@ -20,6 +22,8 @@ public class SettingsMenu : MonoBehaviour
 	[SerializeField]
 	private Image planeInfoButton;
 	[SerializeField]
+	private Image nukeSceneButton;
+	[SerializeField]
 	private Sprite musicOnIcon;
 	[SerializeField]
 	private Sprite musicOffIcon;
@@ -31,18 +35,21 @@ public class SettingsMenu : MonoBehaviour
 	private Sprite infoOnIcon;
 	[SerializeField]
 	private Sprite InfoOffIcon;
+	[SerializeField]
+	private Sprite nukeOnIcon;
+	[SerializeField]
+	private Sprite nukeOffIcon;
 	private bool openMenu = false;
 	private bool musicOn = true;
 	private bool soundOn = true;
 	private bool showPlaneFB = true;
-	private bool showCardInfo = true;
+	private bool showNukeReset = false;
 
 	void Start()
 	{
 		musicOn = PlayerPrefs.GetInt("Music") > 0;
 		soundOn = PlayerPrefs.GetInt("Sound") > 0;
 		showPlaneFB = PlayerPrefs.GetInt("PlaneFB") > 0;
-		showCardInfo = PlayerPrefs.GetInt("CardInfo") > 0;
 		SetMusic();
 		SetSound();
 		SetPlaneFB();
@@ -101,5 +108,13 @@ public class SettingsMenu : MonoBehaviour
 		showPlaneFB = !showPlaneFB;
 		PlayerPrefs.SetInt("PlaneFB", showPlaneFB ? 1 : 0);
 		SetPlaneFB();
+	}
+
+	public void NukeButtonClicked()
+	{
+		MenuOpenClicked();
+		showNukeReset = !showNukeReset;
+
+		nuke.SetActive(true);
 	}
 }
