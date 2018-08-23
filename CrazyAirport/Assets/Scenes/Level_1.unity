@@ -1182,6 +1182,11 @@ MonoBehaviour:
   m_EffectColor: {r: 0.20784314, g: 0.20784314, b: 0.20784314, a: 0.5}
   m_EffectDistance: {x: 3, y: -3}
   m_UseGraphicAlpha: 1
+--- !u!198 &201224441 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 198206176293695394, guid: 20d2923d175a2354894b654e38dc5064,
+    type: 2}
+  m_PrefabInternal: {fileID: 1005023875}
 --- !u!4 &238292766 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4452221906249902, guid: 20d2923d175a2354894b654e38dc5064,
@@ -6012,7 +6017,7 @@ Prefab:
         type: 2}
       propertyPath: dirtPS
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 201224441}
     - target: {fileID: 0}
       propertyPath: m_RootOrder
       value: 3
