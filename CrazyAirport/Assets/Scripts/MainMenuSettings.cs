@@ -35,7 +35,7 @@ public class MainMenuSettings : MonoBehaviour
 		SetSoundIcon();
 		SetMusicIcon();
 		settingsMenu.SetActive(false);
-		levelSelect.ChangeSoundState(soundOn);
+		if(levelSelect != null) levelSelect.ChangeSoundState(soundOn);
 	}
 
 	public void SettingsClicked()

@@ -9,8 +9,6 @@ public class MainMenu : MonoBehaviour
 	[SerializeField]
 	private Text versionText;
 	[SerializeField]
-	private GameObject levelScreen;
-	[SerializeField]
 	private GameObject loadingAnim;
 	AsyncOperation loadingScene;
 	private bool isLoading = false;
@@ -19,13 +17,25 @@ public class MainMenu : MonoBehaviour
 	{
 		versionText.text = "V "+Application.version;
 		isLoading = false;
-		levelScreen.SetActive(false);
-		loadingAnim.SetActive(false);
+		if(loadingAnim != null) loadingAnim.SetActive(false);
 	}
 
 	public void OpenLevelScreen()
 	{
-		levelScreen.SetActive(true);
+		if (!isLoading)
+		{
+			isLoading = true;
+			SceneManager.LoadScene("LevelSelection");
+		}
+	}
+
+	public void OpenMainMenu()
+	{
+		if (!isLoading)
+		{
+			isLoading = true;
+			SceneManager.LoadScene("Start");
+		}
 	}
 
 	public void LoadLastLevel()
@@ -62,10 +72,5 @@ public class MainMenu : MonoBehaviour
 	{
 		yield return new WaitForSeconds(1.5f);
 		loadingScene.allowSceneActivation = true;
-	}
-
-	public void MainMenuButtonClicked()
-	{
-		if (!isLoading) levelScreen.SetActive(false);
 	}
 }

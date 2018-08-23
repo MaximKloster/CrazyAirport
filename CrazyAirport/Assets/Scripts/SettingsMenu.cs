@@ -44,6 +44,20 @@ public class SettingsMenu : MonoBehaviour
 	private bool soundOn = true;
 	private bool showPlaneFB = true;
 	private bool showNukeReset = false;
+	private bool allowMenuOpen = true;
+
+	public bool AllowMenuOpen
+	{
+		get
+		{
+			return allowMenuOpen;
+		}
+
+		set
+		{
+			allowMenuOpen = value;
+		}
+	}
 
 	void Start()
 	{
@@ -80,10 +94,13 @@ public class SettingsMenu : MonoBehaviour
 
 	public void MenuOpenClicked()
 	{
-		cardMan.MenuButtonClicked();
-		if (!openMenu) gameMaster.SaveCameraSettings();
-		openMenu = !openMenu;
-		settingsMenu.SetActive(openMenu);
+		if (AllowMenuOpen)
+		{
+			cardMan.MenuButtonClicked();
+			if (!openMenu) gameMaster.SaveCameraSettings();
+			openMenu = !openMenu;
+			settingsMenu.SetActive(openMenu);
+		}
 	}
 
 	public void MusicButtonClicked()

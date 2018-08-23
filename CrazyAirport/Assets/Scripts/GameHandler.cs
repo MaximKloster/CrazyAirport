@@ -29,6 +29,13 @@ public class GameHandler : MonoBehaviour
 	[SerializeField]
 	private PlaneManager planeMan;
 	[SerializeField]
+	private SettingsMenu settingsMan;
+	[SerializeField]
+	private Map[] map;
+	[SerializeField]
+	private float showEndsreenDelay = 3;
+	[Header("Camera", order = 2)]
+	[SerializeField]
 	private float camYRotSpeed = 2.5f;
 	[SerializeField]
 	private float camXRotSpeed = 2.5f;
@@ -42,10 +49,6 @@ public class GameHandler : MonoBehaviour
 	[SerializeField]
 	[Range(70, 150)]
 	private float maxFOW = 70;
-	[SerializeField]
-	private Map[] map;
-	[SerializeField]
-	private float showEndsreenDelay = 3;
 	#endregion
 	#region ui variables
 	[Header("UI", order = 2)]
@@ -101,6 +104,17 @@ public class GameHandler : MonoBehaviour
 	[SerializeField]
 	private GameObject road;
 	#endregion
+	#region dirty buildings variables
+	[Header("Dirty Buildings", order = 2)]
+	[SerializeField]
+	private GameObject dirtyForest;
+	[SerializeField]
+	private GameObject dirtyLake;
+	[SerializeField]
+	private GameObject dirtyStopp;
+	[SerializeField]
+	private GameObject dirtyStart;
+	#endregion
 	#region gameplay variables
 	private bool gameEnd = false;
 	private bool waitForContinue = true;
@@ -132,6 +146,7 @@ public class GameHandler : MonoBehaviour
 	private float closeUpMoveSpeed = 1.75f;
 	#endregion
 	#region particle variables
+	[Header("Particels", order = 2)]
 	[SerializeField]
 	private ParticleSystem sparksPS;
 	[SerializeField]
@@ -246,12 +261,13 @@ public class GameHandler : MonoBehaviour
 
 	public void ReadyToContinue()
 	{
-		if(!gameEnd) StartCoroutine(PlayPointGain());
+		if (!gameEnd) StartCoroutine(PlayPointGain());
 	}
 
 	public void PlayCrashCloseUp(Vector3 pos, Vector3 dir)
 	{
 		gameEnd = true;
+		settingsMan.AllowMenuOpen = false;
 		string currentLevel = SceneManager.GetActiveScene().name;
 		int highScore = PlayerPrefs.GetInt(currentLevel);
 		if (playerPoints > highScore) PlayerPrefs.SetInt(currentLevel, playerPoints);
@@ -273,6 +289,11 @@ public class GameHandler : MonoBehaviour
 	public void BackToMainMenu()
 	{
 		SceneManager.LoadScene("Start");
+	}
+
+	public void BackToLevels()
+	{
+		SceneManager.LoadScene("LevelSelection");
 	}
 
 	private void SupportRound()
@@ -650,14 +671,24 @@ public class GameHandler : MonoBehaviour
 						CheckAndSetAroundTiles(z, x, 1);
 						break;
 					case BuildingType.Start:
-						Instantiate(startingBuildings[buildID], buildingParent);
+						GameObject start = Instantiate(startingBuildings[buildID], buildingParent);
 						mapTile.TileStatus = MapTile.BuildStatus.Start;
+						if (dirtyStart != null)
+						{
+							GameObject dStart = Instantiate(dirtyStart, buildingParent);
+							mapTile.AddDirtyCleanMeshes(start, dStart);
+						}
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Stop:
-						Instantiate(stopBuildings[buildID], buildingParent);
+						GameObject stopp = Instantiate(stopBuildings[buildID], buildingParent);
 						mapTile.TileStatus = MapTile.BuildStatus.Stop;
+						if (dirtyStopp != null)
+						{
+							GameObject dStopp = Instantiate(dirtyStopp, buildingParent);
+							mapTile.AddDirtyCleanMeshes(stopp, dStopp);
+						}
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);
 						break;
@@ -668,8 +699,13 @@ public class GameHandler : MonoBehaviour
 						CheckAndSetAroundTiles(z, x, 2);
 						break;
 					case BuildingType.Park:
-						Instantiate(parkBuildings[buildID], buildingParent);
+						GameObject park = Instantiate(parkBuildings[buildID], buildingParent);
 						mapTile.TileStatus = MapTile.BuildStatus.Park;
+						if (dirtyForest != null && dirtyLake != null)
+						{
+							GameObject dPark = Instantiate(buildID > 0 ? dirtyLake : dirtyForest, buildingParent);
+							mapTile.AddDirtyCleanMeshes(park, dPark);
+						}
 						pointsPerMission++;
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);

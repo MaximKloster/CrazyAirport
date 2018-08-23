@@ -641,7 +641,7 @@ GameObject:
   - component: {fileID: 126008384}
   - component: {fileID: 126008383}
   m_Layer: 5
-  m_Name: RestartButton
+  m_Name: LevelsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -682,7 +682,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 971640747}
-          m_MethodName: BackToMainMenu
+          m_MethodName: BackToLevels
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1417,83 +1417,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4452221906249902, guid: 20d2923d175a2354894b654e38dc5064,
     type: 2}
   m_PrefabInternal: {fileID: 277970568}
---- !u!1 &282840810
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 282840814}
-  - component: {fileID: 282840813}
-  - component: {fileID: 282840811}
-  m_Layer: 0
-  m_Name: Cam01
-  m_TagString: MainCamera
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!81 &282840811
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 282840810}
-  m_Enabled: 1
---- !u!20 &282840813
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 282840810}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: -1
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 1
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!4 &282840814
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 282840810}
-  m_LocalRotation: {x: 0.4933717, y: -0, z: -0, w: 0.8698187}
-  m_LocalPosition: {x: -0.64, y: 5.67, z: -0.67}
-  m_LocalScale: {x: 1, y: 1.0000002, z: 1.0000002}
-  m_Children: []
-  m_Father: {fileID: 769856594}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 59.125004, y: 0, z: 0}
 --- !u!4 &283917716 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4452221906249902, guid: 20d2923d175a2354894b654e38dc5064,
@@ -1615,7 +1538,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 971640747}
-          m_MethodName: BackToMainMenu
+          m_MethodName: BackToLevels
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -4683,10 +4606,7 @@ Transform:
   m_LocalPosition: {x: 4, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 282840814}
-  - {fileID: 2142121277}
   - {fileID: 1895606828}
-  - {fileID: 889793474}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 25, y: 0, z: 0}
@@ -5549,83 +5469,6 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 863654405}
   m_CullTransparentMesh: 0
---- !u!1 &889793471
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 889793474}
-  - component: {fileID: 889793473}
-  - component: {fileID: 889793472}
-  m_Layer: 0
-  m_Name: Cam04
-  m_TagString: MainCamera
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!81 &889793472
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 889793471}
-  m_Enabled: 1
---- !u!20 &889793473
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 889793471}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: -1
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 1
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!4 &889793474
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 889793471}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0.85, y: 5.35, z: 2.35}
-  m_LocalScale: {x: 1, y: 1.0000005, z: 1.0000007}
-  m_Children: []
-  m_Father: {fileID: 769856594}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &958906888 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114347545942627566, guid: 20d2923d175a2354894b654e38dc5064,
@@ -5730,12 +5573,7 @@ MonoBehaviour:
     m_Bits: 4294965759
   cardMan: {fileID: 80463877}
   planeMan: {fileID: 344019822}
-  camYRotSpeed: 5
-  camXRotSpeed: 15
-  xCampDegree: 25
-  zoomFactor: 5
-  minFOW: 30
-  maxFOW: 70
+  settingsMan: {fileID: 80463879}
   map:
   - tiles:
     - {fileID: 1820405674}
@@ -5788,6 +5626,12 @@ MonoBehaviour:
     - {fileID: 1612282103}
     - {fileID: 1123588430}
   showEndsreenDelay: 2
+  camYRotSpeed: 5
+  camXRotSpeed: 15
+  xCampDegree: 25
+  zoomFactor: 5
+  minFOW: 30
+  maxFOW: 70
   gameOverScreen: {fileID: 1832192180}
   buildPointsText: {fileID: 440676746}
   controlPointsText: {fileID: 849974001}
@@ -5818,6 +5662,10 @@ MonoBehaviour:
   buildingBuilding: {fileID: 1788739590498544, guid: e5c1c288b816b4347bff79a32d1ab483,
     type: 2}
   road: {fileID: 1239367053111634, guid: c27c37337f0088f449cacee181e5ba1a, type: 2}
+  dirtyForest: {fileID: 0}
+  dirtyLake: {fileID: 0}
+  dirtyStopp: {fileID: 0}
+  dirtyStart: {fileID: 0}
   sparksPS: {fileID: 1246415838}
   cleanPS: {fileID: 2011352844}
   constructionClip: {fileID: 8300000, guid: 2f1f710dd7a9d3447855ead67c687e00, type: 3}
@@ -6055,7 +5903,7 @@ GameObject:
   - component: {fileID: 1013788474}
   - component: {fileID: 1013788473}
   m_Layer: 5
-  m_Name: QuitButton
+  m_Name: HomeButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6096,7 +5944,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 971640747}
-          m_MethodName: QuitGame
+          m_MethodName: BackToMainMenu
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -9867,7 +9715,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1832192181
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10548,7 +10396,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1.0000001}
   m_Children: []
   m_Father: {fileID: 769856594}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 42.698, y: 0, z: 0}
 --- !u!81 &1895606829
 AudioListener:
@@ -11762,80 +11610,3 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2139501745}
   m_CullTransparentMesh: 0
---- !u!1 &2142121276
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2142121277}
-  - component: {fileID: 2142121279}
-  - component: {fileID: 2142121278}
-  m_Layer: 0
-  m_Name: Cam02
-  m_TagString: MainCamera
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &2142121277
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2142121276}
-  m_LocalRotation: {x: 0.6504683, y: -0, z: -0, w: 0.75953346}
-  m_LocalPosition: {x: -0.64, y: 5.28, z: 1.52}
-  m_LocalScale: {x: 1, y: 1.0000001, z: 1.0000001}
-  m_Children: []
-  m_Father: {fileID: 769856594}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 81.15401, y: 0, z: 0}
---- !u!81 &2142121278
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2142121276}
-  m_Enabled: 1
---- !u!20 &2142121279
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2142121276}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: -1
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 1
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022

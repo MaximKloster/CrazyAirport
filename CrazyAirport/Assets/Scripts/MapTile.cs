@@ -77,10 +77,19 @@ public class MapTile : MonoBehaviour
 			planeOnField = value;
 		}
 	}
+	private GameObject cleanMesh;
+	private GameObject dirtyMesh;
 
 	private void Start()
 	{
 		highlightMesh.gameObject.SetActive(false);
+	}
+
+	public void AddDirtyCleanMeshes(GameObject clean, GameObject dirty)
+	{
+		cleanMesh = clean;
+		dirtyMesh = dirty;
+		dirtyMesh.SetActive(false);
 	}
 
 	public void PlanePathField()
@@ -90,6 +99,7 @@ public class MapTile : MonoBehaviour
 			Dirty = true;
 			dirtPS.Play();
 			if (tileStatus == BuildStatus.Park) gameMaster.DeactivatedPark(true);
+			if (dirtyMesh != null && cleanMesh != null) ChangeMesh(true);
 		}
 	}
 
@@ -100,6 +110,7 @@ public class MapTile : MonoBehaviour
 			Dirty = false;
 			dirtPS.Stop();
 			if (tileStatus == BuildStatus.Park) gameMaster.DeactivatedPark(false);
+			if (dirtyMesh != null && cleanMesh != null) ChangeMesh(false);
 		}
 	}
 
@@ -112,5 +123,19 @@ public class MapTile : MonoBehaviour
 	public void DeactivateGroundMesh()
 	{
 		ground.SetActive(false);
+	}
+
+	private void ChangeMesh(bool dirty)
+	{
+		if(dirty)
+		{
+			cleanMesh.SetActive(false);
+			dirtyMesh.SetActive(true);
+		}
+		else
+		{
+			cleanMesh.SetActive(true);
+			dirtyMesh.SetActive(false);
+		}
 	}
 }
