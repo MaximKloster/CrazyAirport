@@ -5662,9 +5662,10 @@ MonoBehaviour:
   buildingBuilding: {fileID: 1788739590498544, guid: e5c1c288b816b4347bff79a32d1ab483,
     type: 2}
   road: {fileID: 1239367053111634, guid: c27c37337f0088f449cacee181e5ba1a, type: 2}
-  dirtyForest: {fileID: 0}
-  dirtyLake: {fileID: 0}
-  dirtyStopp: {fileID: 0}
+  dirtyForest: {fileID: 1491946260907828, guid: 119c25f5c998d054088c12dcc76da4af,
+    type: 2}
+  dirtyLake: {fileID: 1450701905652524, guid: 0ee50825b59460241948ff9166df797f, type: 2}
+  dirtyStopp: {fileID: 1925256971444818, guid: 3f927b00f2391a84aae904b2a98245c0, type: 2}
   dirtyStart: {fileID: 0}
   sparksPS: {fileID: 1246415838}
   cleanPS: {fileID: 2011352844}
