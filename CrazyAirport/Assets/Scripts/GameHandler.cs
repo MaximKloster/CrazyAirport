@@ -450,8 +450,7 @@ public class GameHandler : MonoBehaviour
 		xRot = PlayerPrefs.GetFloat("XRot");
 		yRot = PlayerPrefs.GetFloat("YRot");
 		currentCam = camControl.GetCurrentCamera();
-		float tempFOW = PlayerPrefs.GetFloat("Zoom");
-		currentCam.fieldOfView = tempFOW > minFOW ? maxFOW : tempFOW;
+		currentCam.fieldOfView = Mathf.Clamp(PlayerPrefs.GetFloat("Zoom"), minFOW, maxFOW);
 		Vector3 newCamPos = new Vector3(currentCam.transform.localPosition.x, currentCam.transform.localPosition.y, PlayerPrefs.GetFloat("CamZPos"));
 		currentCam.transform.localPosition = newCamPos;
 		camTransform.rotation = Quaternion.Euler(xRot, -yRot, 0);

@@ -19,6 +19,8 @@ public class PlaneController : MonoBehaviour
 	[SerializeField]
 	private GameObject movementFeedback;
 	[SerializeField]
+	private Animator landingAnim;
+	[SerializeField]
 	private Animator moveFBAnim;
 	#endregion
 	#region plane variables
@@ -91,6 +93,7 @@ public class PlaneController : MonoBehaviour
 	public void ShowMovementFeedback(bool show)
 	{
 		movementFeedback.SetActive(show);
+		if (show) moveFBAnim.SetTrigger("Reset");
 	}
 
 	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show, bool sound)
@@ -207,12 +210,12 @@ public class PlaneController : MonoBehaviour
 	// fly as long the plane reached the stop or landing field it stops the MoveToNextField coroutine
 	private IEnumerator StopAtField(Vector3 newPos)
 	{
-		//if (landing) movementFeedback.SetActive(false);
+		if(landing) landingAnim.SetTrigger("Land");
 		while (Fly(newPos))
 		{
-			if (landing) planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime), planeMesh.transform.position.z);
 			yield return null;
 		}
+		moveFBAnim.enabled = false;
 
 		if (landing)
 		{
@@ -225,6 +228,9 @@ public class PlaneController : MonoBehaviour
 		else
 		{
 			notInteractable = false;
+			movementFeedback.transform.position = planeTransform.position;
+			moveFBAnim.enabled = true;
+			moveFBAnim.SetTrigger("Reset");
 		}
 	}
 
@@ -292,14 +298,24 @@ public class PlaneController : MonoBehaviour
 		Destroy(movementFeedback.gameObject);
 		groundMarker.SetActive(false);
 		explosionPS.Play();
-		while (planeMesh.transform.position.y > -0.12f)
+		switch(fieldsMovement)
 		{
-			planeMesh.transform.Rotate(planeMesh.transform.up, crashRotationSpeed);
-			planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (crashFallSpeed * Time.deltaTime), planeMesh.transform.position.z);
-			yield return null;
+			case 1:
+				landingAnim.SetTrigger("Crash_Small");
+				break;
+			case 2:
+				landingAnim.SetTrigger("Crash_Medium");
+				break;
+			case 3:
+				landingAnim.SetTrigger("Crash_Fast");
+				break;
 		}
+		yield return new WaitForSeconds(2);
+
 		burnPS.Play();
 		smokePS.Play();
+
+		yield return new WaitForSeconds(1.5f);
 		if (AllowSound)
 		{
 			audioSource.clip = planeOnGroundClip;

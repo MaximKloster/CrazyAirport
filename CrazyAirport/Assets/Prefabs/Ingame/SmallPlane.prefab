@@ -159,6 +159,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4201453962654512}
+  - component: {fileID: 95300253868088704}
   m_Layer: 10
   m_Name: Plane_Mesh
   m_TagString: Untagged
@@ -610,6 +611,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!95 &95300253868088704
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1934357371556036}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a7f98383cf8b4e74fac32d99e190faed, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!95 &95969127843732098
 Animator:
   serializedVersion: 3
@@ -645,6 +664,7 @@ MonoBehaviour:
   groundMarker: {fileID: 1687038098501986}
   planeMesh: {fileID: 1934357371556036}
   movementFeedback: {fileID: 1996702885388752}
+  landingAnim: {fileID: 95300253868088704}
   moveFBAnim: {fileID: 95969127843732098}
   ignoreMask:
     serializedVersion: 2
