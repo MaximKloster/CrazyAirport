@@ -1,30 +1,55 @@
 fileFormatVersion: 2
-guid: 8eb0947b2c7172b44bb5d4c39df6f379
+guid: d43fcd71749eb9442bec127fbc62c753
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
-    100002: PlaneM
-    100004: PlaneMLine
+    100002: PlaneLineS
+    100004: PlaneS
     400000: //RootNode
-    400002: PlaneM
-    400004: PlaneMLine
-    2100000: PlaneYellow
-    2100002: Darker
+    400002: PlaneLineS
+    400004: PlaneS
+    2100000: Darker
+    2100002: PlaneGreen
     2100004: Street
     2100006: White
     2100008: Gray
-    2300000: PlaneM
-    3300000: PlaneM
-    4300000: PlaneMLine
-    4300002: PlaneM
+    2300000: PlaneS
+    3300000: PlaneS
+    4300000: PlaneLineS
+    4300002: PlaneS
     9500000: //RootNode
-    13700000: PlaneMLine
-  externalObjects: {}
+    13700000: PlaneLineS
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Darker
+    second: {fileID: 2100000, guid: 097203ca96c3f2c43aad091153267ab9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Gray
+    second: {fileID: 2100000, guid: e63df7c7b736fa740ae727b05fa2a39c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PlaneGreen
+    second: {fileID: 2100000, guid: 830250fb95717b448a2a6446d436abb8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Street
+    second: {fileID: 2100000, guid: aa126e9be67cc1545a345687761690a3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: White
+    second: {fileID: 2100000, guid: 835e64b05c9301849acbb0fe062a5452, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
-    materialSearch: 1
+    materialSearch: 2
     materialLocation: 1
   animations:
     legacyGenerateAnimations: 4

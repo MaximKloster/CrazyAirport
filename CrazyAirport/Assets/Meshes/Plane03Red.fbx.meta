@@ -1,47 +1,25 @@
 fileFormatVersion: 2
-guid: 965b1b7f500aaf8479251264e63853e5
-timeCreated: 1533802892
-licenseType: Free
+guid: 260c984720e801148bf3530bac285ec7
 ModelImporter:
-  serializedVersion: 22
+  serializedVersion: 23
   fileIDToRecycleName:
-    100000: Plane.081
-    100002: //RootNode
-    100004: Sphere.008
-    100006: Plane.021
-    100008: Plane.035
-    100010: Sphere.003
-    100012: Sphere.006
-    400000: Plane.081
-    400002: //RootNode
-    400004: Sphere.008
-    400006: Plane.021
-    400008: Plane.035
-    400010: Sphere.003
-    400012: Sphere.006
-    2100000: Street
-    2100002: White
-    2100004: PlaneRed
-    2100006: Gray
-    2100008: Darker
-    2300000: Plane.081
-    2300002: Sphere.008
-    2300004: Plane.021
-    2300006: Plane.035
-    2300008: Sphere.003
-    2300010: Sphere.006
-    3300000: Plane.081
-    3300002: Sphere.008
-    3300004: Plane.021
-    3300006: Plane.035
-    3300008: Sphere.003
-    3300010: Sphere.006
-    4300000: Sphere.008
-    4300002: Plane.081
-    4300004: Sphere.006
-    4300006: Plane.035
-    4300008: Plane.021
-    4300010: Sphere.003
+    100000: //RootNode
+    100002: PlaneL
+    100004: PlaneLineL
+    400000: //RootNode
+    400002: PlaneL
+    400004: PlaneLineL
+    2100000: Darker
+    2100002: PlaneRed
+    2100004: Street
+    2100006: White
+    2100008: Gray
+    2300000: PlaneL
+    3300000: PlaneL
+    4300000: PlaneLineL
+    4300002: PlaneL
+    9500000: //RootNode
+    13700000: PlaneLineL
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -71,7 +49,7 @@ ModelImporter:
   materials:
     importMaterials: 1
     materialName: 0
-    materialSearch: 1
+    materialSearch: 2
     materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
@@ -86,6 +64,7 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -117,6 +96,8 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -141,7 +122,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
