@@ -543,7 +543,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c739cf761b8aeb7469bda8a4d522d6dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nuke: {fileID: 732130592}
   cardMan: {fileID: 80463877}
   gameMaster: {fileID: 971640747}
   planeMan: {fileID: 344019822}
@@ -6028,7 +6027,8 @@ MonoBehaviour:
     - {fileID: 858465444}
     - {fileID: 1612282103}
     - {fileID: 1123588430}
-  showEndsreenDelay: 2
+  showEndsreenDelay: 1
+  nuke: {fileID: 732130592}
   camYRotSpeed: 5
   camXRotSpeed: 15
   xCampDegree: 25
@@ -8727,7 +8727,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1529942923
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10279,7 +10279,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1832192181
 RectTransform:
   m_ObjectHideFlags: 0
