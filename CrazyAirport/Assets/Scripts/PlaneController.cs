@@ -92,8 +92,16 @@ public class PlaneController : MonoBehaviour
 
 	public void ShowMovementFeedback(bool show)
 	{
-		movementFeedback.SetActive(show);
-		if (show) moveFBAnim.SetTrigger("Reset");
+		
+		if (show)
+		{
+			movementFeedback.transform.localScale = new Vector3(1, 1, 1);
+			moveFBAnim.SetTrigger("Reset");
+		}
+		else
+		{
+			movementFeedback.transform.localScale = new Vector3(0, 0, 0);
+		}
 	}
 
 	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show, bool sound)
@@ -314,13 +322,13 @@ public class PlaneController : MonoBehaviour
 
 		burnPS.Play();
 		smokePS.Play();
-
-		yield return new WaitForSeconds(1.5f);
 		if (AllowSound)
 		{
 			audioSource.clip = planeOnGroundClip;
 			audioSource.Play();
 		}
+
+		yield return new WaitForSeconds(1.5f);
 		if (callCrashFinished) planeMan.CrashFinished();
 	}
 

@@ -34,6 +34,8 @@ public class GameHandler : MonoBehaviour
 	private Map[] map;
 	[SerializeField]
 	private float showEndsreenDelay = 3;
+	[SerializeField]
+	private GameObject nuke;
 	[Header("Camera", order = 2)]
 	[SerializeField]
 	private float camYRotSpeed = 2.5f;
@@ -127,6 +129,19 @@ public class GameHandler : MonoBehaviour
 	private int pointsThisRound = 0;
 	private BuildCard cardInHand;
 	private CleaningCard tokenInHand;
+	private bool playResetAnimation;
+	public bool PlayResetAnimation
+	{
+		get
+		{
+			return playResetAnimation;
+		}
+
+		set
+		{
+			playResetAnimation = value;
+		}
+	}
 	#endregion
 	#region camera veriables
 	private int gamePoints;
@@ -191,6 +206,7 @@ public class GameHandler : MonoBehaviour
 
 	private void GameSetup()
 	{
+		nuke.SetActive(false);
 		cardObject.SetActive(false);
 		waitForContinue = true;
 		playerGainPointsGO.SetActive(false);
@@ -249,7 +265,8 @@ public class GameHandler : MonoBehaviour
 
 	public void ResetGame()
 	{
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		if (PlayResetAnimation) StartCoroutine(PlayReset());
+		else SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 
 	public void FinishedTurn()
@@ -1055,5 +1072,14 @@ public class GameHandler : MonoBehaviour
 		List<RaycastResult> results = new List<RaycastResult>();
 		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
 		return results.Count > 0;
+	}
+
+	private IEnumerator PlayReset()
+	{
+		gameOverScreen.SetActive(false);
+		yield return new WaitForSeconds(1);
+		nuke.SetActive(true);
+		yield return new WaitForSeconds(5);
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }

@@ -6,8 +6,6 @@ using UnityEngine.UI;
 public class SettingsMenu : MonoBehaviour
 {
 	[SerializeField]
-	private GameObject nuke;
-	[SerializeField]
 	private CardManager cardMan;
 	[SerializeField]
 	private GameHandler gameMaster;
@@ -64,9 +62,11 @@ public class SettingsMenu : MonoBehaviour
 		musicOn = PlayerPrefs.GetInt("Music") > 0;
 		soundOn = PlayerPrefs.GetInt("Sound") > 0;
 		showPlaneFB = PlayerPrefs.GetInt("PlaneFB") > 0;
+		showNukeReset = PlayerPrefs.GetInt("ResetFB") > 0;
 		SetMusic();
 		SetSound();
 		SetPlaneFB();
+		SetResetFB();
 		settingsMenu.SetActive(false);
 	}
 
@@ -90,6 +90,13 @@ public class SettingsMenu : MonoBehaviour
 		if (showPlaneFB) planeInfoButton.sprite = infoOnIcon;
 		else planeInfoButton.sprite = InfoOffIcon;
 		planeMan.ShowFeedback = showPlaneFB;
+	}
+
+	private void SetResetFB()
+	{
+		if (showNukeReset) nukeSceneButton.sprite = nukeOnIcon;
+		else nukeSceneButton.sprite = nukeOffIcon;
+		gameMaster.PlayResetAnimation = showNukeReset;
 	}
 
 	public void MenuOpenClicked()
@@ -129,9 +136,10 @@ public class SettingsMenu : MonoBehaviour
 
 	public void NukeButtonClicked()
 	{
-		MenuOpenClicked();
+		cardMan.MenuButtonClicked();
 		showNukeReset = !showNukeReset;
-
-		nuke.SetActive(true);
+		PlayerPrefs.SetInt("ResetFB", showNukeReset ? 1 : 0);
+		SetResetFB();
+		//nuke.SetActive(true);
 	}
 }
