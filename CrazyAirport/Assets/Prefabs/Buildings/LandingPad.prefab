@@ -54,7 +54,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4303262064501656}
   m_Layer: 0
-  m_Name: Landekissen
+  m_Name: LandingPad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
