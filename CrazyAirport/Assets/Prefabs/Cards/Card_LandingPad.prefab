@@ -8,15 +8,15 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1783094576440954}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1405256072984026
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224738299557140860}
   - component: {fileID: 222335062372204550}
@@ -31,9 +31,9 @@ GameObject:
 --- !u!1 &1783094576440954
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224861370853833194}
   - component: {fileID: 222935935417129750}
@@ -53,7 +53,7 @@ GameObject:
 --- !u!82 &82944404515118720
 AudioSource:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1783094576440954}
   m_Enabled: 1
@@ -149,7 +149,7 @@ AudioSource:
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1783094576440954}
   m_Enabled: 1
@@ -166,7 +166,7 @@ Animator:
 --- !u!114 &114221610978337732
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1783094576440954}
   m_Enabled: 1
@@ -213,7 +213,7 @@ MonoBehaviour:
 --- !u!114 &114456277718677046
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1783094576440954}
   m_Enabled: 1
@@ -222,19 +222,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canGroup: {fileID: 225523736539940034}
-  buildingName: Landing Pad
-  description: Planes will land here if they are at the end of the movement on this
-    field.
+  buildingName: LANDING PAD
+  description: Planes will land on this field when they stop on it at the end of a
+    turn. Can be built everywhere.
   cardType: 3
   buildID: 0
   getCardSound: {fileID: 8300000, guid: 97dc609353787c84da18e8dfe93c13e1, type: 3}
   grabSound: {fileID: 8300000, guid: 959b64aea028c9148bd91cc051bc203e, type: 3}
-  wrongPlacedSound: {fileID: 0}
-  backInHandSound: {fileID: 0}
 --- !u!114 &114491195936872350
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1405256072984026}
   m_Enabled: 1
@@ -250,7 +248,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: ef7e678dc2e36d54d9e23588e403999f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e98fe017ee534b3408cc8724540b01fe, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -261,7 +259,7 @@ MonoBehaviour:
 --- !u!114 &114849542965588496
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1783094576440954}
   m_Enabled: 1
@@ -277,7 +275,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: c263cd26e15c6b547b4b9fcf4f50c13e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ab9b108879c19b9408feb2feb2d9d662, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -288,19 +286,21 @@ MonoBehaviour:
 --- !u!222 &222335062372204550
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1405256072984026}
+  m_CullTransparentMesh: 0
 --- !u!222 &222935935417129750
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1783094576440954}
+  m_CullTransparentMesh: 0
 --- !u!224 &224738299557140860
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1405256072984026}
   m_LocalRotation: {x: 0, y: 1, z: -0, w: -0.0000001872535}
@@ -318,7 +318,7 @@ RectTransform:
 --- !u!224 &224861370853833194
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1783094576440954}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -337,7 +337,7 @@ RectTransform:
 --- !u!225 &225523736539940034
 CanvasGroup:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1783094576440954}
   m_Enabled: 1
