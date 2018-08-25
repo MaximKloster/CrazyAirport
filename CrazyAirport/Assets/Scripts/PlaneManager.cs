@@ -11,13 +11,19 @@ public class PlaneManager : MonoBehaviour
 	[SerializeField]
 	private Transform[] allSpawnpoints;
 	[SerializeField]
+	private Transform[] allStartSpawnpoints;
+	[SerializeField]
 	private GameObject[] planePrefab;
 	[SerializeField]
 	private Vector4 mapBorders;
+	[SerializeField]
+	[Range(0,100)]
+	private float startplaneSpawnChance = 30;
 	#endregion
 	#region gameplay variables
 	private List<PlaneController> allPlanes;
 	private int[] lastSpawnPoints = new int[4] { -1, -1, -1, -1 }; // check if a plane was last time here started, so to do not use again in next round
+	private int[] startPlaneOnSpawnPoints = new int[2] { -1, -1 }; // check if a start plane is still on a startpoint
 	private int turn = 0;
 	private int maxSpawnPlaneSize = 1;
 	private int maxSpawnPlaneAmount = 1;
@@ -187,7 +193,23 @@ public class PlaneManager : MonoBehaviour
 
 	public bool TryToRotatePlane()
 	{
-		return (gameMaster.CheckIfHaveControlPoints());
+		return gameMaster.CheckIfHaveControlPoints();
+	}
+
+	public bool TryToPlacePlane()
+	{
+		return gameMaster.CheckIfCanPlacePlane();
+	}
+
+	public void ReleasedPlane(int id, bool onStartapult)
+	{
+		gameMaster.ReleasedPlane(onStartapult);
+		if (onStartapult) startPlaneOnSpawnPoints[id] = -1;
+	}
+
+	public Camera GiveCurrentCam()
+	{
+		return gameMaster.GiveCurrentCam();
 	}
 
 	public void PlaneIsRotatedToDefault()
@@ -222,19 +244,52 @@ public class PlaneManager : MonoBehaviour
 		for (int i = 0; i < maxSpawnPlaneAmount; i++)
 		{
 			int sp;
-			do
+			bool spawnStartPlane = false;
+			//if(currentLevel > 1)
 			{
-				sp = Random.Range(0, allSpawnpoints.Length);
-			} while (sp == lastSpawnPoints[0] || sp == lastSpawnPoints[1] || sp == lastSpawnPoints[2] || sp == lastSpawnPoints[3] || sp == tempSP[0] || sp == tempSP[1] || sp == tempSP[2] || sp == tempSP[3]);
-			tempSP[i] = sp;
+				if(startPlaneOnSpawnPoints[0] == -1 || startPlaneOnSpawnPoints[1] == -1)
+				{
+					float number = Random.Range(0, 100);
+					if (number < startplaneSpawnChance) spawnStartPlane = true;
+				}
+			}
 
-			int planeType;
-			if (onlyPlanes3) planeType = 2;
-			else planeType = Random.Range(0, maxSpawnPlaneSize);
-			GameObject planeObject = Instantiate(planePrefab[planeType], allSpawnpoints[sp].transform.position, allSpawnpoints[sp].transform.rotation, transform);
-			PlaneController plane = planeObject.GetComponent<PlaneController>();
-			plane.PlaneSetup(this, mapBorders, ShowFeedback, AllowSound);
-			allPlanes.Add(plane);
+			if (spawnStartPlane)
+			{
+				int id;
+				if(startPlaneOnSpawnPoints[0] == -1)
+				{
+					id = 0;
+				}
+				else
+				{
+					id = 1;
+				}
+				startPlaneOnSpawnPoints[id] = 1;
+
+				int planeType;
+				if (onlyPlanes3) planeType = 2;
+				else planeType = Random.Range(0, maxSpawnPlaneSize);
+				GameObject planeObject = Instantiate(planePrefab[planeType], allStartSpawnpoints[id].position, allStartSpawnpoints[id].rotation, transform);
+				PlaneController plane = planeObject.GetComponent<PlaneController>();
+				plane.PlaneSetup(this, mapBorders, ShowFeedback, AllowSound, id, true);
+				allPlanes.Add(plane);
+			}
+			else
+			{
+				do
+				{
+					sp = Random.Range(0, allSpawnpoints.Length);
+				} while (sp == lastSpawnPoints[0] || sp == lastSpawnPoints[1] || sp == lastSpawnPoints[2] || sp == lastSpawnPoints[3] || sp == tempSP[0] || sp == tempSP[1] || sp == tempSP[2] || sp == tempSP[3]);
+				tempSP[i] = sp;
+				int planeType;
+				if (onlyPlanes3) planeType = 2;
+				else planeType = Random.Range(0, maxSpawnPlaneSize);
+				GameObject planeObject = Instantiate(planePrefab[planeType], allSpawnpoints[sp].position, allSpawnpoints[sp].rotation, transform);
+				PlaneController plane = planeObject.GetComponent<PlaneController>();
+				plane.PlaneSetup(this, mapBorders, ShowFeedback, AllowSound, -1);
+				allPlanes.Add(plane);
+			}
 		}
 
 		lastSpawnPoints = tempSP;

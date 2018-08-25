@@ -350,6 +350,31 @@ public class GameHandler : MonoBehaviour
 		else return false;
 	}
 
+	public bool CheckIfCanPlacePlane()
+	{
+		if (gameEnd || waitForContinue) return false;
+
+		if (currentPCP > 0)
+		{
+			currentPCP--;
+			StartCoroutine(PlayerChagenCP(false));
+			HighLightStartapults(true);
+			return true;
+		}
+		else return false;
+	}
+
+	public void ReleasedPlane(bool onStartapult)
+	{
+		HighLightStartapults(false);
+		if (!onStartapult) InteractionPlaneReset();
+	}
+
+	public Camera GiveCurrentCam()
+	{
+		return camControl.GetCurrentCamera().GetComponent<Camera>();
+	}
+
 	public bool CheckIfHaveControlPoints()
 	{
 		if (gameEnd || waitForContinue) return false;
@@ -853,6 +878,17 @@ public class GameHandler : MonoBehaviour
 			highlightedTile.CardOverItem(false);
 			highlightedTile = null;
 			cardObject.SetActive(false);
+		}
+	}
+
+	private void HighLightStartapults(bool highlight)
+	{
+		foreach (Map row in map)
+		{
+			foreach (MapTile tile in row.tiles)
+			{
+				if (tile.TileStatus == MapTile.BuildStatus.Start && !tile.Dirty) tile.IsBuildable = highlight;
+			}
 		}
 	}
 

@@ -676,7 +676,7 @@ MonoBehaviour:
   moveFBAnim: {fileID: 95800958184187250}
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 4294966783
+    m_Bits: 311
   fieldsMovement: 2
   landingSpeed: 1.25
   crashRotationSpeed: 5
