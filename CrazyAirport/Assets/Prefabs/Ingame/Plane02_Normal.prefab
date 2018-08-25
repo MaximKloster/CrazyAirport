@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 54132636933652042}
   - component: {fileID: 65354477977916104}
   - component: {fileID: 82429722273874624}
+  - component: {fileID: 114196715099312262}
   m_Layer: 10
   m_Name: Plane02_Normal
   m_TagString: Untagged
@@ -277,7 +278,7 @@ Transform:
   m_GameObject: {fileID: 1588122502341160}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.1, z: 0}
-  m_LocalScale: {x: 0.05, y: 1, z: 0.05}
+  m_LocalScale: {x: -0.05, y: 1, z: 0.05}
   m_Children: []
   m_Father: {fileID: 4520718057398392}
   m_RootOrder: 1
@@ -639,6 +640,21 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114196715099312262
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1294815844120604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcbe2e4048cf9a41957a90ef68ed265, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotator: {fileID: 4709519404386464}
+  rotType: 0
+  rotationSpeed: 25
+  useRandomSpeed: 0
 --- !u!114 &114420363858776096
 MonoBehaviour:
   m_ObjectHideFlags: 1

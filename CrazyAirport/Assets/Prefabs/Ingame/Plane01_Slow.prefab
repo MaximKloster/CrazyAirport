@@ -59,6 +59,7 @@ GameObject:
   - component: {fileID: 54779186438914276}
   - component: {fileID: 65829389374344242}
   - component: {fileID: 82141464962816812}
+  - component: {fileID: 114549082045226024}
   m_Layer: 10
   m_Name: Plane01_Slow
   m_TagString: Untagged
@@ -204,7 +205,7 @@ Transform:
   m_GameObject: {fileID: 1687038098501986}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.1, z: 0}
-  m_LocalScale: {x: 0.04, y: 1, z: 0.04}
+  m_LocalScale: {x: -0.04, y: 1, z: -0.04}
   m_Children: []
   m_Father: {fileID: 4430769244708446}
   m_RootOrder: 1
@@ -676,6 +677,21 @@ MonoBehaviour:
   planeRotateClip: {fileID: 8300000, guid: ae0540f68d3b3ff488e765aa10c8ca08, type: 3}
   planeCrashClip: {fileID: 8300000, guid: a1fddf472f9b89b40b803bc831b8f454, type: 3}
   planeOnGroundClip: {fileID: 8300000, guid: ef2af18bfbce22d44b3ccce42a0f688b, type: 3}
+--- !u!114 &114549082045226024
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1117705745194016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afcbe2e4048cf9a41957a90ef68ed265, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotator: {fileID: 4098150798226788}
+  rotType: 0
+  rotationSpeed: 25
+  useRandomSpeed: 0
 --- !u!137 &137149478158733304
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
