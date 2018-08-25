@@ -8,15 +8,15 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1771701147288860}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1311593215816164
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224155997982957912}
   - component: {fileID: 222856270796800444}
@@ -31,9 +31,9 @@ GameObject:
 --- !u!1 &1771701147288860
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224271976657578284}
   - component: {fileID: 222487717086731370}
@@ -53,7 +53,7 @@ GameObject:
 --- !u!82 &82276514200339376
 AudioSource:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771701147288860}
   m_Enabled: 1
@@ -149,7 +149,7 @@ AudioSource:
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771701147288860}
   m_Enabled: 1
@@ -166,7 +166,7 @@ Animator:
 --- !u!114 &114413781295020464
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771701147288860}
   m_Enabled: 1
@@ -175,19 +175,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canGroup: {fileID: 225441167928095114}
-  buildingName: Lake
-  description: +1 Point for success mission. Succsse missions are like landing planes
-    or starting planes reach their destination.
+  buildingName: LAKE
+  description: Gives you one Bonus Point for each landed plane.
   cardType: 0
   buildID: 1
   getCardSound: {fileID: 8300000, guid: 97dc609353787c84da18e8dfe93c13e1, type: 3}
   grabSound: {fileID: 8300000, guid: 959b64aea028c9148bd91cc051bc203e, type: 3}
-  wrongPlacedSound: {fileID: 0}
-  backInHandSound: {fileID: 0}
 --- !u!114 &114451466171897714
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771701147288860}
   m_Enabled: 1
@@ -234,7 +231,7 @@ MonoBehaviour:
 --- !u!114 &114522388215263920
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771701147288860}
   m_Enabled: 1
@@ -250,7 +247,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: a4857dee2a3758b459f9365593ad7c4a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 53047b2cdfb8ae74d844fdf992977ae1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -261,7 +258,7 @@ MonoBehaviour:
 --- !u!114 &114658364037997566
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1311593215816164}
   m_Enabled: 1
@@ -277,7 +274,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: ef7e678dc2e36d54d9e23588e403999f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e98fe017ee534b3408cc8724540b01fe, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -288,19 +285,21 @@ MonoBehaviour:
 --- !u!222 &222487717086731370
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771701147288860}
+  m_CullTransparentMesh: 0
 --- !u!222 &222856270796800444
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1311593215816164}
+  m_CullTransparentMesh: 0
 --- !u!224 &224155997982957912
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1311593215816164}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0.00000028088027}
@@ -318,7 +317,7 @@ RectTransform:
 --- !u!224 &224271976657578284
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771701147288860}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -337,7 +336,7 @@ RectTransform:
 --- !u!225 &225441167928095114
 CanvasGroup:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1771701147288860}
   m_Enabled: 1

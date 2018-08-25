@@ -8,15 +8,15 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1918442987429298}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1382905171961258
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224111465025880330}
   - component: {fileID: 222123280306368194}
@@ -31,9 +31,9 @@ GameObject:
 --- !u!1 &1918442987429298
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224263421930549858}
   - component: {fileID: 222303975419372014}
@@ -53,7 +53,7 @@ GameObject:
 --- !u!82 &82570269832750776
 AudioSource:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1918442987429298}
   m_Enabled: 1
@@ -149,7 +149,7 @@ AudioSource:
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1918442987429298}
   m_Enabled: 1
@@ -166,7 +166,7 @@ Animator:
 --- !u!114 &114000070943824520
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1918442987429298}
   m_Enabled: 1
@@ -182,7 +182,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 4faf595bc21c2cb4b88c2aff22a2995e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8a44269c890060641912bee3b2bb893b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -193,7 +193,7 @@ MonoBehaviour:
 --- !u!114 &114094930019585382
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1918442987429298}
   m_Enabled: 1
@@ -240,7 +240,7 @@ MonoBehaviour:
 --- !u!114 &114211456025974450
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1382905171961258}
   m_Enabled: 1
@@ -256,7 +256,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: ef7e678dc2e36d54d9e23588e403999f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e98fe017ee534b3408cc8724540b01fe, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -267,7 +267,7 @@ MonoBehaviour:
 --- !u!114 &114681832947998686
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1918442987429298}
   m_Enabled: 1
@@ -276,30 +276,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canGroup: {fileID: 225155606171060292}
-  buildingName: Crane
-  description: You can build one more building each round.
+  buildingName: CRANE
+  description: Lets you build one more building each turn.
   cardType: 4
   buildID: 0
   getCardSound: {fileID: 8300000, guid: 97dc609353787c84da18e8dfe93c13e1, type: 3}
   grabSound: {fileID: 8300000, guid: 959b64aea028c9148bd91cc051bc203e, type: 3}
-  wrongPlacedSound: {fileID: 0}
-  backInHandSound: {fileID: 0}
 --- !u!222 &222123280306368194
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1382905171961258}
+  m_CullTransparentMesh: 0
 --- !u!222 &222303975419372014
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1918442987429298}
+  m_CullTransparentMesh: 0
 --- !u!224 &224111465025880330
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1382905171961258}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0.00000028088027}
@@ -317,7 +317,7 @@ RectTransform:
 --- !u!224 &224263421930549858
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1918442987429298}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -336,7 +336,7 @@ RectTransform:
 --- !u!225 &225155606171060292
 CanvasGroup:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1918442987429298}
   m_Enabled: 1

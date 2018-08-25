@@ -8,15 +8,15 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1132293227770708}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1132293227770708
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224553747166685610}
   - component: {fileID: 222254466549834104}
@@ -36,9 +36,9 @@ GameObject:
 --- !u!1 &1635934367326418
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224455660399098960}
   - component: {fileID: 222873689315566754}
@@ -53,7 +53,7 @@ GameObject:
 --- !u!82 &82368258175890238
 AudioSource:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1132293227770708}
   m_Enabled: 1
@@ -149,7 +149,7 @@ AudioSource:
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1132293227770708}
   m_Enabled: 1
@@ -166,7 +166,7 @@ Animator:
 --- !u!114 &114083385173091890
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1132293227770708}
   m_Enabled: 1
@@ -175,18 +175,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canGroup: {fileID: 225081829619823586}
-  buildingName: Radio Tower
+  buildingName: STOP
   description: Planes will stop here even if they normaly would fly further.
   cardType: 1
   buildID: 0
   getCardSound: {fileID: 8300000, guid: 97dc609353787c84da18e8dfe93c13e1, type: 3}
   grabSound: {fileID: 8300000, guid: 959b64aea028c9148bd91cc051bc203e, type: 3}
-  wrongPlacedSound: {fileID: 0}
-  backInHandSound: {fileID: 0}
 --- !u!114 &114330001189442752
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1132293227770708}
   m_Enabled: 1
@@ -202,7 +200,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 179cbd136a73f714faf7f6cf9c48c724, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0d0b3bd44ee23f643978990fed1d7c7e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -213,7 +211,7 @@ MonoBehaviour:
 --- !u!114 &114419480349000152
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1132293227770708}
   m_Enabled: 1
@@ -260,7 +258,7 @@ MonoBehaviour:
 --- !u!114 &114716269043625592
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1635934367326418}
   m_Enabled: 1
@@ -276,7 +274,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: ef7e678dc2e36d54d9e23588e403999f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e98fe017ee534b3408cc8724540b01fe, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -287,19 +285,21 @@ MonoBehaviour:
 --- !u!222 &222254466549834104
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1132293227770708}
+  m_CullTransparentMesh: 0
 --- !u!222 &222873689315566754
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1635934367326418}
+  m_CullTransparentMesh: 0
 --- !u!224 &224455660399098960
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1635934367326418}
   m_LocalRotation: {x: 0, y: 1, z: -0, w: -0.0000001872535}
@@ -317,7 +317,7 @@ RectTransform:
 --- !u!224 &224553747166685610
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1132293227770708}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -336,7 +336,7 @@ RectTransform:
 --- !u!225 &225081829619823586
 CanvasGroup:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1132293227770708}
   m_Enabled: 1

@@ -8,15 +8,15 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1422120777938564}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1413002540150272
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224727000347208896}
   - component: {fileID: 222000731682651528}
@@ -31,9 +31,9 @@ GameObject:
 --- !u!1 &1422120777938564
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 224164392740263196}
   - component: {fileID: 222185940162614176}
@@ -53,7 +53,7 @@ GameObject:
 --- !u!82 &82879572414650474
 AudioSource:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422120777938564}
   m_Enabled: 1
@@ -149,7 +149,7 @@ AudioSource:
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422120777938564}
   m_Enabled: 1
@@ -166,7 +166,7 @@ Animator:
 --- !u!114 &114105968683966932
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422120777938564}
   m_Enabled: 1
@@ -174,9 +174,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a73a8b6b27f5f4b4b8848708565addc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tokenName: Cleaning Wind
-  discription: Reactivates dirty fields. Fields that are dirty lose their bonus while
-    they are dirty.
+  tokenName: CLEANING WIND
+  discription: Cleans up dirty fields. Fields that are dirty loose their bonus aslong
+    as they are dirty.
   canGroup: {fileID: 225081135462305770}
   getCardSound: {fileID: 8300000, guid: 97dc609353787c84da18e8dfe93c13e1, type: 3}
   grabSound: {fileID: 8300000, guid: e4e83f24592646c4c8ebc5690315c841, type: 3}
@@ -185,7 +185,7 @@ MonoBehaviour:
 --- !u!114 &114274237864716524
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1413002540150272}
   m_Enabled: 1
@@ -212,7 +212,7 @@ MonoBehaviour:
 --- !u!114 &114708019095211290
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422120777938564}
   m_Enabled: 1
@@ -259,7 +259,7 @@ MonoBehaviour:
 --- !u!114 &114718142945209586
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422120777938564}
   m_Enabled: 1
@@ -286,19 +286,21 @@ MonoBehaviour:
 --- !u!222 &222000731682651528
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1413002540150272}
+  m_CullTransparentMesh: 0
 --- !u!222 &222185940162614176
 CanvasRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422120777938564}
+  m_CullTransparentMesh: 0
 --- !u!224 &224164392740263196
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422120777938564}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -317,7 +319,7 @@ RectTransform:
 --- !u!224 &224727000347208896
 RectTransform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1413002540150272}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
@@ -335,7 +337,7 @@ RectTransform:
 --- !u!225 &225081135462305770
 CanvasGroup:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1422120777938564}
   m_Enabled: 1
