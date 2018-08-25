@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlaneController : MonoBehaviour
 {
 	enum PlaneRotation { NONE, LEFT, RIGHT }
+	enum Destination { NONE, NORTH, EAST, SOUTH, WEST }
 	#region plane parts
 	[Header("Plane Parts", order = 2)]
 	[SerializeField]
@@ -41,6 +43,7 @@ public class PlaneController : MonoBehaviour
 	private float crashFallSpeed = 0.4f;
 	private Vector4 borders;
 	bool landing = false;
+	bool isStartingPlane = false;
 	#endregion
 	#region gameplay variables
 	private PlaneRotation planeRotation = PlaneRotation.NONE;
@@ -52,6 +55,16 @@ public class PlaneController : MonoBehaviour
 	private Vector3 checkPointPos;
 	private int movesDone = 0;
 	private bool callCrashFinished = false;
+	private Destination destinationDir = Destination.NONE;
+	private bool flying = true;
+	private Camera currentCam;
+	private bool grabbed = false;
+	private Vector3 defaultPos;
+	private Quaternion defaultRot;
+	private bool onStartapult = false;
+	private bool showFB = true;
+	private int startID;
+	private BoxCollider interactionTrigger;
 	#endregion
 	#region sound variables
 	[SerializeField]
@@ -76,15 +89,13 @@ public class PlaneController : MonoBehaviour
 	}
 	#endregion
 
-	private void OnDrawGizmos()
-	{
-		Gizmos.color = Color.red;
-		Gizmos.DrawLine(transform.position, transform.position + transform.forward);
-	}
-
 	void Start()
 	{
-		movementFeedback.transform.parent = null;
+		BoxCollider[] colliders = GetComponents<BoxCollider>();
+		foreach(BoxCollider collider in colliders)
+		{
+			if (collider.isTrigger) interactionTrigger = collider;
+		}
 		audioSource = GetComponent<AudioSource>();
 		audioSource.clip = planeRotateClip;
 		planeTransform = transform;
@@ -92,68 +103,148 @@ public class PlaneController : MonoBehaviour
 
 	public void ShowMovementFeedback(bool show)
 	{
-		
-		if (show)
+		showFB = show;
+		if (flying)
 		{
-			movementFeedback.transform.localScale = new Vector3(1, 1, 1);
-			moveFBAnim.SetTrigger("Reset");
-		}
-		else
-		{
-			movementFeedback.transform.localScale = new Vector3(0, 0, 0);
+			if (show)
+			{
+				movementFeedback.transform.localScale = new Vector3(1, 1, 1);
+				moveFBAnim.SetTrigger("Reset");
+			}
+			else
+			{
+				movementFeedback.transform.localScale = new Vector3(0, 0, 0);
+			}
 		}
 	}
 
-	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show, bool sound)
+	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show, bool sound, int id, bool startingPlane = false)
 	{
+		startID = id;
+		showFB = show;
 		AllowSound = sound;
 		planeMan = manager;
 		borders = mapBorders;
-		movementFeedback.SetActive(show);
+		isStartingPlane = startingPlane;
+		if (isStartingPlane)
+		{
+			int dir = Random.Range(0, 3);
+			switch (dir)
+			{
+				case 0:
+					destinationDir = Destination.NORTH;
+					break;
+				case 1:
+					destinationDir = Destination.SOUTH;
+					break;
+				case 2:
+					destinationDir = Destination.EAST;
+					break;
+			}
+			flying = false;
+			landingAnim.SetTrigger("Start");
+			movementFeedback.transform.localScale = new Vector3(0, 0, 0);
+		}
+		else
+		{
+			movementFeedback.transform.parent = null;
+			ShowMovementFeedback(show);
+		}
+		defaultPos = transform.position;
+		defaultRot = transform.rotation;
 	}
 
 	private void OnCollisionEnter(Collision collision)
 	{
-		if (planeMan.CrashStarted(planeTransform.position, planeTransform.forward))
+		if (flying)
 		{
-			callCrashFinished = true;
-			if (AllowSound)
+			if (planeMan.CrashStarted(planeTransform.position, planeTransform.forward))
 			{
-				audioSource.clip = planeCrashClip;
-				audioSource.Play();
+				callCrashFinished = true;
+				if (AllowSound)
+				{
+					audioSource.clip = planeCrashClip;
+					audioSource.Play();
+				}
 			}
+			StartCoroutine(CrashAnimation());
 		}
-		StartCoroutine(CrashAnimation());
+	}
+
+	private void OnMouseUp()
+	{
+		if (grabbed)
+		{
+			ReleasePlane();
+		}
+	}
+
+	private void ReleasePlane()
+	{
+		if (onStartapult)
+		{
+			grabbed = false;
+			flying = true;
+			planeMan.ReleasedPlane(startID ,true);
+			ShowMovementFeedback(showFB);
+			interactionTrigger.enabled = false;
+			StartapultRotation startapult = planeOnField.GetComponentInChildren<StartapultRotation>();
+			startapult.PlaneOnField = true;
+			planeTransform.parent = startapult.transform;
+		}
+		else ResetPlane();
+	}
+
+	private void ResetPlane()
+	{
+		grabbed = false;
+		planeMan.ReleasedPlane(startID, false);
+		landingAnim.SetTrigger("Start");
+		onStartapult = false;
+		planeOnField = null;
+		gameObject.transform.position = defaultPos;
+		gameObject.transform.rotation = defaultRot;
 	}
 
 	// plane was clicked for rotation
 	private void OnMouseDown()
 	{
-		if (notInteractable) return;
-		switch (planeRotation)
+		if (notInteractable)
 		{
-			case PlaneRotation.NONE:
-				if (planeMan.TryToRotatePlane())
-				{
-					planeRotation = PlaneRotation.RIGHT;
+			if (flying) return;
+			if (planeMan.TryToPlacePlane())
+			{
+				currentCam = planeMan.GiveCurrentCam();
+				StartCoroutine(FollowFinger());
+			}
+		}
+		else
+		{
+			switch (planeRotation)
+			{
+				case PlaneRotation.NONE:
+					if (planeMan.TryToRotatePlane())
+					{
+						planeRotation = PlaneRotation.RIGHT;
+						planeTransform.Rotate(planeTransform.up, 90);
+						movementFeedback.transform.Rotate(planeTransform.up, 90);
+						if (AllowSound) audioSource.Play();
+					}
+					break;
+				case PlaneRotation.RIGHT:
+					planeRotation = PlaneRotation.LEFT;
+					planeTransform.Rotate(planeTransform.up, -180);
+					movementFeedback.transform.Rotate(planeTransform.up, -180);
+					if (AllowSound) audioSource.Play();
+					break;
+				case PlaneRotation.LEFT:
+					planeRotation = PlaneRotation.NONE;
+					planeMan.PlaneIsRotatedToDefault();
 					planeTransform.Rotate(planeTransform.up, 90);
 					movementFeedback.transform.Rotate(planeTransform.up, 90);
 					if (AllowSound) audioSource.Play();
-				}
-				break;
-			case PlaneRotation.RIGHT:
-				planeRotation = PlaneRotation.LEFT;
-				planeTransform.Rotate(planeTransform.up, -180);
-				movementFeedback.transform.Rotate(planeTransform.up, -180);
-				if (AllowSound) audioSource.Play();
-				break;
-			case PlaneRotation.LEFT:
-				planeRotation = PlaneRotation.NONE;
-				planeMan.PlaneIsRotatedToDefault();
-				planeTransform.Rotate(planeTransform.up, 90);
-				movementFeedback.transform.Rotate(planeTransform.up, 90);
-				if (AllowSound) audioSource.Play();
-				break;
+					break;
+			}
 		}
 	}
 
@@ -163,17 +254,40 @@ public class PlaneController : MonoBehaviour
 		notInteractable = true;
 		planeRotation = PlaneRotation.NONE;
 		if (moveFBAnim != null) moveFBAnim.SetTrigger("Move");
-		movementCoroutine = StartCoroutine(MoveToNextField());
+		if (flying) movementCoroutine = StartCoroutine(MoveToNextField());
 	}
 
 	// plane moves as long as reached his destination
 	private IEnumerator MoveToNextField()
 	{
+		if(onStartapult)
+		{
+			planeTransform.parent = null;
+			movementFeedback.transform.parent = null;
+			planeOnField.GetComponentInChildren<StartapultRotation>().PlaneLeft();
+			interactionTrigger.enabled = true;
+			onStartapult = false;
+			planeOnField.PlanePathField();
+			switch (fieldsMovement)
+			{
+				case 1:
+					landingAnim.SetTrigger("Fly1");
+					break;
+				case 2:
+					landingAnim.SetTrigger("Fly2");
+					break;
+				case 3:
+					landingAnim.SetTrigger("Fly3");
+					break;
+			}
+		}
+
 		if (planeOnField != null)
 		{
 			planeOnField.PlaneOnField = false;
 			planeOnField = null;
 		}
+
 		Vector3 newPos = planeTransform.position + planeTransform.forward * fieldsMovement;
 		checkPointPos = planeTransform.position + planeTransform.forward * 0.51f;
 		movesDone = 0;
@@ -208,7 +322,7 @@ public class PlaneController : MonoBehaviour
 			{
 				checkPointPos = checkPointPos + planeTransform.forward;
 				movesDone++;
-				if (movesDone == fieldsMovement) CheckMapTile(true);
+				if (movesDone == fieldsMovement && !isStartingPlane) CheckMapTile(true);
 				else CheckMapTile();
 			}
 		}
@@ -218,7 +332,7 @@ public class PlaneController : MonoBehaviour
 	// fly as long the plane reached the stop or landing field it stops the MoveToNextField coroutine
 	private IEnumerator StopAtField(Vector3 newPos)
 	{
-		if(landing) landingAnim.SetTrigger("Land");
+		if (landing) landingAnim.SetTrigger("Land");
 		while (Fly(newPos))
 		{
 			yield return null;
@@ -306,7 +420,7 @@ public class PlaneController : MonoBehaviour
 		Destroy(movementFeedback.gameObject);
 		groundMarker.SetActive(false);
 		explosionPS.Play();
-		switch(fieldsMovement)
+		switch (fieldsMovement)
 		{
 			case 1:
 				landingAnim.SetTrigger("Crash_Small");
@@ -348,5 +462,49 @@ public class PlaneController : MonoBehaviour
 			yield return null;
 		}
 		Destroy(gameObject);
+	}
+
+	private IEnumerator FollowFinger()
+	{
+		grabbed = true;
+		Vector3 worldPoint;
+		RaycastHit hit;
+		while (grabbed)
+		{
+			Vector2 mouse = Input.mousePosition;
+			worldPoint = currentCam.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, 250));
+			if (Physics.Raycast(currentCam.transform.position, worldPoint, out hit, 10, ignoreMask))
+			{
+				MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
+				if (mapTile != null)
+				{
+					if (mapTile.TileStatus == MapTile.BuildStatus.Start && mapTile.IsBuildable)
+					{
+						landingAnim.SetTrigger("Prepare");
+						onStartapult = true;
+						planeOnField = mapTile;
+						gameObject.transform.position = mapTile.transform.position;
+						gameObject.transform.rotation = mapTile.transform.rotation;
+					}
+					else
+					{
+						onStartapult = false;
+						planeOnField = null;
+						landingAnim.SetTrigger("Start");
+						gameObject.transform.position = hit.point;
+					}
+				}
+				else
+				{
+					onStartapult = false;
+					planeOnField = null;
+					landingAnim.SetTrigger("Start");
+					gameObject.transform.position = hit.point;
+				}
+			}
+			else ResetPlane();
+
+			yield return null;
+		}
 	}
 }
