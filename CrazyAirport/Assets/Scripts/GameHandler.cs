@@ -114,8 +114,6 @@ public class GameHandler : MonoBehaviour
 	private GameObject dirtyLake;
 	[SerializeField]
 	private GameObject dirtyStopp;
-	[SerializeField]
-	private GameObject dirtyStart;
 	#endregion
 	#region gameplay variables
 	private bool gameEnd = false;
@@ -711,11 +709,6 @@ public class GameHandler : MonoBehaviour
 					case BuildingType.Start:
 						GameObject start = Instantiate(startingBuildings[buildID], buildingParent);
 						mapTile.TileStatus = MapTile.BuildStatus.Start;
-						if (dirtyStart != null)
-						{
-							GameObject dStart = Instantiate(dirtyStart, buildingParent);
-							mapTile.AddDirtyCleanMeshes(start, dStart);
-						}
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);
 						break;
