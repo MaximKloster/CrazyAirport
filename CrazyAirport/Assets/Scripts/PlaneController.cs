@@ -331,7 +331,7 @@ public class PlaneController : MonoBehaviour
 			{
 				checkPointPos = checkPointPos + planeTransform.forward;
 				movesDone++;
-				if (movesDone == fieldsMovement && !isStartingPlane) CheckMapTile(true);
+				if (movesDone == fieldsMovement) CheckMapTile(true);
 				else CheckMapTile();
 			}
 		}
@@ -403,7 +403,7 @@ public class PlaneController : MonoBehaviour
 
 				if (checkLanding)
 				{
-					if (status == MapTile.BuildStatus.Road)
+					if (status == MapTile.BuildStatus.Road && !isStartingPlane)
 					{
 						StopCoroutine(movementCoroutine);
 						landing = true;
