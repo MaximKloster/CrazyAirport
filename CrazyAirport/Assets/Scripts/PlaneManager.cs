@@ -240,6 +240,11 @@ public class PlaneManager : MonoBehaviour
 		return gameMaster.GiveCurrentCam();
 	}
 
+	public bool PerspectiveCam()
+	{
+		return gameMaster.PerspectiveCam();
+	}
+
 	public void PlaneIsRotatedToDefault()
 	{
 		gameMaster.InteractionPlaneReset();

@@ -68,7 +68,7 @@ public class PlaneController : MonoBehaviour
 	private bool onStartapult = false;
 	private bool showFB = true;
 	private int startID;
-	private BoxCollider interactionTrigger;
+	private BoxCollider[] planeColliders;
 	#endregion
 	#region sound variables
 	[SerializeField]
@@ -95,11 +95,7 @@ public class PlaneController : MonoBehaviour
 
 	void Start()
 	{
-		BoxCollider[] colliders = GetComponents<BoxCollider>();
-		foreach (BoxCollider collider in colliders)
-		{
-			if (collider.isTrigger) interactionTrigger = collider;
-		}
+		planeColliders = GetComponents<BoxCollider>();
 		audioSource = GetComponent<AudioSource>();
 		audioSource.clip = planeRotateClip;
 		planeTransform = transform;
@@ -203,11 +199,14 @@ public class PlaneController : MonoBehaviour
 	{
 		if (onStartapult)
 		{
+			foreach (BoxCollider collider in planeColliders)
+			{
+				if (!collider.isTrigger) collider.enabled = true;
+			}
 			grabbed = false;
 			flying = true;
 			planeMan.ReleasedPlane(startID, true);
 			ShowMovementFeedback(showFB);
-			interactionTrigger.enabled = false;
 			StartapultRotation startapult = planeOnField.GetComponentInChildren<StartapultRotation>();
 			startapult.PlaneOnField = true;
 			planeTransform.parent = startapult.transform;
@@ -217,6 +216,10 @@ public class PlaneController : MonoBehaviour
 
 	private void ResetPlane()
 	{
+		foreach (BoxCollider collider in planeColliders)
+		{
+			collider.enabled = true;
+		}
 		grabbed = false;
 		planeMan.ReleasedPlane(startID, false);
 		landingAnim.SetTrigger("Start");
@@ -234,7 +237,10 @@ public class PlaneController : MonoBehaviour
 			if (flying) return;
 			if (planeMan.TryToPlacePlane())
 			{
-				currentCam = planeMan.GiveCurrentCam();
+				foreach (BoxCollider collider in planeColliders)
+				{
+					collider.enabled = false;
+				}
 				StartCoroutine(FollowFinger());
 			}
 		}
@@ -282,10 +288,13 @@ public class PlaneController : MonoBehaviour
 	{
 		if (onStartapult)
 		{
+			foreach (BoxCollider collider in planeColliders)
+			{
+				if (collider.isTrigger) collider.enabled = true;
+			}
 			planeTransform.parent = null;
 			movementFeedback.transform.parent = null;
 			planeOnField.GetComponentInChildren<StartapultRotation>().PlaneLeft();
-			interactionTrigger.enabled = true;
 			onStartapult = false;
 			planeOnField.PlanePathField();
 			landingAnim.SetTrigger("Fly");
@@ -422,13 +431,7 @@ public class PlaneController : MonoBehaviour
 	// after reached destination check if the plane is outsite the map
 	private void CheckBorders()
 	{
-		if (planeTransform.position.x <= borders.x)
-		{
-			if (isStartingPlane && destinationDir == Destination.WEST) planeMan.PlaneReachedDestination(this);
-			else planeMan.OutOfMap(this, fieldsMovement);
-			StartCoroutine(FlyAwayAnimation());
-		}
-		else if (planeTransform.position.z >= borders.y)
+		if (planeTransform.position.z >= borders.y)
 		{
 			if (isStartingPlane && destinationDir == Destination.NORTH) planeMan.PlaneReachedDestination(this);
 			else planeMan.OutOfMap(this, fieldsMovement);
@@ -446,13 +449,19 @@ public class PlaneController : MonoBehaviour
 			else planeMan.OutOfMap(this, fieldsMovement);
 			StartCoroutine(FlyAwayAnimation());
 		}
+		else if (planeTransform.position.x <= borders.x)
+		{
+			if (isStartingPlane && destinationDir == Destination.WEST) planeMan.PlaneReachedDestination(this);
+			else planeMan.OutOfMap(this, fieldsMovement);
+			StartCoroutine(FlyAwayAnimation());
+		}
 		else notInteractable = false;
 	}
 
 	// if crash with an object start crash animation
 	private IEnumerator CrashAnimation()
 	{
-		StopCoroutine(movementCoroutine);
+		if(movementCoroutine != null) StopCoroutine(movementCoroutine);
 		GetComponent<Collider>().enabled = false;
 		Destroy(movementFeedback.gameObject);
 		groundMarker.SetActive(false);
@@ -504,25 +513,37 @@ public class PlaneController : MonoBehaviour
 
 	private IEnumerator FollowFinger()
 	{
+		currentCam = planeMan.GiveCurrentCam();
+		bool perspectivCam = planeMan.PerspectiveCam();
 		grabbed = true;
 		Vector3 worldPoint;
 		RaycastHit hit;
 		while (grabbed)
 		{
 			Vector2 mouse = Input.mousePosition;
-			worldPoint = currentCam.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, 250));
-			if (Physics.Raycast(currentCam.transform.position, worldPoint, out hit, 10, ignoreMask))
+			if (perspectivCam)
 			{
-				MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
-				if (mapTile != null)
+				worldPoint = currentCam.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, 250));
+				if (Physics.Raycast(currentCam.transform.position, worldPoint, out hit, 10, ignoreMask))
 				{
-					if (mapTile.TileStatus == MapTile.BuildStatus.Start && mapTile.IsBuildable)
+					MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
+					if (mapTile != null)
 					{
-						landingAnim.SetTrigger("Prepare");
-						onStartapult = true;
-						planeOnField = mapTile;
-						SetItemsPosition(mapTile.transform.position);
-						gameObject.transform.rotation = mapTile.transform.rotation;
+						if (mapTile.TileStatus == MapTile.BuildStatus.Start && mapTile.IsBuildable)
+						{
+							landingAnim.SetTrigger("Prepare");
+							onStartapult = true;
+							planeOnField = mapTile;
+							SetItemsPosition(mapTile.transform.position);
+							gameObject.transform.rotation = mapTile.transform.rotation;
+						}
+						else
+						{
+							onStartapult = false;
+							planeOnField = null;
+							landingAnim.SetTrigger("Start");
+							SetItemsPosition(hit.point);
+						}
 					}
 					else
 					{
@@ -532,16 +553,42 @@ public class PlaneController : MonoBehaviour
 						SetItemsPosition(hit.point);
 					}
 				}
-				else
-				{
-					onStartapult = false;
-					planeOnField = null;
-					landingAnim.SetTrigger("Start");
-					SetItemsPosition(hit.point);
-				}
+				else ResetPlane();
 			}
-			else ResetPlane();
-
+			else
+			{
+				Ray ray = currentCam.ScreenPointToRay(new Vector3(mouse.x, mouse.y, 250));
+				if (Physics.Raycast(ray.origin, currentCam.transform.forward, out hit, 10, ignoreMask))
+				{
+					MapTile mapTile = hit.collider.gameObject.GetComponent<MapTile>();
+					if (mapTile != null)
+					{
+						if (mapTile.TileStatus == MapTile.BuildStatus.Start && mapTile.IsBuildable)
+						{
+							landingAnim.SetTrigger("Prepare");
+							onStartapult = true;
+							planeOnField = mapTile;
+							SetItemsPosition(mapTile.transform.position);
+							gameObject.transform.rotation = mapTile.transform.rotation;
+						}
+						else
+						{
+							onStartapult = false;
+							planeOnField = null;
+							landingAnim.SetTrigger("Start");
+							SetItemsPosition(hit.point);
+						}
+					}
+					else
+					{
+						onStartapult = false;
+						planeOnField = null;
+						landingAnim.SetTrigger("Start");
+						SetItemsPosition(hit.point);
+					}
+				}
+				else ResetPlane();
+			}
 			yield return null;
 		}
 	}

@@ -370,6 +370,11 @@ public class GameHandler : MonoBehaviour
 		return camControl.GetCurrentCamera().GetComponent<Camera>();
 	}
 
+	public bool PerspectiveCam()
+	{
+		return camControl.CamRotationAllowed;
+	}
+
 	public bool CheckIfHaveControlPoints()
 	{
 		if (gameEnd || waitForContinue) return false;
