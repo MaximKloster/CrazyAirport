@@ -245,7 +245,7 @@ public class PlaneManager : MonoBehaviour
 		{
 			int sp;
 			bool spawnStartPlane = false;
-			//if(currentLevel > 1)
+			if(currentLevel > 1)
 			{
 				if(startPlaneOnSpawnPoints[0] == -1 || startPlaneOnSpawnPoints[1] == -1)
 				{

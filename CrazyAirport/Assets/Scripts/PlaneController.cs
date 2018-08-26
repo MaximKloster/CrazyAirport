@@ -268,18 +268,7 @@ public class PlaneController : MonoBehaviour
 			interactionTrigger.enabled = true;
 			onStartapult = false;
 			planeOnField.PlanePathField();
-			switch (fieldsMovement)
-			{
-				case 1:
-					landingAnim.SetTrigger("Fly1");
-					break;
-				case 2:
-					landingAnim.SetTrigger("Fly2");
-					break;
-				case 3:
-					landingAnim.SetTrigger("Fly3");
-					break;
-			}
+			landingAnim.SetTrigger("Fly");
 		}
 
 		if (planeOnField != null)
