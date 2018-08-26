@@ -627,10 +627,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1463346730827680, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
-      propertyPath: m_Name
-      value: WholeGamePrefab
-      objectReference: {fileID: 0}
     - target: {fileID: 95794900921776154, guid: 0b5619b587f35cd4ba089805a47ae86d,
         type: 2}
       propertyPath: m_Controller
