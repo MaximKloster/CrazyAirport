@@ -82,6 +82,7 @@ public class MapTile : MonoBehaviour
 
 	private void Start()
 	{
+		if (dirtyMesh != null) dirtyMesh.SetActive(false);
 		highlightMesh.gameObject.SetActive(false);
 	}
 
@@ -111,6 +112,7 @@ public class MapTile : MonoBehaviour
 			dirtPS.Stop();
 			if (tileStatus == BuildStatus.Park) gameMaster.DeactivatedPark(false);
 			if (dirtyMesh != null && cleanMesh != null) ChangeMesh(false);
+			if (tileStatus == BuildStatus.Start) GetComponentInChildren<StartapultRotation>().CleanStart();
 		}
 	}
 

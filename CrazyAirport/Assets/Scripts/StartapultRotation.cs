@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class StartapultRotation : MonoBehaviour
 {
+	[SerializeField]
+	private Animator anim;
+	[SerializeField]
+	private GameObject cleanMesh;
+	[SerializeField]
+	private GameObject dirtyMesh;
 	private Quaternion defaultRotation;
 	private bool planeOnField = false;
 	public bool PlaneOnField
@@ -18,6 +24,7 @@ public class StartapultRotation : MonoBehaviour
 			planeOnField = value;
 		}
 	}
+	
 
 	private void Start()
 	{
@@ -26,8 +33,18 @@ public class StartapultRotation : MonoBehaviour
 
 	public void PlaneLeft()
 	{
+		anim.SetTrigger("Fire");
 		PlaneOnField = false;
 		StartCoroutine(RotateBackAfterTime());
+	}
+
+	public void CleanStart()
+	{
+		if(cleanMesh != null && dirtyMesh != null)
+		{
+			cleanMesh.SetActive(true);
+			dirtyMesh.SetActive(false);
+		}
 	}
 
 	private void OnMouseDown()
@@ -37,7 +54,13 @@ public class StartapultRotation : MonoBehaviour
 
 	private IEnumerator RotateBackAfterTime()
 	{
-		yield return new WaitForSeconds(1);
+		yield return new WaitForSeconds(0.3f);
+		if (cleanMesh != null && dirtyMesh != null)
+		{
+			cleanMesh.SetActive(false);
+			dirtyMesh.SetActive(true);
+		}
+		yield return new WaitForSeconds(0.7f);
 		transform.rotation = defaultRotation;
 	}
 }
