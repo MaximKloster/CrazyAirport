@@ -298,19 +298,16 @@ public class GameHandler : MonoBehaviour
 		StartCoroutine(ShowEndScreenAfterTime());
 	}
 
-	public void QuitGame()
-	{
-		Application.Quit();
-	}
-
 	public void BackToMainMenu()
 	{
+		PlayerPrefs.SetInt("MainMenu", 1);
 		SceneManager.LoadScene("Start");
 	}
 
 	public void BackToLevels()
 	{
-		SceneManager.LoadScene("LevelSelection");
+		PlayerPrefs.SetInt("MainMenu", 2);
+		SceneManager.LoadScene("Start");
 	}
 
 	private void SupportRound()
