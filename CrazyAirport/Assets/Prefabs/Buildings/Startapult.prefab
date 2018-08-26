@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33504551255088158}
   - component: {fileID: 23387197717179280}
   m_Layer: 0
-  m_Name: Plane.020
+  m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 33864708582714694}
   - component: {fileID: 23393302405967376}
   m_Layer: 0
-  m_Name: Plane.067
+  m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 33524869474720330}
   - component: {fileID: 23885713370260318}
   m_Layer: 0
-  m_Name: Plane.817
+  m_Name: Road
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 33254838759558276}
   - component: {fileID: 23725177895292504}
   m_Layer: 0
-  m_Name: Rotator.001
+  m_Name: Rotator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 33143263650620340}
   - component: {fileID: 23787474780070816}
   m_Layer: 0
-  m_Name: Cube.001
+  m_Name: Ramp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 33307744078813418}
   - component: {fileID: 23382364031424000}
   m_Layer: 0
-  m_Name: Plane.021
+  m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -123,8 +123,9 @@ GameObject:
   - component: {fileID: 4221617790622322}
   - component: {fileID: 33579706389361274}
   - component: {fileID: 23324416828262972}
+  - component: {fileID: 95178507223498940}
   m_Layer: 0
-  m_Name: Plane.069
+  m_Name: Lamps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -156,7 +157,7 @@ GameObject:
   - component: {fileID: 33985689744838314}
   - component: {fileID: 23403903230743218}
   m_Layer: 0
-  m_Name: Plane.819
+  m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -173,7 +174,7 @@ GameObject:
   - component: {fileID: 33178436168960558}
   - component: {fileID: 23924824909356532}
   m_Layer: 0
-  m_Name: Rope.001
+  m_Name: Rope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -211,7 +212,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1524939451611606
 GameObject:
   m_ObjectHideFlags: 1
@@ -223,7 +224,7 @@ GameObject:
   - component: {fileID: 33829865978358532}
   - component: {fileID: 23532747043963926}
   m_Layer: 0
-  m_Name: Plane.022
+  m_Name: Road
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -240,7 +241,7 @@ GameObject:
   - component: {fileID: 33540692497688828}
   - component: {fileID: 23070949247375532}
   m_Layer: 0
-  m_Name: Plane.820
+  m_Name: Outline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -273,7 +274,7 @@ GameObject:
   - component: {fileID: 33743973339905808}
   - component: {fileID: 23746860794618630}
   m_Layer: 0
-  m_Name: Plane.036
+  m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -289,8 +290,9 @@ GameObject:
   - component: {fileID: 4847979617325218}
   - component: {fileID: 33568865664766910}
   - component: {fileID: 23204630885091768}
+  - component: {fileID: 95085689347622078}
   m_Layer: 0
-  m_Name: Plane.035
+  m_Name: Lamps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -325,7 +327,7 @@ GameObject:
   - component: {fileID: 33747905137403094}
   - component: {fileID: 23549036868174162}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Ramp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1253,6 +1255,42 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.75, z: 1}
   m_Center: {x: 0, y: 0.35, z: 0}
+--- !u!95 &95085689347622078
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1756413100633460}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: dd80cb4b5b9c323418865bc31b3c064f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!95 &95178507223498940
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1295284767442944}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: dd80cb4b5b9c323418865bc31b3c064f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!95 &95282906813849720
 Animator:
   serializedVersion: 3
@@ -1262,7 +1300,7 @@ Animator:
   m_GameObject: {fileID: 1483669194151940}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 1b94f8c9bc8dfca49b746f576eadc12b, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 238e35b48f80d8d42af6b19d2a95572b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1300,6 +1338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc0277037e7df5458e72999e90ef351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anim: {fileID: 0}
   cleanMesh: {fileID: 1483669194151940}
   dirtyMesh: {fileID: 1355475792919272}
 --- !u!137 &137482184967902028
@@ -1343,7 +1382,8 @@ SkinnedMeshRenderer:
   m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 4300006, guid: 1b94f8c9bc8dfca49b746f576eadc12b, type: 3}
   m_Bones: []
-  m_BlendShapeWeights: []
+  m_BlendShapeWeights:
+  - 1.0695411
   m_RootBone: {fileID: 0}
   m_AABB:
     m_Center: {x: -0.00000032328535, y: 0.0014262696, z: 0.003691722}
