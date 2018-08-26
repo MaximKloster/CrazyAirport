@@ -21,9 +21,13 @@ public class PlaneController : MonoBehaviour
 	[SerializeField]
 	private GameObject movementFeedback;
 	[SerializeField]
+	private GameObject directionFeedback;
+	[SerializeField]
 	private Animator landingAnim;
 	[SerializeField]
 	private Animator moveFBAnim;
+	[SerializeField]
+	private Material[] dirFBMats; // 0 = North, 1 = East, 2 = South, 3 = West
 	#endregion
 	#region plane variables
 	[Header("Variables", order = 2)]
@@ -92,7 +96,7 @@ public class PlaneController : MonoBehaviour
 	void Start()
 	{
 		BoxCollider[] colliders = GetComponents<BoxCollider>();
-		foreach(BoxCollider collider in colliders)
+		foreach (BoxCollider collider in colliders)
 		{
 			if (collider.isTrigger) interactionTrigger = collider;
 		}
@@ -118,7 +122,7 @@ public class PlaneController : MonoBehaviour
 		}
 	}
 
-	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show, bool sound, int id, bool startingPlane = false)
+	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show, bool sound, int id, bool allDirections = false, bool startingPlane = false)
 	{
 		startID = id;
 		showFB = show;
@@ -128,30 +132,44 @@ public class PlaneController : MonoBehaviour
 		isStartingPlane = startingPlane;
 		if (isStartingPlane)
 		{
-			int dir = Random.Range(0, 3);
-			switch (dir)
-			{
-				case 0:
-					destinationDir = Destination.NORTH;
-					break;
-				case 1:
-					destinationDir = Destination.SOUTH;
-					break;
-				case 2:
-					destinationDir = Destination.EAST;
-					break;
-			}
-			flying = false;
-			landingAnim.SetTrigger("Start");
-			movementFeedback.transform.localScale = new Vector3(0, 0, 0);
+			SetUpStartingPlane(allDirections);
 		}
 		else
 		{
+			directionFeedback.SetActive(false);
 			movementFeedback.transform.parent = null;
 			ShowMovementFeedback(show);
 		}
 		defaultPos = transform.position;
 		defaultRot = transform.rotation;
+	}
+
+	private void SetUpStartingPlane(bool allDirections)
+	{
+		Debug.Log("setup");
+		int dir = Random.Range(0, allDirections ? 4 : 3);
+		switch (dir)
+		{
+			case 0:
+				destinationDir = Destination.NORTH;
+				break;
+			case 1:
+				destinationDir = Destination.SOUTH;
+				break;
+			case 2:
+				destinationDir = Destination.EAST;
+				break;
+			case 3:
+				destinationDir = Destination.WEST;
+				break;
+		}
+		Debug.Log(destinationDir);
+		directionFeedback.GetComponentInChildren<MeshRenderer>().material = dirFBMats[dir];
+		flying = false;
+		landingAnim.SetTrigger("Start");
+		movementFeedback.transform.localScale = new Vector3(0, 0, 0);
+		//directionFeedback.transform.parent = null;
+		directionFeedback.SetActive(true);
 	}
 
 	private void OnCollisionEnter(Collision collision)
@@ -185,7 +203,7 @@ public class PlaneController : MonoBehaviour
 		{
 			grabbed = false;
 			flying = true;
-			planeMan.ReleasedPlane(startID ,true);
+			planeMan.ReleasedPlane(startID, true);
 			ShowMovementFeedback(showFB);
 			interactionTrigger.enabled = false;
 			StartapultRotation startapult = planeOnField.GetComponentInChildren<StartapultRotation>();
@@ -260,7 +278,7 @@ public class PlaneController : MonoBehaviour
 	// plane moves as long as reached his destination
 	private IEnumerator MoveToNextField()
 	{
-		if(onStartapult)
+		if (onStartapult)
 		{
 			planeTransform.parent = null;
 			movementFeedback.transform.parent = null;
