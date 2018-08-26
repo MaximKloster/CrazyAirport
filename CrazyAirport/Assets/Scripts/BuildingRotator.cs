@@ -23,14 +23,17 @@ public class BuildingRotator : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		switch (rotType)
+		if (rotator != null)
 		{
-			case RotationType.Y:
-				rotator.Rotate(rotator.up, Time.deltaTime * -rotationSpeed);
-				break;
-			case RotationType.Z:
-				rotator.Rotate(rotator.forward, Time.deltaTime * rotationSpeed);
-				break;
+			switch (rotType)
+			{
+				case RotationType.Y:
+					rotator.Rotate(rotator.up, Time.deltaTime * -rotationSpeed);
+					break;
+				case RotationType.Z:
+					rotator.Rotate(rotator.forward, Time.deltaTime * rotationSpeed);
+					break;
+			}
 		}
 	}
 }

@@ -360,6 +360,7 @@ public class PlaneController : MonoBehaviour
 			planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime), planeMesh.transform.position.z);
 			planeMan.PlaneLanded(this);
 			Destroy(movementFeedback.gameObject);
+			Destroy(groundMarker.gameObject);
 			yield return new WaitForSeconds(0.5f);
 			Destroy(gameObject);
 		}

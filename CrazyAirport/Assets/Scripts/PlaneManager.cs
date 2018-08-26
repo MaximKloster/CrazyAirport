@@ -7,6 +7,14 @@ public class PlaneManager : MonoBehaviour
 	#region setup variables
 	[Header("Setup", order = 2)]
 	[SerializeField]
+	private GameObject[] bases;
+	[SerializeField]
+	private GameObject startapult;
+	[SerializeField]
+	private MapTile mapTileStartapult;
+	[SerializeField]
+	private GameObject startapultTile;
+	[SerializeField]
 	private GameHandler gameMaster;
 	[SerializeField]
 	private Transform[] allSpawnpoints;
@@ -92,6 +100,22 @@ public class PlaneManager : MonoBehaviour
 	void Start()
 	{
 		currentLevel = PlayerPrefs.GetInt("Level");
+		if(currentLevel > 1)
+		{
+			bases[0].SetActive(false);
+			bases[1].SetActive(true);
+			startapult.SetActive(true);
+			startapultTile.SetActive(false);
+			mapTileStartapult.TileStatus = MapTile.BuildStatus.Start;
+		}
+		else
+		{
+			bases[0].SetActive(true);
+			bases[1].SetActive(false);
+			startapult.SetActive(false);
+			startapultTile.SetActive(true);
+			mapTileStartapult.TileStatus = MapTile.BuildStatus.Empty;
+		}
 		audioSource = GetComponent<AudioSource>();
 		turn = 0;
 		level = 0;
