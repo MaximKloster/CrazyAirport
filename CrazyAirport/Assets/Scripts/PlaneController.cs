@@ -103,6 +103,7 @@ public class PlaneController : MonoBehaviour
 		audioSource = GetComponent<AudioSource>();
 		audioSource.clip = planeRotateClip;
 		planeTransform = transform;
+		groundMarker.transform.parent = null;
 	}
 
 	public void ShowMovementFeedback(bool show)
@@ -146,29 +147,30 @@ public class PlaneController : MonoBehaviour
 
 	private void SetUpStartingPlane(bool allDirections)
 	{
-		Debug.Log("setup");
 		int dir = Random.Range(0, allDirections ? 4 : 3);
 		switch (dir)
 		{
 			case 0:
 				destinationDir = Destination.NORTH;
+				directionFeedback.transform.Rotate(directionFeedback.transform.up, 180);
 				break;
 			case 1:
 				destinationDir = Destination.SOUTH;
 				break;
 			case 2:
 				destinationDir = Destination.EAST;
+				directionFeedback.transform.Rotate(directionFeedback.transform.up, -90);
 				break;
 			case 3:
 				destinationDir = Destination.WEST;
+				directionFeedback.transform.Rotate(directionFeedback.transform.up, 90);
 				break;
 		}
-		Debug.Log(destinationDir);
 		directionFeedback.GetComponentInChildren<MeshRenderer>().material = dirFBMats[dir];
+		directionFeedback.transform.parent = null;
 		flying = false;
 		landingAnim.SetTrigger("Start");
 		movementFeedback.transform.localScale = new Vector3(0, 0, 0);
-		//directionFeedback.transform.parent = null;
 		directionFeedback.SetActive(true);
 	}
 
@@ -220,7 +222,7 @@ public class PlaneController : MonoBehaviour
 		landingAnim.SetTrigger("Start");
 		onStartapult = false;
 		planeOnField = null;
-		gameObject.transform.position = defaultPos;
+		SetItemsPosition(defaultPos);
 		gameObject.transform.rotation = defaultRot;
 	}
 
@@ -314,7 +316,7 @@ public class PlaneController : MonoBehaviour
 
 		if (currentFlyDistance > flyDistance)
 		{
-			planeTransform.position = newPos;
+			SetItemsPosition(newPos);
 			return false;
 		}
 		else
@@ -322,8 +324,8 @@ public class PlaneController : MonoBehaviour
 			bool checkFielAfterMove = false;
 			if (currentFlyDistance > Vector3.Distance(planeTransform.position, checkPointPos)) checkFielAfterMove = true;
 
-			if (landing) planeTransform.position = planeTransform.position + planeTransform.forward * Time.deltaTime;
-			else planeTransform.position = planeTransform.position + planeTransform.forward * fieldsMovement * Time.deltaTime;
+			if (landing) SetItemsPosition(planeTransform.position + planeTransform.forward * Time.deltaTime);
+			else SetItemsPosition(planeTransform.position + planeTransform.forward * fieldsMovement * Time.deltaTime);
 
 			if (checkFielAfterMove)
 			{
@@ -334,6 +336,13 @@ public class PlaneController : MonoBehaviour
 			}
 		}
 		return true;
+	}
+
+	private void SetItemsPosition(Vector3 newPos)
+	{
+		planeTransform.position = newPos;
+		directionFeedback.transform.position = newPos;
+		groundMarker.transform.position = newPos;
 	}
 
 	// fly as long the plane reached the stop or landing field it stops the MoveToNextField coroutine
@@ -412,8 +421,28 @@ public class PlaneController : MonoBehaviour
 	// after reached destination check if the plane is outsite the map
 	private void CheckBorders()
 	{
-		if (planeTransform.position.x <= borders.x || planeTransform.position.z >= borders.y || planeTransform.position.x >= borders.z || planeTransform.position.z <= borders.w)
+		if (planeTransform.position.x <= borders.x)
 		{
+			if (isStartingPlane && destinationDir == Destination.WEST) planeMan.PlaneReachedDestination(this);
+			else planeMan.OutOfMap(this, fieldsMovement);
+			StartCoroutine(FlyAwayAnimation());
+		}
+		else if (planeTransform.position.z >= borders.y)
+		{
+			if (isStartingPlane && destinationDir == Destination.NORTH) planeMan.PlaneReachedDestination(this);
+			else planeMan.OutOfMap(this, fieldsMovement);
+			StartCoroutine(FlyAwayAnimation());
+		}
+		else if (planeTransform.position.x >= borders.z)
+		{
+			if (isStartingPlane && destinationDir == Destination.EAST) planeMan.PlaneReachedDestination(this);
+			else planeMan.OutOfMap(this, fieldsMovement);
+			StartCoroutine(FlyAwayAnimation());
+		}
+		else if (planeTransform.position.z <= borders.w)
+		{
+			if (isStartingPlane && destinationDir == Destination.SOUTH) planeMan.PlaneReachedDestination(this);
+			else planeMan.OutOfMap(this, fieldsMovement);
 			StartCoroutine(FlyAwayAnimation());
 		}
 		else notInteractable = false;
@@ -426,6 +455,7 @@ public class PlaneController : MonoBehaviour
 		GetComponent<Collider>().enabled = false;
 		Destroy(movementFeedback.gameObject);
 		groundMarker.SetActive(false);
+		if (directionFeedback.activeSelf) directionFeedback.SetActive(false);
 		explosionPS.Play();
 		switch (fieldsMovement)
 		{
@@ -458,8 +488,8 @@ public class PlaneController : MonoBehaviour
 	{
 		GetComponent<Collider>().enabled = false;
 		movementFeedback.SetActive(false);
-		planeMan.OutOfMap(this, fieldsMovement);
 		groundMarker.SetActive(false);
+		if (directionFeedback.activeSelf) directionFeedback.SetActive(false);
 		float time = 0;
 		while (time < 2)
 		{
@@ -490,7 +520,7 @@ public class PlaneController : MonoBehaviour
 						landingAnim.SetTrigger("Prepare");
 						onStartapult = true;
 						planeOnField = mapTile;
-						gameObject.transform.position = mapTile.transform.position;
+						SetItemsPosition(mapTile.transform.position);
 						gameObject.transform.rotation = mapTile.transform.rotation;
 					}
 					else
@@ -498,7 +528,7 @@ public class PlaneController : MonoBehaviour
 						onStartapult = false;
 						planeOnField = null;
 						landingAnim.SetTrigger("Start");
-						gameObject.transform.position = hit.point;
+						SetItemsPosition(hit.point);
 					}
 				}
 				else
@@ -506,7 +536,7 @@ public class PlaneController : MonoBehaviour
 					onStartapult = false;
 					planeOnField = null;
 					landingAnim.SetTrigger("Start");
-					gameObject.transform.position = hit.point;
+					SetItemsPosition(hit.point);
 				}
 			}
 			else ResetPlane();

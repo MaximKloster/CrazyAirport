@@ -1521,9 +1521,11 @@ MonoBehaviour:
   - {fileID: 1652454185893732, guid: de0aaa5e4564c4b4abdd9eb725e59117, type: 2}
   mapBorders: {x: -0.9, y: 4.9, z: 8.9, w: -0.9}
   startplaneSpawnChance: 100
+  allDirectionsExit: 0
   radarClip: {fileID: 8300000, guid: 13f362aa8eb36404282c276bd2ebe4de, type: 3}
   planeMoveClip: {fileID: 8300000, guid: b42acecd2dee0c14c912b920bb2c3e0d, type: 3}
-  onlyPlanes3: 1
+  onlyPlanes3: 0
+  level2: 0
 --- !u!114 &114243852541260718
 MonoBehaviour:
   m_ObjectHideFlags: 1

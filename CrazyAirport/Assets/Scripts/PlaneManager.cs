@@ -305,6 +305,12 @@ public class PlaneManager : MonoBehaviour
 		gameMaster.MissionComplete();
 	}
 
+	public void PlaneReachedDestination(PlaneController plane)
+	{
+		allPlanes.Remove(plane);
+		gameMaster.MissionComplete();
+	}
+
 	public bool CrashStarted(Vector3 pos, Vector3 dir)
 	{
 		if (endGame) return false;

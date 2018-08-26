@@ -2454,9 +2454,11 @@ MonoBehaviour:
   - {fileID: 1652454185893732, guid: de0aaa5e4564c4b4abdd9eb725e59117, type: 2}
   mapBorders: {x: -0.9, y: 4.9, z: 8.9, w: -0.9}
   startplaneSpawnChance: 30
+  allDirectionsExit: 0
   radarClip: {fileID: 8300000, guid: 13f362aa8eb36404282c276bd2ebe4de, type: 3}
   planeMoveClip: {fileID: 8300000, guid: b42acecd2dee0c14c912b920bb2c3e0d, type: 3}
   onlyPlanes3: 0
+  level2: 0
 --- !u!82 &344019823
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5422,7 +5424,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 9436052cddb1b7748a754bc65c80134e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7eb09e0097d592d41950b5d6c2b627f9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6033,7 +6035,6 @@ MonoBehaviour:
     type: 2}
   dirtyLake: {fileID: 1450701905652524, guid: 0ee50825b59460241948ff9166df797f, type: 2}
   dirtyStopp: {fileID: 1925256971444818, guid: 3f927b00f2391a84aae904b2a98245c0, type: 2}
-  dirtyStart: {fileID: 0}
   sparksPS: {fileID: 1246415838}
   cleanPS: {fileID: 2011352844}
   constructionClip: {fileID: 8300000, guid: 2f1f710dd7a9d3447855ead67c687e00, type: 3}
