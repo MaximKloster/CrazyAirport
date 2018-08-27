@@ -955,8 +955,8 @@ MonoBehaviour:
   moveFBAnim: {fileID: 95800958184187250}
   dirFBMats:
   - {fileID: 2100000, guid: d581075fbae454f43a9f8e65aa1524f7, type: 2}
-  - {fileID: 2100000, guid: 78c507f5b09daca48ae5079a701f2f6f, type: 2}
   - {fileID: 2100000, guid: 219254e83d4c90045a86ca63272d7d46, type: 2}
+  - {fileID: 2100000, guid: 78c507f5b09daca48ae5079a701f2f6f, type: 2}
   - {fileID: 2100000, guid: e63df7c7b736fa740ae727b05fa2a39c, type: 2}
   ignoreMask:
     serializedVersion: 2
