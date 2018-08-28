@@ -20,7 +20,7 @@ public class PlaneManager : MonoBehaviour
 	[Range(0,100)]
 	private float startplaneSpawnChance = 30;
 	[SerializeField]
-	private bool allDirectionsExit = false;
+	private PlaneController.Destination[] possibleDestinations;
 	#endregion
 	#region gameplay variables
 	private List<PlaneController> allPlanes;
@@ -271,7 +271,7 @@ public class PlaneManager : MonoBehaviour
 				planeType = Random.Range(0, maxSpawnPlaneSize);
 				GameObject planeObject = Instantiate(planePrefab[planeType], allStartSpawnpoints[id].position, allStartSpawnpoints[id].rotation, transform);
 				PlaneController plane = planeObject.GetComponent<PlaneController>();
-				plane.PlaneSetup(this, mapBorders, ShowFeedback, AllowSound, id, allDirectionsExit, true);
+				plane.PlaneSetup(this, mapBorders, ShowFeedback, AllowSound, id, possibleDestinations, true);
 				allPlanes.Add(plane);
 			}
 			else

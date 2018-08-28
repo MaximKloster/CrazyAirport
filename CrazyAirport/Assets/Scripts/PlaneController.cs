@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 public class PlaneController : MonoBehaviour
 {
 	enum PlaneRotation { NONE, LEFT, RIGHT }
-	enum Destination { NONE, NORTH, EAST, SOUTH, WEST }
+	public enum Destination { NONE, NORTH, EAST, SOUTH, WEST }
 	#region plane parts
 	[Header("Plane Parts", order = 2)]
 	[SerializeField]
@@ -114,7 +114,7 @@ public class PlaneController : MonoBehaviour
 		}
 	}
 
-	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show, bool sound, int id, bool allDirections = false, bool startingPlane = false)
+	public void PlaneSetup(PlaneManager manager, Vector4 mapBorders, bool show, bool sound, int id, Destination[] newPossibleDestinations = null, bool startingPlane = false)
 	{
 		startID = id;
 		showFB = show;
@@ -124,7 +124,7 @@ public class PlaneController : MonoBehaviour
 		isStartingPlane = startingPlane;
 		if (isStartingPlane)
 		{
-			SetUpStartingPlane(allDirections);
+			SetUpStartingPlane(newPossibleDestinations);
 		}
 		else
 		{
@@ -136,28 +136,33 @@ public class PlaneController : MonoBehaviour
 		defaultRot = transform.rotation;
 	}
 
-	private void SetUpStartingPlane(bool allDirections)
+	private void SetUpStartingPlane(Destination[] newPossibleDestination)
 	{
-		int dir = Random.Range(0, allDirections ? 4 : 3);
-		switch (dir)
+		int dir = Random.Range(0, newPossibleDestination.Length);
+		Material mat = mat = dirFBMats[0];
+		switch (newPossibleDestination[dir])
 		{
-			case 0:
+			case Destination.NORTH:
 				destinationDir = Destination.NORTH;
 				directionFeedback.transform.Rotate(directionFeedback.transform.up, 180);
+				mat = dirFBMats[0];
 				break;
-			case 1:
+			case Destination.SOUTH:
 				destinationDir = Destination.SOUTH;
+				mat = dirFBMats[1];
 				break;
-			case 2:
+			case Destination.EAST:
 				destinationDir = Destination.EAST;
 				directionFeedback.transform.Rotate(directionFeedback.transform.up, -90);
+				mat = dirFBMats[2];
 				break;
-			case 3:
+			case Destination.WEST:
 				destinationDir = Destination.WEST;
 				directionFeedback.transform.Rotate(directionFeedback.transform.up, 90);
+				mat = dirFBMats[3];
 				break;
 		}
-		directionFeedback.GetComponentInChildren<MeshRenderer>().material = dirFBMats[dir];
+		directionFeedback.GetComponentInChildren<MeshRenderer>().material = mat;
 		directionFeedback.transform.parent = null;
 		flying = false;
 		landingAnim.SetTrigger("Start");

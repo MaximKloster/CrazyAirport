@@ -966,6 +966,7 @@ public class GameHandler : MonoBehaviour
 		{
 			SupportRound();
 		}
+		pointsThisRound = 0;
 	}
 
 
