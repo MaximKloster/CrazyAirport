@@ -7,14 +7,6 @@ public class PlaneManager : MonoBehaviour
 	#region setup variables
 	[Header("Setup", order = 2)]
 	[SerializeField]
-	private GameObject[] bases;
-	[SerializeField]
-	private GameObject startapult;
-	[SerializeField]
-	private MapTile mapTileStartapult;
-	[SerializeField]
-	private GameObject startapultTile;
-	[SerializeField]
 	private GameHandler gameMaster;
 	[SerializeField]
 	private Transform[] allSpawnpoints;
@@ -59,7 +51,6 @@ public class PlaneManager : MonoBehaviour
 		}
 	}
 	private bool endGame = false;
-	private int currentLevel; // TODO need later for starting planes
 	#endregion
 	#region sound variables
 	[Header("Sound", order = 2)]
@@ -89,33 +80,9 @@ public class PlaneManager : MonoBehaviour
 		}
 	}
 	#endregion
-	#region debug
-	[Header("Debug", order = 2)]
-	[SerializeField]
-	private bool onlyPlanes3 = false;
-	[SerializeField]
-	private bool level2 = false;
-	#endregion
-	// Use this for initialization
+
 	void Start()
 	{
-		currentLevel = PlayerPrefs.GetInt("Level");
-		if(currentLevel > 1)
-		{
-			bases[0].SetActive(false);
-			bases[1].SetActive(true);
-			startapult.SetActive(true);
-			startapultTile.SetActive(false);
-			mapTileStartapult.TileStatus = MapTile.BuildStatus.Start;
-		}
-		else
-		{
-			bases[0].SetActive(true);
-			bases[1].SetActive(false);
-			startapult.SetActive(false);
-			startapultTile.SetActive(true);
-			mapTileStartapult.TileStatus = MapTile.BuildStatus.Empty;
-		}
 		audioSource = GetComponent<AudioSource>();
 		turn = 0;
 		level = 0;
@@ -278,7 +245,7 @@ public class PlaneManager : MonoBehaviour
 		{
 			int sp;
 			bool spawnStartPlane = false;
-			if(currentLevel > 1 || level2)
+			if(allStartSpawnpoints.Length > 0)
 			{
 				if(startPlaneOnSpawnPoints[0] == -1 || startPlaneOnSpawnPoints[1] == -1)
 				{
@@ -301,8 +268,7 @@ public class PlaneManager : MonoBehaviour
 				startPlaneOnSpawnPoints[id] = 1;
 
 				int planeType;
-				if (onlyPlanes3) planeType = 2;
-				else planeType = Random.Range(0, maxSpawnPlaneSize);
+				planeType = Random.Range(0, maxSpawnPlaneSize);
 				GameObject planeObject = Instantiate(planePrefab[planeType], allStartSpawnpoints[id].position, allStartSpawnpoints[id].rotation, transform);
 				PlaneController plane = planeObject.GetComponent<PlaneController>();
 				plane.PlaneSetup(this, mapBorders, ShowFeedback, AllowSound, id, allDirectionsExit, true);
@@ -316,8 +282,7 @@ public class PlaneManager : MonoBehaviour
 				} while (sp == lastSpawnPoints[0] || sp == lastSpawnPoints[1] || sp == lastSpawnPoints[2] || sp == lastSpawnPoints[3] || sp == tempSP[0] || sp == tempSP[1] || sp == tempSP[2] || sp == tempSP[3]);
 				tempSP[i] = sp;
 				int planeType;
-				if (onlyPlanes3) planeType = 2;
-				else planeType = Random.Range(0, maxSpawnPlaneSize);
+				planeType = Random.Range(0, maxSpawnPlaneSize);
 				GameObject planeObject = Instantiate(planePrefab[planeType], allSpawnpoints[sp].position, allSpawnpoints[sp].rotation, transform);
 				PlaneController plane = planeObject.GetComponent<PlaneController>();
 				plane.PlaneSetup(this, mapBorders, ShowFeedback, AllowSound, -1);

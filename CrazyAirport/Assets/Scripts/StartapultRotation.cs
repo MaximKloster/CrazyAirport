@@ -35,7 +35,7 @@ public class StartapultRotation : MonoBehaviour
 	{
 		anim.SetTrigger("Fire");
 		PlaneOnField = false;
-		StartCoroutine(RotateBackAfterTime());
+		//StartCoroutine(RotateBackAfterTime());
 	}
 
 	public void CleanStart()

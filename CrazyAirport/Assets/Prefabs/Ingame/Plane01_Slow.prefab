@@ -956,8 +956,6 @@ MonoBehaviour:
     m_Bits: 311
   fieldsMovement: 1
   landingSpeed: 1.25
-  crashRotationSpeed: 10
-  crashFallSpeed: 0.3
   planeRotateClip: {fileID: 8300000, guid: ae0540f68d3b3ff488e765aa10c8ca08, type: 3}
   planeCrashClip: {fileID: 8300000, guid: a1fddf472f9b89b40b803bc831b8f454, type: 3}
   planeOnGroundClip: {fileID: 8300000, guid: ef2af18bfbce22d44b3ccce42a0f688b, type: 3}

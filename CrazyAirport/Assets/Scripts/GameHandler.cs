@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
@@ -21,21 +20,11 @@ public class GameHandler : MonoBehaviour
 	[SerializeField]
 	private GameObject cardObject;
 	[SerializeField]
-	private CameraController camControl;
-	[SerializeField]
 	private LayerMask ignoreMask;
-	[SerializeField]
-	private CardManager cardMan;
 	[SerializeField]
 	private PlaneManager planeMan;
 	[SerializeField]
-	private SettingsMenu settingsMan;
-	[SerializeField]
 	private Map[] map;
-	[SerializeField]
-	private float showEndsreenDelay = 3;
-	[SerializeField]
-	private GameObject nuke;
 	[Header("Camera", order = 2)]
 	[SerializeField]
 	private float camYRotSpeed = 2.5f;
@@ -52,26 +41,11 @@ public class GameHandler : MonoBehaviour
 	[Range(70, 150)]
 	private float maxFOW = 70;
 	#endregion
-	#region ui variables
-	[Header("UI", order = 2)]
-	[SerializeField]
-	private GameObject gameOverScreen;
-	[SerializeField]
-	private Text buildPointsText;
-	[SerializeField]
-	private Text controlPointsText;
-	[SerializeField]
-	private Text playerPointsText;
-	[SerializeField]
-	private GameObject playerGainPointsGO;
-	[SerializeField]
-	private Text playerGainPointsText;
-	[SerializeField]
-	private GameObject playerLoseBP;
-	[SerializeField]
-	private GameObject playerChangeCP;
-	[SerializeField]
-	private Text playerChangeCPText;
+	#region important parts
+	private CameraController camControl;
+	private CardManager cardMan;
+	private SettingsMenu settingsMan;
+	private UIManager uiMan;
 	#endregion
 	#region player interaction variables
 	[Header("Player Interaction", order = 2)]
@@ -127,19 +101,6 @@ public class GameHandler : MonoBehaviour
 	private int pointsThisRound = 0;
 	private BuildCard cardInHand;
 	private CleaningCard tokenInHand;
-	private bool playResetAnimation;
-	public bool PlayResetAnimation
-	{
-		get
-		{
-			return playResetAnimation;
-		}
-
-		set
-		{
-			playResetAnimation = value;
-		}
-	}
 	#endregion
 	#region camera veriables
 	private int gamePoints;
@@ -174,10 +135,6 @@ public class GameHandler : MonoBehaviour
 	private AudioClip cleaningClip;
 	[SerializeField]
 	private AudioClip wrongPlacedClip;
-	[SerializeField]
-	private AudioClip successClip;
-	[SerializeField]
-	private AudioClip failClip;
 	private AudioSource audioSource;
 	private bool allowSound;
 	public bool AllowSound
@@ -198,22 +155,26 @@ public class GameHandler : MonoBehaviour
 	private void Start()
 	{
 		audioSource = GetComponent<AudioSource>();
+	}
+
+	public void GetSetUpParts(CameraController newCamControl, CardManager newCardMan, SettingsMenu newSettingsMan, UIManager newUIMan)
+	{
+		camControl = newCamControl;
+		cardMan = newCardMan;
+		settingsMan = newSettingsMan;
+		uiMan = newUIMan;
+
 		GameSetup();
 		SetUpMap();
 	}
 
 	private void GameSetup()
 	{
-		nuke.SetActive(false);
+		
 		cardObject.SetActive(false);
 		waitForContinue = true;
-		playerGainPointsGO.SetActive(false);
-		playerLoseBP.SetActive(false);
-		playerChangeCP.SetActive(false);
-		gameOverScreen.SetActive(false);
 		camTransform = camControl.gameObject.transform;
 		LoadCameraSettings();
-		playerPointsText.text = "0";
 		RefreshInteractionPoints();
 	}
 
@@ -261,12 +222,6 @@ public class GameHandler : MonoBehaviour
 		cardMan.ReachedLevelOne();
 	}
 
-	public void ResetGame()
-	{
-		if (PlayResetAnimation) StartCoroutine(PlayReset());
-		else SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-	}
-
 	public void FinishedTurn()
 	{
 		if (gameEnd || waitForContinue) return;
@@ -283,9 +238,7 @@ public class GameHandler : MonoBehaviour
 	{
 		gameEnd = true;
 		settingsMan.AllowMenuOpen = false;
-		string currentLevel = SceneManager.GetActiveScene().name;
-		int highScore = PlayerPrefs.GetInt(currentLevel);
-		if (playerPoints > highScore) PlayerPrefs.SetInt(currentLevel, playerPoints);
+		uiMan.SaveHighScore(playerPoints);
 		SaveCameraSettings();
 		closeUpScene = true;
 		StartCoroutine(PlayCloseUpScene(pos, dir));
@@ -293,19 +246,7 @@ public class GameHandler : MonoBehaviour
 
 	public void EndGame()
 	{
-		StartCoroutine(ShowEndScreenAfterTime());
-	}
-
-	public void BackToMainMenu()
-	{
-		PlayerPrefs.SetInt("MainMenu", 1);
-		SceneManager.LoadScene("Start");
-	}
-
-	public void BackToLevels()
-	{
-		PlayerPrefs.SetInt("MainMenu", 2);
-		SceneManager.LoadScene("Start");
+		uiMan.GameOver();
 	}
 
 	private void SupportRound()
@@ -349,20 +290,14 @@ public class GameHandler : MonoBehaviour
 	{
 		if (gameEnd || waitForContinue) return false;
 
-		if (currentPCP > 0)
-		{
-			currentPCP--;
-			StartCoroutine(PlayerChagenCP(false));
-			HighLightStartapults(true);
-			return true;
-		}
-		else return false;
+		HighLightStartapults(true);
+		return true;
+
 	}
 
 	public void ReleasedPlane(bool onStartapult)
 	{
 		HighLightStartapults(false);
-		if (!onStartapult) InteractionPlaneReset();
 	}
 
 	public Camera GiveCurrentCam()
@@ -382,7 +317,7 @@ public class GameHandler : MonoBehaviour
 		if (currentPCP > 0)
 		{
 			currentPCP--;
-			StartCoroutine(PlayerChagenCP(false));
+			uiMan.ChangeControlPoints(false, currentPCP);
 			return true;
 		}
 		else return false;
@@ -391,7 +326,7 @@ public class GameHandler : MonoBehaviour
 	public void InteractionPlaneReset()
 	{
 		currentPCP++;
-		StartCoroutine(PlayerChagenCP(true));
+		uiMan.ChangeControlPoints(true, currentPCP);
 	}
 
 	public void DeactivatedPark(bool deactivate)
@@ -712,7 +647,7 @@ public class GameHandler : MonoBehaviour
 						CheckAndSetAroundTiles(z, x, 1);
 						break;
 					case BuildingType.Start:
-						GameObject start = Instantiate(startingBuildings[buildID], buildingParent);
+						Instantiate(startingBuildings[buildID], buildingParent);
 						mapTile.TileStatus = MapTile.BuildStatus.Start;
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);
@@ -777,7 +712,7 @@ public class GameHandler : MonoBehaviour
 				}
 				HighlightBuildableTiles(false);
 				currentBBP--;
-				StartCoroutine(PlayerLoseBP());
+				uiMan.LoseBuildPoints(currentBBP);
 				return true;
 			}
 		}
@@ -1019,81 +954,21 @@ public class GameHandler : MonoBehaviour
 	{
 		currentBBP = maxBBP;
 		currentPCP = maxPCP;
-		buildPointsText.text = currentBBP.ToString();
-		controlPointsText.text = currentPCP.ToString();
-	}
-
-	private IEnumerator ShowEndScreenAfterTime()
-	{
-		yield return new WaitForSeconds(showEndsreenDelay);
-		gameOverScreen.SetActive(true);
+		uiMan.RefreshInteractionPoints(currentBBP, currentPCP);
 	}
 
 	private IEnumerator PlayPointGain()
 	{
-		if (pointsThisRound != 0)
-		{
-			if (pointsThisRound > 0)
-			{
-				if (AllowSound)
-				{
-					audioSource.clip = successClip;
-					audioSource.Play();
-				}
-				playerGainPointsText.color = Color.green;
-				playerGainPointsText.text = "+" + pointsThisRound.ToString();
-			}
-			else
-			{
-
-				if (AllowSound)
-				{
-					audioSource.clip = failClip;
-					audioSource.Play();
-				}
-				playerGainPointsText.color = Color.red;
-				playerGainPointsText.text = "-" + pointsThisRound.ToString();
-			}
-
-			playerGainPointsGO.SetActive(true);
-			yield return new WaitForSeconds(0.3f);
-			playerGainPointsGO.SetActive(false);
-			playerPoints += pointsThisRound;
-			playerPointsText.text = playerPoints.ToString();
-			pointsThisRound = 0;
-		}
-
+		playerPoints += pointsThisRound;
+		uiMan.GainPoints(pointsThisRound, playerPoints);
+		yield return new WaitForSeconds(0.3f);
 		if (!gameEnd)
 		{
 			SupportRound();
 		}
 	}
 
-	private IEnumerator PlayerLoseBP()
-	{
-		playerLoseBP.SetActive(true);
-		yield return new WaitForSeconds(0.25f);
-		playerLoseBP.SetActive(false);
-		buildPointsText.text = currentBBP.ToString();
-	}
 
-	private IEnumerator PlayerChagenCP(bool gain)
-	{
-		if (gain)
-		{
-			playerChangeCPText.color = Color.blue;
-			playerChangeCPText.text = "+1";
-		}
-		else
-		{
-			playerChangeCPText.color = Color.red;
-			playerChangeCPText.text = "-1";
-		}
-		playerChangeCP.SetActive(true);
-		yield return new WaitForSeconds(0.25f);
-		playerChangeCP.SetActive(false);
-		controlPointsText.text = currentPCP.ToString();
-	}
 	#endregion
 
 	private bool IsPointerOverUIObject()
@@ -1103,14 +978,5 @@ public class GameHandler : MonoBehaviour
 		List<RaycastResult> results = new List<RaycastResult>();
 		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
 		return results.Count > 0;
-	}
-
-	private IEnumerator PlayReset()
-	{
-		gameOverScreen.SetActive(false);
-		yield return new WaitForSeconds(1);
-		nuke.SetActive(true);
-		yield return new WaitForSeconds(5);
-		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }

@@ -40,8 +40,6 @@ public class CardManager : MonoBehaviour
 	[SerializeField]
 	private int roadCardAmount = 12;
 	[SerializeField]
-	private GameHandler gameMaster;
-	[SerializeField]
 	private float gainCardDelay = 0.3f;
 	#endregion
 	#region cardinfo variables
@@ -60,6 +58,7 @@ public class CardManager : MonoBehaviour
 	private Sprite[] allInfoSprites;
 	#endregion
 	#region gameplay variables
+	private GameHandler gameMaster;
 	private List<GameObject> deck;
 	private BuildCard[] handCards;
 	private CleaningCard[] handCleanCards;
@@ -136,6 +135,11 @@ public class CardManager : MonoBehaviour
 		StartCoroutine(SetUpStartCards());
 	}
 
+	public void GetSetUpParts(GameHandler gameHandler)
+	{
+		gameMaster = gameHandler;
+	}
+
 	public void ReachedLevelOne()
 	{
 		List<GameObject> allCards = deck;
@@ -187,7 +191,7 @@ public class CardManager : MonoBehaviour
 		allCards.Add(cardCard);
 		allCards.AddRange(collection: parkCards);
 		allCards.AddRange(collection: controlCards);
-		if (currentLevel > 1) allCards.AddRange(collection: startCards);
+		//if (currentLevel > 1) allCards.AddRange(collection: startCards);
 		allCards.AddRange(collection: landCards);
 		allCards.AddRange(collection: cleanCards);
 

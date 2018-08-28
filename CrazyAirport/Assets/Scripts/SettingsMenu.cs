@@ -8,11 +8,9 @@ public class SettingsMenu : MonoBehaviour
 	[SerializeField]
 	private CardManager cardMan;
 	[SerializeField]
-	private GameHandler gameMaster;
-	[SerializeField]
-	private PlaneManager planeMan;
-	[SerializeField]
 	private GameObject settingsMenu;
+	[SerializeField]
+	private UIManager uiMan;
 	[SerializeField]
 	private Image musicButton;
 	[SerializeField]
@@ -37,6 +35,11 @@ public class SettingsMenu : MonoBehaviour
 	private Sprite nukeOnIcon;
 	[SerializeField]
 	private Sprite nukeOffIcon;
+
+	private GameHandler gameMaster;
+	private PlaneManager planeMan;
+	private CameraController camMan;
+
 	private bool openMenu = false;
 	private bool musicOn = true;
 	private bool soundOn = true;
@@ -70,6 +73,23 @@ public class SettingsMenu : MonoBehaviour
 		settingsMenu.SetActive(false);
 	}
 
+	public void GetSetUpParts(GameHandler gameHandler, PlaneManager newPlaneMan, CameraController newCamMan)
+	{
+		gameMaster = gameHandler;
+		planeMan = newPlaneMan;
+		camMan = newCamMan;
+	}
+
+	public void ChangeCamera()
+	{
+		camMan.SwitchCamera();
+	}
+
+	public void FinishedTurn()
+	{
+		gameMaster.FinishedTurn();
+	}
+
 	private void SetSound()
 	{
 		if (soundOn) soundButton.sprite = soundOnIcon;
@@ -77,6 +97,7 @@ public class SettingsMenu : MonoBehaviour
 		cardMan.AllowSound = soundOn;
 		planeMan.AllowSound = soundOn;
 		gameMaster.AllowSound = soundOn;
+		uiMan.AllowSound = soundOn;
 	}
 
 	private void SetMusic()
@@ -96,7 +117,7 @@ public class SettingsMenu : MonoBehaviour
 	{
 		if (showNukeReset) nukeSceneButton.sprite = nukeOnIcon;
 		else nukeSceneButton.sprite = nukeOffIcon;
-		gameMaster.PlayResetAnimation = showNukeReset;
+		uiMan.PlayResetAnimation = showNukeReset;
 	}
 
 	public void MenuOpenClicked()
@@ -120,10 +141,10 @@ public class SettingsMenu : MonoBehaviour
 
 	public void SoundButtonClicked()
 	{
-		cardMan.MenuButtonClicked();
 		soundOn = !soundOn;
 		PlayerPrefs.SetInt("Sound", soundOn ? 1 : 0);
 		SetSound();
+		cardMan.MenuButtonClicked();
 	}
 
 	public void PlanesFBButtonClicked()
@@ -140,6 +161,5 @@ public class SettingsMenu : MonoBehaviour
 		showNukeReset = !showNukeReset;
 		PlayerPrefs.SetInt("ResetFB", showNukeReset ? 1 : 0);
 		SetResetFB();
-		//nuke.SetActive(true);
 	}
 }

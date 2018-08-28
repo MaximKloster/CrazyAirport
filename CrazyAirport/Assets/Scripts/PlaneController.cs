@@ -39,12 +39,6 @@ public class PlaneController : MonoBehaviour
 	[SerializeField]
 	[Range(0.1f, 10)]
 	private float landingSpeed = 1.2f;
-	[SerializeField]
-	[Range(0.1f, 10)]
-	private float crashRotationSpeed = 7.5f;
-	[SerializeField]
-	[Range(0.1f, 5)]
-	private float crashFallSpeed = 0.4f;
 	private Vector4 borders;
 	bool landing = false;
 	bool isStartingPlane = false;
@@ -56,6 +50,7 @@ public class PlaneController : MonoBehaviour
 	private PlaneManager planeMan;
 	private Coroutine movementCoroutine;
 	private MapTile planeOnField;
+	private StartapultRotation startapult;
 	private Vector3 checkPointPos;
 	private int movesDone = 0;
 	private bool callCrashFinished = false;
@@ -207,9 +202,10 @@ public class PlaneController : MonoBehaviour
 			flying = true;
 			planeMan.ReleasedPlane(startID, true);
 			ShowMovementFeedback(showFB);
-			StartapultRotation startapult = planeOnField.GetComponentInChildren<StartapultRotation>();
+			startapult = planeOnField.GetComponentInChildren<StartapultRotation>();
 			startapult.PlaneOnField = true;
 			planeTransform.parent = startapult.transform;
+			planeTransform.rotation = startapult.transform.rotation;
 		}
 		else ResetPlane();
 	}
@@ -294,9 +290,9 @@ public class PlaneController : MonoBehaviour
 			}
 			planeTransform.parent = null;
 			movementFeedback.transform.parent = null;
-			planeOnField.GetComponentInChildren<StartapultRotation>().PlaneLeft();
+			startapult.PlaneLeft();
 			onStartapult = false;
-			planeOnField.PlanePathField();
+			//planeOnField.PlanePathField();
 			landingAnim.SetTrigger("Fly");
 		}
 
@@ -394,8 +390,8 @@ public class PlaneController : MonoBehaviour
 				MapTile.BuildStatus status = mapTile.TileStatus;
 				switch (status)
 				{
+					//case MapTile.BuildStatus.Start:
 					case MapTile.BuildStatus.Park:
-					case MapTile.BuildStatus.Start:
 						mapTile.PlanePathField();
 						break;
 					case MapTile.BuildStatus.Stop:
