@@ -1159,6 +1159,53 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1842220080}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1894796884
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4025133781675186, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025133781675186, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025133781675186, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025133781675186, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025133781675186, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025133781675186, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025133781675186, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025133781675186, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 95794900921776154, guid: 0b5619b587f35cd4ba089805a47ae86d,
+        type: 2}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 158de9fd7e07dbf4893a2caaf2916190, type: 2}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0b5619b587f35cd4ba089805a47ae86d, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1 &1967939663
 GameObject:
   m_ObjectHideFlags: 0
