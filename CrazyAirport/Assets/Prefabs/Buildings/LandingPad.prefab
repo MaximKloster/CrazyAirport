@@ -170,6 +170,7 @@ GameObject:
   - component: {fileID: 4232006865216224}
   - component: {fileID: 33573678896481756}
   - component: {fileID: 23836131933120794}
+  - component: {fileID: 95907662785104978}
   m_Layer: 0
   m_Name: Lamps
   m_TagString: Untagged
@@ -571,6 +572,24 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1605323620532242}
   m_Mesh: {fileID: 4300010, guid: fe427ca629145d6449741eb17d36bbeb, type: 3}
+--- !u!95 &95907662785104978
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1986360363337858}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: dd80cb4b5b9c323418865bc31b3c064f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!95 &95945382220151980
 Animator:
   serializedVersion: 3
