@@ -332,11 +332,6 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 703694701}
   m_Script: {fileID: 11500000, guid: 43d0acd0f1bd37449bee5d0836f39309, type: 3}
---- !u!1 &798086652 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1250781409688740, guid: d3120e2989d99604e81d3cd56f6338d1,
-    type: 2}
-  m_PrefabInternal: {fileID: 618040184}
 --- !u!1 &1308885538 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1201688543090336, guid: d3120e2989d99604e81d3cd56f6338d1,
@@ -386,11 +381,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114953106598265388, guid: 0d8530545d381df449b62ccb0257f50f,
-        type: 2}
-      propertyPath: nuke
-      value: 
-      objectReference: {fileID: 798086652}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0d8530545d381df449b62ccb0257f50f, type: 2}
   m_IsPrefabAsset: 0

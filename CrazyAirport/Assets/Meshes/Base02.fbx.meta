@@ -12,6 +12,8 @@ ModelImporter:
     100012: Rotator.002
     100014: Tower
     100016: Outline
+    100018: TrafficLight_L
+    100020: TrafficLight_R
     400000: Base
     400002: //RootNode
     400004: Fences
@@ -21,6 +23,8 @@ ModelImporter:
     400012: Rotator.002
     400014: Tower
     400016: Outline
+    400018: TrafficLight_L
+    400020: TrafficLight_R
     2100000: Lamp
     2100002: Water
     2100004: Darker
@@ -28,6 +32,8 @@ ModelImporter:
     2100008: Street
     2100010: Gray
     2100012: Green
+    2100014: PlaneGreen
+    2100016: Dark
     2300000: Base
     2300002: Fences
     2300004: Grass
@@ -36,6 +42,8 @@ ModelImporter:
     2300010: Rotator.002
     2300012: Tower
     2300014: Outline
+    2300016: TrafficLight_L
+    2300018: TrafficLight_R
     3300000: Base
     3300002: Fences
     3300004: Grass
@@ -44,6 +52,8 @@ ModelImporter:
     3300010: Rotator.002
     3300012: Tower
     3300014: Outline
+    3300016: TrafficLight_L
+    3300018: TrafficLight_R
     4300000: Lamps
     4300002: Rotator.002
     4300004: Base
@@ -52,7 +62,14 @@ ModelImporter:
     4300010: Roadway
     4300012: Grass
     4300014: Outline
+    4300016: TrafficLight_L
+    4300018: TrafficLight_R
   externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Dark
+    second: {fileID: 2100000, guid: 9c968e52e5ef33c4c80fd579c4829eb8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -73,6 +90,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Lamp
     second: {fileID: 2100000, guid: 35be69f7ebf449e48b8e7ff8b9b20379, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PlaneGreen
+    second: {fileID: 2100000, guid: 830250fb95717b448a2a6446d436abb8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
