@@ -941,6 +941,12 @@ MonoBehaviour:
   burnPS: {fileID: 198947797372190142}
   smokePS: {fileID: 198322474801459748}
   groundMarker: {fileID: 1038190614194020}
+  markerRotator: {fileID: 114549082045226024}
+  arrowsMesh: {fileID: 23944509004499920}
+  arrowMats:
+  - {fileID: 2100000, guid: e32d83a3abb8cd44b8f1abd4d993eb54, type: 2}
+  - {fileID: 2100000, guid: 8d344cad287338e4b8818ea97ef2fe1f, type: 2}
+  - {fileID: 2100000, guid: e63df7c7b736fa740ae727b05fa2a39c, type: 2}
   planeMesh: {fileID: 1934357371556036}
   movementFeedback: {fileID: 1996702885388752}
   directionFeedback: {fileID: 1989971370413344}

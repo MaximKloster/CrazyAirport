@@ -2004,36 +2004,14 @@ MonoBehaviour:
   roadCard: {fileID: 1970146740083302, guid: 00475a88bced50b429772ce6a105ccef, type: 2}
   buildCard: {fileID: 1918442987429298, guid: 23a0c27128fe2db40a6f8806c4fb394b, type: 2}
   cardCard: {fileID: 1973555131321646, guid: a4298557250a1284dba98707ae36974f, type: 2}
-  parkCards:
-  - {fileID: 1771701147288860, guid: 35e921d99fd332948b733b390eac6183, type: 2}
-  - {fileID: 1414827542249980, guid: c7e3e858fe500b049aaa624d76f99ebb, type: 2}
-  - {fileID: 1771701147288860, guid: 35e921d99fd332948b733b390eac6183, type: 2}
-  - {fileID: 1414827542249980, guid: c7e3e858fe500b049aaa624d76f99ebb, type: 2}
-  - {fileID: 1771701147288860, guid: 35e921d99fd332948b733b390eac6183, type: 2}
-  - {fileID: 1414827542249980, guid: c7e3e858fe500b049aaa624d76f99ebb, type: 2}
-  - {fileID: 1771701147288860, guid: 35e921d99fd332948b733b390eac6183, type: 2}
-  - {fileID: 1414827542249980, guid: c7e3e858fe500b049aaa624d76f99ebb, type: 2}
-  - {fileID: 1771701147288860, guid: 35e921d99fd332948b733b390eac6183, type: 2}
-  - {fileID: 1414827542249980, guid: c7e3e858fe500b049aaa624d76f99ebb, type: 2}
-  - {fileID: 1771701147288860, guid: 35e921d99fd332948b733b390eac6183, type: 2}
-  - {fileID: 1414827542249980, guid: c7e3e858fe500b049aaa624d76f99ebb, type: 2}
-  stopCards:
-  - {fileID: 1132293227770708, guid: 9cc93df0e491de046b249c3d90604a82, type: 2}
-  - {fileID: 1132293227770708, guid: 9cc93df0e491de046b249c3d90604a82, type: 2}
-  - {fileID: 1132293227770708, guid: 9cc93df0e491de046b249c3d90604a82, type: 2}
-  - {fileID: 1132293227770708, guid: 9cc93df0e491de046b249c3d90604a82, type: 2}
-  controlCards:
-  - {fileID: 1807588183320776, guid: f25b517e9e61e894292587946d237a44, type: 2}
-  - {fileID: 1807588183320776, guid: f25b517e9e61e894292587946d237a44, type: 2}
-  startCards:
-  - {fileID: 1907495136195334, guid: 9b9aa7cb0e69a86499a435ec3a076bc0, type: 2}
-  - {fileID: 1907495136195334, guid: 9b9aa7cb0e69a86499a435ec3a076bc0, type: 2}
-  landCards:
-  - {fileID: 1783094576440954, guid: aa9a114aaafd2844d948942d37ede082, type: 2}
-  - {fileID: 1783094576440954, guid: aa9a114aaafd2844d948942d37ede082, type: 2}
-  cleanCards:
-  - {fileID: 1557749138694426, guid: fed2a30ccadd8dd4bbbd89b53c269c1a, type: 2}
-  - {fileID: 1557749138694426, guid: fed2a30ccadd8dd4bbbd89b53c269c1a, type: 2}
+  parkCard: {fileID: 1414827542249980, guid: c7e3e858fe500b049aaa624d76f99ebb, type: 2}
+  lakeCard: {fileID: 1771701147288860, guid: 35e921d99fd332948b733b390eac6183, type: 2}
+  stopCard: {fileID: 1132293227770708, guid: 9cc93df0e491de046b249c3d90604a82, type: 2}
+  controlCard: {fileID: 1807588183320776, guid: f25b517e9e61e894292587946d237a44,
+    type: 2}
+  startCard: {fileID: 1907495136195334, guid: 9b9aa7cb0e69a86499a435ec3a076bc0, type: 2}
+  landCard: {fileID: 1783094576440954, guid: aa9a114aaafd2844d948942d37ede082, type: 2}
+  cleanCard: {fileID: 1557749138694426, guid: fed2a30ccadd8dd4bbbd89b53c269c1a, type: 2}
   cleaningCard: {fileID: 1422120777938564, guid: acba71d0274964c49a1e6a7b9a197c5a,
     type: 2}
   cardBorder: {fileID: 224023198255002980}

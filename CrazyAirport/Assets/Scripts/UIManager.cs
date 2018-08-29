@@ -191,7 +191,7 @@ public class UIManager : MonoBehaviour
 					gainPointsAudio.Play();
 				}
 				playerGainPointsText.color = Color.red;
-				playerGainPointsText.text = "-" + pointsThisRound.ToString();
+				playerGainPointsText.text = pointsThisRound.ToString();
 			}
 
 			playerGainPointsGO.SetActive(true);

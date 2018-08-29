@@ -14,17 +14,19 @@ public class CardManager : MonoBehaviour
 	[SerializeField]
 	private GameObject cardCard;
 	[SerializeField]
-	private GameObject[] parkCards;
+	private GameObject parkCard;
 	[SerializeField]
-	private GameObject[] stopCards;
+	private GameObject lakeCard;
 	[SerializeField]
-	private GameObject[] controlCards;
+	private GameObject stopCard;
 	[SerializeField]
-	private GameObject[] startCards;
+	private GameObject controlCard;
 	[SerializeField]
-	private GameObject[] landCards;
+	private GameObject startCard;
 	[SerializeField]
-	private GameObject[] cleanCards;
+	private GameObject landCard;
+	[SerializeField]
+	private GameObject cleanCard;
 	[SerializeField]
 	private GameObject cleaningCard;
 	#endregion
@@ -59,6 +61,7 @@ public class CardManager : MonoBehaviour
 	#endregion
 	#region gameplay variables
 	private GameHandler gameMaster;
+	private DeckBuilder deckBuilder;
 	private List<GameObject> deck;
 	private BuildCard[] handCards;
 	private CleaningCard[] handCleanCards;
@@ -66,6 +69,8 @@ public class CardManager : MonoBehaviour
 	private int cardsGain = 1;
 	private int cleansGain = 1;
 	private bool hasBonusCard = false;
+	private int stopCardsPossible;
+	private int stopCardsInDeck = 0;
 	public int CardsGain
 	{
 		get
@@ -135,24 +140,29 @@ public class CardManager : MonoBehaviour
 		StartCoroutine(SetUpStartCards());
 	}
 
-	public void GetSetUpParts(GameHandler gameHandler)
+	public void GetSetUpParts(GameHandler gameHandler, DeckBuilder newDeckBuilder)
 	{
 		gameMaster = gameHandler;
+		deckBuilder = newDeckBuilder;
 	}
 
-	public void ReachedLevelOne()
+	public void AddStopCard()
 	{
-		List<GameObject> allCards = deck;
-		List<GameObject> newDeck = new List<GameObject>();
-		allCards.AddRange(collection: stopCards);
-		while (allCards.Count > 0)
+		if (stopCardsInDeck < stopCardsPossible)
 		{
-			int rand = Random.Range(0, allCards.Count);
-			newDeck.Add(allCards[rand]);
-			allCards.RemoveAt(rand);
+			List<GameObject> allCards = deck;
+			allCards.Add(stopCard);
+			stopCardsInDeck++;
+			List<GameObject> newDeck = new List<GameObject>();
+			while (allCards.Count > 0)
+			{
+				int rand = Random.Range(0, allCards.Count);
+				newDeck.Add(allCards[rand]);
+				allCards.RemoveAt(rand);
+			}
+			deck.Clear();
+			deck = newDeck;
 		}
-		deck.Clear();
-		deck = newDeck;
 	}
 
 	// Instantiate the Hand Cards and give them the reference to the card manager for cummunication and its slot ID
@@ -183,17 +193,38 @@ public class CardManager : MonoBehaviour
 	private List<GameObject> GenerateDeck()
 	{
 		List<GameObject> allCards = new List<GameObject>();
-		for (int i = 0; i < roadCardAmount; i++) // Add road Cards to the deck for the amount was set up
+		for (int i = 0; i < deckBuilder.RoadCardsAmount; i++)
 		{
 			allCards.Add(roadCard);
 		}
-		allCards.Add(buildCard);
-		allCards.Add(cardCard);
-		allCards.AddRange(collection: parkCards);
-		allCards.AddRange(collection: controlCards);
-		//if (currentLevel > 1) allCards.AddRange(collection: startCards);
-		allCards.AddRange(collection: landCards);
-		allCards.AddRange(collection: cleanCards);
+		for (int i = 0; i < deckBuilder.ParkCardsAmount; i++)
+		{
+			allCards.Add(parkCard);
+		}
+		for (int i = 0; i < deckBuilder.LakeCardsAmount; i++)
+		{
+			allCards.Add(lakeCard);
+		}
+		for (int i = 0; i < deckBuilder.ControlCardsAmount; i++)
+		{
+			allCards.Add(controlCard);
+		}
+		for (int i = 0; i < deckBuilder.BuildCardsAmount; i++)
+		{
+			allCards.Add(buildCard);
+		}
+		for (int i = 0; i < deckBuilder.CardCardsAmount; i++)
+		{
+			allCards.Add(cardCard);
+		}
+		for (int i = 0; i < deckBuilder.LandingCardsAmount; i++)
+		{
+			allCards.Add(landCard);
+		}
+		for (int i = 0; i < deckBuilder.CleanCardsAmount; i++)
+		{
+			allCards.Add(cleanCard);
+		}
 
 		List<GameObject> newDeck = new List<GameObject>();
 
@@ -203,6 +234,8 @@ public class CardManager : MonoBehaviour
 			newDeck.Add(allCards[rand]);
 			allCards.RemoveAt(rand);
 		}
+
+		stopCardsPossible = deckBuilder.StopCardsAmount;
 
 		return newDeck;
 	}

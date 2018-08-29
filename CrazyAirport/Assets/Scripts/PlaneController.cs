@@ -17,6 +17,12 @@ public class PlaneController : MonoBehaviour
 	[SerializeField]
 	private GameObject groundMarker;
 	[SerializeField]
+	private BuildingRotator markerRotator;
+	[SerializeField]
+	private MeshRenderer arrowsMesh;
+	[SerializeField]
+	private Material[] arrowMats;
+	[SerializeField]
 	private GameObject planeMesh;
 	[SerializeField]
 	private GameObject movementFeedback;
@@ -64,6 +70,7 @@ public class PlaneController : MonoBehaviour
 	private bool showFB = true;
 	private int startID;
 	private BoxCollider[] planeColliders;
+	private float defaultRotFBSpeed;
 	#endregion
 	#region sound variables
 	[SerializeField]
@@ -90,11 +97,13 @@ public class PlaneController : MonoBehaviour
 
 	void Start()
 	{
+		defaultRotFBSpeed = markerRotator.RotationSpeed;
 		planeColliders = GetComponents<BoxCollider>();
 		audioSource = GetComponent<AudioSource>();
 		audioSource.clip = planeRotateClip;
 		planeTransform = transform;
 		groundMarker.transform.parent = null;
+		SetRotationFeedback(true);
 	}
 
 	public void ShowMovementFeedback(bool show)
@@ -230,6 +239,12 @@ public class PlaneController : MonoBehaviour
 		gameObject.transform.rotation = defaultRot;
 	}
 
+	public bool WasRotated()
+	{
+		if (planeRotation == PlaneRotation.NONE) return false;
+		return true;
+	}
+
 	// plane was clicked for rotation
 	private void OnMouseDown()
 	{
@@ -253,6 +268,8 @@ public class PlaneController : MonoBehaviour
 					if (planeMan.TryToRotatePlane())
 					{
 						planeRotation = PlaneRotation.RIGHT;
+						arrowsMesh.material = arrowMats[1];
+						markerRotator.RotationSpeed = defaultRotFBSpeed;
 						planeTransform.Rotate(planeTransform.up, 90);
 						movementFeedback.transform.Rotate(planeTransform.up, 90);
 						if (AllowSound) audioSource.Play();
@@ -265,6 +282,7 @@ public class PlaneController : MonoBehaviour
 					if (AllowSound) audioSource.Play();
 					break;
 				case PlaneRotation.LEFT:
+					arrowsMesh.material = arrowMats[0];
 					planeRotation = PlaneRotation.NONE;
 					planeMan.PlaneIsRotatedToDefault();
 					planeTransform.Rotate(planeTransform.up, 90);
@@ -272,6 +290,21 @@ public class PlaneController : MonoBehaviour
 					if (AllowSound) audioSource.Play();
 					break;
 			}
+		}
+	}
+
+	public void SetRotationFeedback(bool disable)
+	{
+		if(disable)
+		{
+			arrowsMesh.material = arrowMats[2];
+			markerRotator.RotationSpeed = 0;
+		}
+		else
+		{
+			if (notInteractable) return;
+			arrowsMesh.material = arrowMats[0];
+			markerRotator.RotationSpeed = defaultRotFBSpeed;
 		}
 	}
 
@@ -297,7 +330,6 @@ public class PlaneController : MonoBehaviour
 			movementFeedback.transform.parent = null;
 			startapult.PlaneLeft();
 			onStartapult = false;
-			//planeOnField.PlanePathField();
 			landingAnim.SetTrigger("Fly");
 		}
 
@@ -457,6 +489,7 @@ public class PlaneController : MonoBehaviour
 			StartCoroutine(FlyAwayAnimation());
 		}
 		else notInteractable = false;
+		SetRotationFeedback(false);
 	}
 
 	// if crash with an object start crash animation

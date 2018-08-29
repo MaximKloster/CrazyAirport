@@ -188,7 +188,17 @@ public class PlaneManager : MonoBehaviour
 
 	public bool TryToRotatePlane()
 	{
-		return gameMaster.CheckIfHaveControlPoints();
+		int pointsLeft = gameMaster.CheckIfHaveControlPoints();
+		if (pointsLeft > 0) return true;
+		else if(pointsLeft == 0)
+		{
+			foreach(PlaneController plane in allPlanes)
+			{
+				if (!plane.WasRotated()) plane.SetRotationFeedback(true);
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public bool TryToPlacePlane()
@@ -215,6 +225,10 @@ public class PlaneManager : MonoBehaviour
 	public void PlaneIsRotatedToDefault()
 	{
 		gameMaster.InteractionPlaneReset();
+		foreach (PlaneController plane in allPlanes)
+		{
+			if (!plane.WasRotated()) plane.SetRotationFeedback(false);
+		}
 	}
 
 	private void MoveAllPlanes()

@@ -15,6 +15,19 @@ public class BuildingRotator : MonoBehaviour
 	[SerializeField]
 	private bool useRandomSpeed = true;
 
+	public float RotationSpeed
+	{
+		get
+		{
+			return rotationSpeed;
+		}
+
+		set
+		{
+			rotationSpeed = value;
+		}
+	}
+
 	void Start()
 	{
 		if (useRandomSpeed) rotationSpeed = Random.Range(5, 25);

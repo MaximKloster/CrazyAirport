@@ -219,7 +219,7 @@ public class GameHandler : MonoBehaviour
 	#region Communication Functions
 	public void ReachedLevelOne()
 	{
-		cardMan.ReachedLevelOne();
+		cardMan.AddStopCard();
 	}
 
 	public void FinishedTurn()
@@ -310,17 +310,17 @@ public class GameHandler : MonoBehaviour
 		return camControl.CamRotationAllowed;
 	}
 
-	public bool CheckIfHaveControlPoints()
+	public int CheckIfHaveControlPoints()
 	{
-		if (gameEnd || waitForContinue) return false;
+		if (gameEnd || waitForContinue) return -1;
 
 		if (currentPCP > 0)
 		{
 			currentPCP--;
 			uiMan.ChangeControlPoints(false, currentPCP);
-			return true;
+			return currentPCP;
 		}
-		else return false;
+		else return -1;
 	}
 
 	public void InteractionPlaneReset()

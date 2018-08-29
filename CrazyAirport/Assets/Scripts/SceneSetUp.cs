@@ -18,16 +18,18 @@ public class SceneSetUp : MonoBehaviour
 	private SettingsMenu settingsMenu;
 	private UIManager uiMan;
 	private PlaneManager planeMan;
+	private DeckBuilder deckBuilder;
 
 	private void Awake()
 	{
 		gameHander = map.GetComponent<GameHandler>();
+		deckBuilder = map.GetComponent<DeckBuilder>();
 		planeMan = map.GetComponentInChildren<PlaneManager>();
 		cardManager = ui.GetComponent<CardManager>();
 		settingsMenu = ui.GetComponent<SettingsMenu>();
 		uiMan = ui.GetComponent<UIManager>();
 		gameHander.GetSetUpParts(camController, cardManager, settingsMenu, uiMan);
 		settingsMenu.GetSetUpParts(gameHander, planeMan, camController);
-		cardManager.GetSetUpParts(gameHander);
+		cardManager.GetSetUpParts(gameHander, deckBuilder);
 	}
 }
