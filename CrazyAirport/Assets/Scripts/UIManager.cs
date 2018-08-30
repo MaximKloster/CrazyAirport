@@ -75,8 +75,23 @@ public class UIManager : MonoBehaviour
 		playerPointsText.text = "0";
 	}
 
-	public void GameOver()
+	public void GameOver(int turns, int bonusPoints, int minusPoints, int gL, int yL, int rL, int pS, int gRD, int yRD, int rRD, int pLM, int pStop, int fClean, int bRemoved)
 	{
+		Debug.Log("Turns Survived: " + turns);
+		Debug.Log("BonusPoints: " + bonusPoints);
+		Debug.Log("Points Lost: " + minusPoints);
+		Debug.Log("Green Landet: " + gL);
+		Debug.Log("Yellow Landet: " + yL);
+		Debug.Log("Red Landet: " + rL);
+		Debug.Log("Planes Started: " + pS);
+		Debug.Log("Green Arrived: " + gRD);
+		Debug.Log("Yellow Arrived: " + yRD);
+		Debug.Log("Red Arrived: " + rRD);
+		Debug.Log("Planes left Map: " + pLM);
+		Debug.Log("Planes Stopped: " + pStop);
+		Debug.Log("Fields Cleaned: " + fClean);
+		Debug.Log("Buildings Removed: " + bRemoved);
+
 		StartCoroutine(ShowEndScreenAfterTime());
 	}
 

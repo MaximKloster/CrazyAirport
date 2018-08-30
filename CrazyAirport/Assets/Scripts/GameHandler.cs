@@ -104,7 +104,7 @@ public class GameHandler : MonoBehaviour
 	#endregion
 	#region camera veriables
 	private int gamePoints;
-	private int pointsPerMission = 1;
+	private int bonusPointsPerMission = 0;
 	private Vector2 mousePos;
 	private float yRot = 0;
 	private float xRot = 0;
@@ -150,7 +150,20 @@ public class GameHandler : MonoBehaviour
 		}
 	}
 	#endregion
-
+	#region stats variables
+	int minusPoints = 0; //
+	int gL = 0; //
+	int yL = 0; //
+	int rL = 0; //
+	int pS = 0; //
+	int gRD = 0; //
+	int yRD = 0; //
+	int rRD = 0; //
+	int pLM = 0; //
+	int pStop = 0;
+	int fClean = 0;
+	int bRemoved = 0;
+	#endregion
 	#region Setup Functions
 	private void Start()
 	{
@@ -170,7 +183,6 @@ public class GameHandler : MonoBehaviour
 
 	private void GameSetup()
 	{
-		
 		cardObject.SetActive(false);
 		waitForContinue = true;
 		camTransform = camControl.gameObject.transform;
@@ -217,7 +229,7 @@ public class GameHandler : MonoBehaviour
 	}
 	#endregion
 	#region Communication Functions
-	public void ReachedLevelOne()
+	public void NextStage()
 	{
 		cardMan.AddStopCard();
 	}
@@ -246,7 +258,8 @@ public class GameHandler : MonoBehaviour
 
 	public void EndGame()
 	{
-		uiMan.GameOver();
+		int bonusPoints = playerPoints - gL - yL * 2 - rL * 3;
+		uiMan.GameOver(planeMan.Turn -1, bonusPoints , minusPoints, gL, yL, rL, pS, gRD, yRD, rRD, pLM, pStop, fClean, bRemoved);
 	}
 
 	private void SupportRound()
@@ -260,13 +273,46 @@ public class GameHandler : MonoBehaviour
 		waitForContinue = false;
 	}
 
-	public void MissionComplete()
+	public void MissionComplete(int speed, bool startingPlane)
 	{
-		pointsThisRound += pointsPerMission;
+		if(startingPlane)
+		{
+			switch (speed)
+			{
+				case 1:
+					gRD++;
+					break;
+				case 2:
+					yRD++;
+					break;
+				case 3:
+					rRD++;
+					break;
+			}
+		}
+		else
+		{
+			switch (speed)
+			{
+				case 1:
+					gL++;
+					break;
+				case 2:
+					yL++;
+					break;
+				case 3:
+					rL++;
+					break;
+			}
+		}
+
+		pointsThisRound += (speed + bonusPointsPerMission);
 	}
 
 	public void PlaneOutOfMap(int speed)
 	{
+		pLM++;
+		minusPoints -= pointsLoseFactor * speed;
 		pointsThisRound -= pointsLoseFactor * speed;
 	}
 
@@ -297,6 +343,7 @@ public class GameHandler : MonoBehaviour
 
 	public void ReleasedPlane(bool onStartapult)
 	{
+		if (onStartapult) pS++;
 		HighLightStartapults(false);
 	}
 
@@ -331,8 +378,8 @@ public class GameHandler : MonoBehaviour
 
 	public void DeactivatedPark(bool deactivate)
 	{
-		if (deactivate) pointsPerMission--;
-		else pointsPerMission++;
+		if (deactivate) bonusPointsPerMission--;
+		else bonusPointsPerMission++;
 	}
 	#endregion
 	#region Camera Functions
@@ -556,6 +603,7 @@ public class GameHandler : MonoBehaviour
 
 	private void PlayCleanParticle(Vector3 pos)
 	{
+		fClean++;
 		cleanPS.transform.position = new Vector3(pos.x, cleanPS.transform.position.y, pos.z);
 		cleanPS.transform.Rotate(cleanPS.transform.up, cleanYRot);
 		cleanPS.Play();
@@ -677,7 +725,7 @@ public class GameHandler : MonoBehaviour
 							GameObject dPark = Instantiate(buildID > 0 ? dirtyLake : dirtyForest, buildingParent);
 							mapTile.AddDirtyCleanMeshes(park, dPark);
 						}
-						pointsPerMission++;
+						bonusPointsPerMission++;
 						buildableTiles[z][x] = 12;
 						CheckAndSetAroundTiles(z, x, 2);
 						break;
@@ -968,8 +1016,6 @@ public class GameHandler : MonoBehaviour
 		}
 		pointsThisRound = 0;
 	}
-
-
 	#endregion
 
 	private bool IsPointerOverUIObject()

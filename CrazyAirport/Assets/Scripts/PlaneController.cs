@@ -317,6 +317,12 @@ public class PlaneController : MonoBehaviour
 		if (flying) movementCoroutine = StartCoroutine(MoveToNextField());
 	}
 
+	public void PlayeExplosion()
+	{
+		explosionPS.Play();
+		burnPS.Play();
+		smokePS.Play();
+	}
 	// plane moves as long as reached his destination
 	private IEnumerator MoveToNextField()
 	{
@@ -400,7 +406,7 @@ public class PlaneController : MonoBehaviour
 		if (landing)
 		{
 			planeMesh.transform.position = new Vector3(planeMesh.transform.position.x, planeMesh.transform.position.y - (landingSpeed * Time.deltaTime), planeMesh.transform.position.z);
-			planeMan.PlaneLanded(this);
+			planeMan.PlaneLanded(this, fieldsMovement);
 			Destroy(movementFeedback.gameObject);
 			Destroy(groundMarker.gameObject);
 			yield return new WaitForSeconds(0.5f);
@@ -466,25 +472,25 @@ public class PlaneController : MonoBehaviour
 	{
 		if (planeTransform.position.z >= borders.y)
 		{
-			if (isStartingPlane && destinationDir == Destination.NORTH) planeMan.PlaneReachedDestination(this);
+			if (isStartingPlane && destinationDir == Destination.NORTH) planeMan.PlaneReachedDestination(this, fieldsMovement);
 			else planeMan.OutOfMap(this, fieldsMovement);
 			StartCoroutine(FlyAwayAnimation());
 		}
 		else if (planeTransform.position.x >= borders.z)
 		{
-			if (isStartingPlane && destinationDir == Destination.EAST) planeMan.PlaneReachedDestination(this);
+			if (isStartingPlane && destinationDir == Destination.EAST) planeMan.PlaneReachedDestination(this, fieldsMovement);
 			else planeMan.OutOfMap(this, fieldsMovement);
 			StartCoroutine(FlyAwayAnimation());
 		}
 		else if (planeTransform.position.z <= borders.w)
 		{
-			if (isStartingPlane && destinationDir == Destination.SOUTH) planeMan.PlaneReachedDestination(this);
+			if (isStartingPlane && destinationDir == Destination.SOUTH) planeMan.PlaneReachedDestination(this, fieldsMovement);
 			else planeMan.OutOfMap(this, fieldsMovement);
 			StartCoroutine(FlyAwayAnimation());
 		}
 		else if (planeTransform.position.x <= borders.x)
 		{
-			if (isStartingPlane && destinationDir == Destination.WEST) planeMan.PlaneReachedDestination(this);
+			if (isStartingPlane && destinationDir == Destination.WEST) planeMan.PlaneReachedDestination(this, fieldsMovement);
 			else planeMan.OutOfMap(this, fieldsMovement);
 			StartCoroutine(FlyAwayAnimation());
 		}

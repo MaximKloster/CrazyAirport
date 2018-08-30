@@ -54,7 +54,7 @@ public class LevelSelection : MonoBehaviour
 	private List<Level> allLevels;
 	private int selectedLevel;
 	private int screenWidth;
-	private float moveSpeed = 10;
+	private float moveSpeed = 7.5f;
 	AsyncOperation loadingScene;
 	private bool isLoading = false;
 	private bool soundAllowed = false;
@@ -156,7 +156,7 @@ public class LevelSelection : MonoBehaviour
 		distance = destination - xPos;
 		while (right ? newPos < destination : newPos > destination)
 		{
-			newPos += distance * Time.deltaTime * moveSpeed * 2;
+			newPos += distance * Time.deltaTime * moveSpeed;
 			allLevels[selectedLevel].SelectedMove(newPos);
 			yield return null;
 		}
@@ -187,7 +187,7 @@ public class LevelSelection : MonoBehaviour
 		while (newPos != destination)
 		{
 			// Movement
-			float movement = distance * Time.deltaTime * moveSpeed * 2;
+			float movement = distance * Time.deltaTime * moveSpeed;
 			if (Mathf.Abs(movement) > Mathf.Abs(destination - newPos)) newPos = destination;
 			else newPos += movement;
 
