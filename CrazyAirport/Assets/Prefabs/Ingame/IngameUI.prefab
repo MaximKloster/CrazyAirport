@@ -4035,6 +4035,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87562cae6b68ae44e817a8470b484d61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameOverPointsText: {fileID: 114883007163721986}
+  settingsPointsText: {fileID: 114829691788521240}
+  statsText: {fileID: 114914034889815096}
   showEndscreenDelay: 1.5
   nuke: {fileID: 1250781409688740}
   gameOverScreen: {fileID: 1507134471207912}
@@ -4858,7 +4861,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 114881569907473294}
           m_MethodName: FinishedTurn
           m_Mode: 1
           m_Arguments:
@@ -6321,6 +6324,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c739cf761b8aeb7469bda8a4d522d6dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelName: {fileID: 114652425467753316}
+  levelDescription: {fileID: 114996225137734878}
   cardMan: {fileID: 114104636808517296}
   settingsMenu: {fileID: 1638900418088472}
   uiMan: {fileID: 114410997725976062}

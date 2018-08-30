@@ -6,6 +6,10 @@ using UnityEngine.UI;
 public class SettingsMenu : MonoBehaviour
 {
 	[SerializeField]
+	private Text levelName;
+	[SerializeField]
+	private Text levelDescription;
+	[SerializeField]
 	private CardManager cardMan;
 	[SerializeField]
 	private GameObject settingsMenu;
@@ -62,6 +66,8 @@ public class SettingsMenu : MonoBehaviour
 
 	void Start()
 	{
+		levelName.text = PlayerPrefs.GetString("LevelName");
+		levelDescription.text = PlayerPrefs.GetString("LevelDescription");
 		musicOn = PlayerPrefs.GetInt("Music") > 0;
 		soundOn = PlayerPrefs.GetInt("Sound") > 0;
 		showPlaneFB = PlayerPrefs.GetInt("PlaneFB") > 0;

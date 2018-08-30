@@ -376,6 +376,8 @@ public class LevelSelection : MonoBehaviour
 	{
 		isLoading = true;
 		int level = selectedLevel;
+		PlayerPrefs.SetString("LevelName", allLevels[selectedLevel].LevelName);
+		PlayerPrefs.SetString("LevelDescription", allLevels[selectedLevel].Discription);
 		loadingScene = SceneManager.LoadSceneAsync("Level_" + level, LoadSceneMode.Single);
 		PlayerPrefs.SetInt("Level", level);
 		PlayerPrefs.SetInt("LastLevel", level);
@@ -432,5 +434,15 @@ public class LevelSelection : MonoBehaviour
 		}
 		else discriptionText.text = allLevels[selectedLevel].Discription;
 
+	}
+
+	public string GetLevel1Name()
+	{
+		return allLevels[1].LevelName;
+	}
+
+	public string GetLevel1Description()
+	{
+		return allLevels[1].Discription;
 	}
 }

@@ -7,6 +7,12 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
 	[SerializeField]
+	private Text gameOverPointsText;
+	[SerializeField]
+	private Text settingsPointsText;
+	[SerializeField]
+	private Text statsText;
+	[SerializeField]
 	private float showEndscreenDelay = 1.5f;
 	[SerializeField]
 	private GameObject nuke;
@@ -73,10 +79,14 @@ public class UIManager : MonoBehaviour
 		playerLoseBP.SetActive(false);
 		playerChangeCP.SetActive(false);
 		playerPointsText.text = "0";
+		gameOverPointsText.text = "0";
+		settingsPointsText.text = "0";
 	}
 
 	public void GameOver(int turns, int bonusPoints, int minusPoints, int gL, int yL, int rL, int pS, int gRD, int yRD, int rRD, int pLM, int pStop, int fClean, int bRemoved)
 	{
+		int planesLandet = gL + yL + rL;
+		statsText.text = planesLandet + "\n" + pS + "\n" + turns;
 		Debug.Log("Turns Survived: " + turns);
 		Debug.Log("BonusPoints: " + bonusPoints);
 		Debug.Log("Points Lost: " + minusPoints);
@@ -213,6 +223,8 @@ public class UIManager : MonoBehaviour
 			yield return new WaitForSeconds(0.3f);
 			playerGainPointsGO.SetActive(false);
 			playerPointsText.text = finalPoints.ToString();
+			gameOverPointsText.text = finalPoints.ToString();
+			settingsPointsText.text = finalPoints.ToString();
 			pointsThisRound = 0;
 		}
 	}

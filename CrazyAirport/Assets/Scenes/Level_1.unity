@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 2013775501}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641252, b: 0.574817, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -114,12 +114,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &533758211 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114953106598265388, guid: 0d8530545d381df449b62ccb0257f50f,
-    type: 2}
-  m_PrefabInternal: {fileID: 1093014061}
-  m_Script: {fileID: 11500000, guid: 796e4517ec4e7114b9801ad1d1629e7b, type: 3}
 --- !u!1 &533758213 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1853833846922332, guid: 0d8530545d381df449b62ccb0257f50f,
@@ -222,11 +216,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114605080109318420, guid: d3120e2989d99604e81d3cd56f6338d1,
-        type: 2}
-      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 533758211}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d3120e2989d99604e81d3cd56f6338d1, type: 2}
   m_IsPrefabAsset: 0

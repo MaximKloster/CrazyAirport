@@ -7,6 +7,10 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
 	[SerializeField]
+	private LevelSelection levelSelection;
+	[SerializeField]
+	private GameObject Level1;
+	[SerializeField]
 	private Text versionText;
 	[SerializeField]
 	private GameObject loadingAnim;
@@ -23,9 +27,9 @@ public class MainMenu : MonoBehaviour
 	{
 		int mainMenuScreen = PlayerPrefs.GetInt("MainMenu");
 		OpenStartScreen(mainMenuScreen);
-		versionText.text = "V "+Application.version;
+		versionText.text = "V " + Application.version;
 		isLoading = false;
-		if(loadingAnim != null) loadingAnim.SetActive(false);
+		if (loadingAnim != null) loadingAnim.SetActive(false);
 	}
 
 	private void OpenStartScreen(int id)
@@ -74,6 +78,11 @@ public class MainMenu : MonoBehaviour
 		int lastLevel = PlayerPrefs.GetInt("LastLevel");
 		if (lastLevel < 1)
 		{
+			if (PlayerPrefs.GetString("LevelName").Length < 1)
+			{
+				PlayerPrefs.SetString("LevelName", Level1.GetComponent<Level>().LevelName);
+				PlayerPrefs.SetString("LevelDescription", Level1.GetComponent<Level>().Discription);
+			}
 			PlayerPrefs.SetInt("Level", 1);
 			PlayerPrefs.SetInt("LastLevel", 1);
 			loadingScene = SceneManager.LoadSceneAsync("Level_" + 1, LoadSceneMode.Single);
