@@ -311,6 +311,7 @@ public class PlaneManager : MonoBehaviour
 				{
 					plane.PlayeExplosion();
 					CrashStarted(plane.transform.position, plane.transform.forward);
+					StartCoroutine(EndGameAfterTime());
 				}
 				else
 				{
@@ -399,5 +400,11 @@ public class PlaneManager : MonoBehaviour
 	{
 		gameMaster.PlaneOutOfMap(speed);
 		allPlanes.Remove(plane);
+	}
+
+	private IEnumerator EndGameAfterTime()
+	{
+		yield return new WaitForSeconds(2);
+		CrashFinished();
 	}
 }
