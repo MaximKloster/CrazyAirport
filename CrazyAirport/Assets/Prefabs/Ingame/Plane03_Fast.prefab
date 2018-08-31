@@ -946,7 +946,7 @@ MonoBehaviour:
   arrowMats:
   - {fileID: 2100000, guid: e32d83a3abb8cd44b8f1abd4d993eb54, type: 2}
   - {fileID: 2100000, guid: 8d344cad287338e4b8818ea97ef2fe1f, type: 2}
-  - {fileID: 2100000, guid: e63df7c7b736fa740ae727b05fa2a39c, type: 2}
+  - {fileID: 2100000, guid: aa126e9be67cc1545a345687761690a3, type: 2}
   planeMesh: {fileID: 1099998039659596}
   movementFeedback: {fileID: 1177094944410728}
   directionFeedback: {fileID: 1263435273224052}
