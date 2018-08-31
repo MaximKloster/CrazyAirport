@@ -49,6 +49,7 @@ public class BuildCard : MonoBehaviour
 	private bool showInfo = false;
 	private float infoShowBorder;
 	private float cardMovementSpeed = 10;
+	private Coroutine moveBackCoroutine;
 
 	public string BuildingName
 	{
@@ -115,6 +116,12 @@ public class BuildCard : MonoBehaviour
 
 	public void SelectCard(BaseEventData data)
 	{
+		if(moveBackCoroutine != null)
+		{
+			StopCoroutine(moveBackCoroutine);
+			moveBackCoroutine = null;
+		}
+
 		if (manager.CheckIfHaveBuildPoints(this))
 		{
 			if (anim != null) Destroy(anim);
@@ -150,7 +157,7 @@ public class BuildCard : MonoBehaviour
 
 	public void ResetPosition()
 	{
-		StartCoroutine(MoveCardBack());
+		moveBackCoroutine = StartCoroutine(MoveCardBack());
 	}
 
 	private IEnumerator MoveCardBack()
@@ -163,6 +170,7 @@ public class BuildCard : MonoBehaviour
 			else cardTransform.position += tick;
 			yield return null;
 		}
+		moveBackCoroutine = null;
 	}
 
 	private IEnumerator FollowFinger()

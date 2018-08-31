@@ -346,7 +346,7 @@ public class PlaneManager : MonoBehaviour
 				{
 					int id = Random.Range(0, allStartSpawnpoints.Length);
 					spawnStartPlane = id;
-					switch(id)
+					switch (id)
 					{
 						case 0:
 							ampel01.material = ampelLights[1];
@@ -356,7 +356,7 @@ public class PlaneManager : MonoBehaviour
 							break;
 					}
 				}
-				else if(startPlaneOnSpawnPoints[0])
+				else if (startPlaneOnSpawnPoints[0])
 				{
 					spawnStartPlane = 1;
 					ampel02.material = ampelLights[1];
@@ -406,5 +406,13 @@ public class PlaneManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(2);
 		CrashFinished();
+	}
+
+	public void ShowSpawnPointsFB(bool show)
+	{
+		foreach (Transform sp in allSpawnpoints)
+		{
+			sp.GetComponent<SpawnPoint>().EnableFeedback(show);
+		}
 	}
 }

@@ -123,7 +123,8 @@ public class SettingsMenu : MonoBehaviour
 	{
 		if (showNukeReset) nukeSceneButton.sprite = nukeOnIcon;
 		else nukeSceneButton.sprite = nukeOffIcon;
-		uiMan.PlayResetAnimation = showNukeReset;
+		//uiMan.PlayResetAnimation = showNukeReset;
+		planeMan.ShowSpawnPointsFB(showNukeReset);
 	}
 
 	public void MenuOpenClicked()

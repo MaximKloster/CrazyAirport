@@ -1047,7 +1047,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1655133987843240
 GameObject:
   m_ObjectHideFlags: 1
@@ -4038,7 +4038,7 @@ MonoBehaviour:
   gameOverPointsText: {fileID: 114883007163721986}
   settingsPointsText: {fileID: 114829691788521240}
   statsText: {fileID: 114914034889815096}
-  showEndscreenDelay: 1.5
+  showEndscreenDelay: 0.5
   nuke: {fileID: 1250781409688740}
   gameOverScreen: {fileID: 1507134471207912}
   settingsScreen: {fileID: 1638900418088472}
