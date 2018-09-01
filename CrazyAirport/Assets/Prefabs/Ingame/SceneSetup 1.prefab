@@ -647,6 +647,7 @@ MonoBehaviour:
   cameras:
   - {fileID: 1737387678314362}
   - {fileID: 1537460506555534}
+  ppb: {fileID: 114381586954532580}
 --- !u!215 &215409280103475818
 ReflectionProbe:
   m_ObjectHideFlags: 1

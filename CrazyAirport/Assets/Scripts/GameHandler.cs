@@ -58,6 +58,8 @@ public class GameHandler : MonoBehaviour
 	private int playerPoints = 0;
 	[SerializeField]
 	private int pointsLoseFactor = 2;
+	[SerializeField]
+	private float showEndscreenDelay = 0.5f;
 	#endregion
 	#region building variables
 	[Header("Buildings", order = 2)]
@@ -258,8 +260,15 @@ public class GameHandler : MonoBehaviour
 
 	public void EndGame()
 	{
+		StartCoroutine(ShowEndscreenAfterTime());
+	}
+
+	private IEnumerator ShowEndscreenAfterTime()
+	{
+		yield return new WaitForSeconds(showEndscreenDelay);
 		int bonusPoints = playerPoints - gL - yL * 2 - rL * 3;
-		uiMan.GameOver(planeMan.Turn -1, bonusPoints , minusPoints, gL, yL, rL, pS, gRD, yRD, rRD, pLM, pStop, fClean, bRemoved);
+		uiMan.GameOver(planeMan.Turn - 1, bonusPoints, minusPoints, gL, yL, rL, pS, gRD, yRD, rRD, pLM, pStop, fClean, bRemoved);
+		settingsMan.ActivateDOF(true);
 	}
 
 	private void SupportRound()

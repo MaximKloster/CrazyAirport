@@ -135,7 +135,13 @@ public class SettingsMenu : MonoBehaviour
 			if (!openMenu) gameMaster.SaveCameraSettings();
 			openMenu = !openMenu;
 			settingsMenu.SetActive(openMenu);
+			ActivateDOF(openMenu);
 		}
+	}
+
+	public void ActivateDOF(bool activate)
+	{
+		camMan.ActivateDOF(activate);
 	}
 
 	public void MusicButtonClicked()

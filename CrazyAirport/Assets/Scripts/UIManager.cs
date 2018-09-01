@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,13 +12,9 @@ public class UIManager : MonoBehaviour
 	[SerializeField]
 	private Text statsText;
 	[SerializeField]
-	private float showEndscreenDelay = 1.5f;
-	[SerializeField]
 	private GameObject nuke;
 	[SerializeField]
 	private GameObject gameOverScreen;
-	[SerializeField]
-	private GameObject settingsScreen;
 	[SerializeField]
 	private Text playerPointsText;
 	[SerializeField]
@@ -74,7 +69,6 @@ public class UIManager : MonoBehaviour
 	{
 		nuke.SetActive(false);
 		gameOverScreen.SetActive(false);
-		settingsScreen.SetActive(false);
 		playerGainPointsGO.SetActive(false);
 		playerLoseBP.SetActive(false);
 		playerChangeCP.SetActive(false);
@@ -102,7 +96,7 @@ public class UIManager : MonoBehaviour
 		Debug.Log("Fields Cleaned: " + fClean);
 		Debug.Log("Buildings Removed: " + bRemoved);
 
-		StartCoroutine(ShowEndScreenAfterTime());
+		gameOverScreen.SetActive(true);
 	}
 
 	public void ResetGame()
@@ -151,15 +145,8 @@ public class UIManager : MonoBehaviour
 		StartCoroutine(PlayerGainPoints(pointsThisRound, finalPoints));
 	}
 
-	private IEnumerator ShowEndScreenAfterTime()
-	{
-		yield return new WaitForSeconds(showEndscreenDelay);
-		gameOverScreen.SetActive(true);
-	}
-
 	private IEnumerator PlayReset()
 	{
-		settingsScreen.SetActive(false);
 		gameOverScreen.SetActive(false);
 		yield return new WaitForSeconds(1);
 		nuke.SetActive(true);
