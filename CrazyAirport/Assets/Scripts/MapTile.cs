@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MapTile : MonoBehaviour
 {
-	public enum BuildStatus { Empty, Border, Building, Road, Stop, Start, Park }
+	public enum BuildStatus { Empty, Border, Building, Road, Stop, Start, Park, Rotator }
 	#region setup variables
 	[Header("Start Setup", order = 2)]
 	[SerializeField]
