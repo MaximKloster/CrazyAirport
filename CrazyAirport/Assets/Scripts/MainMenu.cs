@@ -9,7 +9,7 @@ public class MainMenu : MonoBehaviour
 	[SerializeField]
 	private LevelSelection levelSelection;
 	[SerializeField]
-	private GameObject Level1;
+	private GameObject startLevel;
 	[SerializeField]
 	private Text versionText;
 	[SerializeField]
@@ -19,12 +19,15 @@ public class MainMenu : MonoBehaviour
 	[SerializeField]
 	private GameObject levelScreen;
 	[SerializeField]
+	private GameObject achivementsScreen;
+	[SerializeField]
 	private GameObject endGamePopUp;
 	AsyncOperation loadingScene;
 	private bool isLoading = false;
 
 	void Start()
 	{
+		achivementsScreen.SetActive(false);
 		int mainMenuScreen = PlayerPrefs.GetInt("MainMenu");
 		OpenStartScreen(mainMenuScreen);
 		versionText.text = "V " + Application.version;
@@ -80,8 +83,8 @@ public class MainMenu : MonoBehaviour
 		{
 			if (PlayerPrefs.GetString("LevelName").Length < 1)
 			{
-				PlayerPrefs.SetString("LevelName", Level1.GetComponent<Level>().LevelName);
-				PlayerPrefs.SetString("LevelDescription", Level1.GetComponent<Level>().Discription);
+				PlayerPrefs.SetString("LevelName", startLevel.GetComponent<Level>().LevelName);
+				PlayerPrefs.SetString("LevelDescription", startLevel.GetComponent<Level>().Discription);
 			}
 			PlayerPrefs.SetInt("Level", 1);
 			PlayerPrefs.SetInt("LastLevel", 1);

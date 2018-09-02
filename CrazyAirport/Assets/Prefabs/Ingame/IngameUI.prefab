@@ -590,7 +590,7 @@ GameObject:
   - component: {fileID: 114914034889815096}
   - component: {fileID: 114692593349053516}
   m_Layer: 5
-  m_Name: StatsText02
+  m_Name: StatsPointsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -972,7 +972,7 @@ GameObject:
   - component: {fileID: 114705012840072998}
   - component: {fileID: 114159856614100466}
   m_Layer: 5
-  m_Name: StatsText01
+  m_Name: StatsNameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1030,7 +1030,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1655133987843240
 GameObject:
   m_ObjectHideFlags: 1
@@ -3976,11 +3976,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameOverPointsText: {fileID: 114883007163721986}
   settingsPointsText: {fileID: 114829691788521240}
-  statsText: {fileID: 114914034889815096}
-  showEndscreenDelay: 0.5
+  statsNameText: {fileID: 114705012840072998}
+  statsPointsText: {fileID: 114914034889815096}
   nuke: {fileID: 1250781409688740}
   gameOverScreen: {fileID: 1507134471207912}
-  settingsScreen: {fileID: 1638900418088472}
   playerPointsText: {fileID: 114644456391602752}
   playerGainPointsGO: {fileID: 1655133987843240}
   playerGainPointsText: {fileID: 114024431427474448}

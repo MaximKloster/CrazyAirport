@@ -10,7 +10,9 @@ public class UIManager : MonoBehaviour
 	[SerializeField]
 	private Text settingsPointsText;
 	[SerializeField]
-	private Text statsText;
+	private Text statsNameText;
+	[SerializeField]
+	private Text statsPointsText;
 	[SerializeField]
 	private GameObject nuke;
 	[SerializeField]
@@ -80,7 +82,20 @@ public class UIManager : MonoBehaviour
 	public void GameOver(int turns, int bonusPoints, int minusPoints, int gL, int yL, int rL, int pS, int gRD, int yRD, int rRD, int pLM, int pStop, int fClean, int bRemoved)
 	{
 		int planesLandet = gL + yL + rL;
-		statsText.text = planesLandet + "\n" + pS + "\n" + turns;
+		string namesDefaultText = "Bonus Points\n" + "Minus Points\n" + "Landed Planes\n" + "Turns Survived\n";
+		string pointsDefaultText = bonusPoints + "\n" + minusPoints + "\n" + planesLandet + "\n" + turns;
+
+		//int currentLevel = PlayerPrefs.GetInt("Level");
+
+		//switch(currentLevel)
+		//{
+		//	case 0:
+		//		break;
+		//	case 1:
+		//		break;
+		//	case 2:
+		//		break;
+		//}
 		Debug.Log("Turns Survived: " + turns);
 		Debug.Log("BonusPoints: " + bonusPoints);
 		Debug.Log("Points Lost: " + minusPoints);
@@ -95,6 +110,9 @@ public class UIManager : MonoBehaviour
 		Debug.Log("Planes Stopped: " + pStop);
 		Debug.Log("Fields Cleaned: " + fClean);
 		Debug.Log("Buildings Removed: " + bRemoved);
+
+		statsNameText.text = namesDefaultText;
+		statsPointsText.text = pointsDefaultText;
 
 		gameOverScreen.SetActive(true);
 	}
