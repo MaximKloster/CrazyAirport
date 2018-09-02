@@ -69,7 +69,7 @@ MonoBehaviour:
       screenEdgeMask:
         intensity: 0.03
   depthOfField:
-    m_Enabled: 1
+    m_Enabled: 0
     m_Settings:
       focusDistance: 2.55
       aperture: 10.6
@@ -121,10 +121,10 @@ MonoBehaviour:
         neutralWhiteClip: 10
       basic:
         postExposure: 0
-        temperature: -10
+        temperature: 0
         tint: 0
-        hueShift: 0
-        saturation: 1.1
+        hueShift: -5
+        saturation: 1.3
         contrast: 1.1
       channelMixer:
         red: {x: 1, y: 0, z: 0}
@@ -317,14 +317,14 @@ MonoBehaviour:
       size: 1
       luminanceContribution: 0.8
   vignette:
-    m_Enabled: 0
+    m_Enabled: 1
     m_Settings:
       mode: 0
       color: {r: 0, g: 0, b: 0, a: 1}
       center: {x: 0.5, y: 0.5}
-      intensity: 0.45
-      smoothness: 0.2
-      roundness: 1
+      intensity: 0.5
+      smoothness: 1
+      roundness: 0.5
       mask: {fileID: 0}
       opacity: 1
       rounded: 0
