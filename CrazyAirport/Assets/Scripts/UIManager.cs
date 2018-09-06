@@ -17,7 +17,9 @@ public class UIManager : MonoBehaviour
 	private GameObject nuke;
 	[SerializeField]
 	private GameObject gameOverScreen;
-	[SerializeField]
+    [SerializeField]
+    private GameObject Screen;
+    [SerializeField]
 	private Text playerPointsText;
 	[SerializeField]
 	private GameObject playerGainPointsGO;
@@ -67,7 +69,9 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
-	void Start()
+    Animator HUD_Animator;
+
+    void Start()
 	{
 		nuke.SetActive(false);
 		gameOverScreen.SetActive(false);
@@ -77,7 +81,8 @@ public class UIManager : MonoBehaviour
 		playerPointsText.text = "0";
 		gameOverPointsText.text = "0";
 		settingsPointsText.text = "0";
-	}
+        HUD_Animator = Screen.GetComponent<Animator>();
+    }
 
 	public void GameOver(int turns, int bonusPoints, int minusPoints, int gL, int yL, int rL, int pS, int gRD, int yRD, int rRD, int pLM, int pStop, int fClean, int bRemoved)
 	{
@@ -115,7 +120,8 @@ public class UIManager : MonoBehaviour
 		statsPointsText.text = pointsDefaultText;
 
 		gameOverScreen.SetActive(true);
-	}
+        HUD_Animator.SetTrigger("HideHUD");
+    }
 
 	public void ResetGame()
 	{

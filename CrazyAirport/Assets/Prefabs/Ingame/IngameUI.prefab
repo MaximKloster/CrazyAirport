@@ -699,6 +699,7 @@ GameObject:
   - component: {fileID: 222403902898034708}
   - component: {fileID: 114192532904990618}
   - component: {fileID: 82994433101779570}
+  - component: {fileID: 95047592109760784}
   m_Layer: 5
   m_Name: Screen
   m_TagString: Untagged
@@ -1030,7 +1031,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1655133987843240
 GameObject:
   m_ObjectHideFlags: 1
@@ -1846,6 +1847,24 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 0342558b44ca5eb4db1b286c0f2e6fdf, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!95 &95047592109760784
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1376527108532516}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 8c177e59a86c0e147972377f02f73fe5, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -3980,6 +3999,7 @@ MonoBehaviour:
   statsPointsText: {fileID: 114914034889815096}
   nuke: {fileID: 1250781409688740}
   gameOverScreen: {fileID: 1507134471207912}
+  Screen: {fileID: 1376527108532516}
   playerPointsText: {fileID: 114644456391602752}
   playerGainPointsGO: {fileID: 1655133987843240}
   playerGainPointsText: {fileID: 114024431427474448}
@@ -5318,17 +5338,15 @@ MonoBehaviour:
 
     Started Planes
 
-    Turns until Crash
 
     Bonus Points
 
-    Stat 05
+    Minus Points
 
-    Stat 06
 
-    Stat 07
+    Fields Cleaned
 
-    Stat 08'
+    Turns Survived'
 --- !u!114 &114724836099301226
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5746,6 +5764,17 @@ MonoBehaviour:
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 95047592109760784}
+          m_MethodName: ResetTrigger
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: HideHUD
             m_BoolArgument: 0
           m_CallState: 2
       m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
@@ -6266,6 +6295,7 @@ MonoBehaviour:
   levelDescription: {fileID: 114996225137734878}
   cardMan: {fileID: 114104636808517296}
   settingsMenu: {fileID: 1638900418088472}
+  Screen: {fileID: 1376527108532516}
   uiMan: {fileID: 114410997725976062}
   musicButton: {fileID: 114845901647028406}
   soundButton: {fileID: 114134775584274372}
@@ -6375,13 +6405,11 @@ MonoBehaviour:
 
     0
 
-    0
 
     0
 
     0
 
-    0
 
     0
 

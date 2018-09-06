@@ -13,8 +13,10 @@ public class SettingsMenu : MonoBehaviour
 	private CardManager cardMan;
 	[SerializeField]
 	private GameObject settingsMenu;
-	[SerializeField]
-	private UIManager uiMan;
+    [SerializeField]
+    private GameObject Screen;
+    [SerializeField]
+    private UIManager uiMan;
 	[SerializeField]
 	private Image musicButton;
 	[SerializeField]
@@ -64,6 +66,8 @@ public class SettingsMenu : MonoBehaviour
 		}
 	}
 
+    Animator HUD_Animator;
+
 	void Start()
 	{
 		levelName.text = PlayerPrefs.GetString("LevelName");
@@ -77,6 +81,7 @@ public class SettingsMenu : MonoBehaviour
 		SetPlaneFB();
 		SetResetFB();
 		settingsMenu.SetActive(false);
+        HUD_Animator = Screen.GetComponent<Animator>();
 	}
 
 	public void GetSetUpParts(GameHandler gameHandler, PlaneManager newPlaneMan, CameraController newCamMan)
@@ -136,6 +141,8 @@ public class SettingsMenu : MonoBehaviour
 			openMenu = !openMenu;
 			settingsMenu.SetActive(openMenu);
 			ActivateDOF(openMenu);
+            if (openMenu) HUD_Animator.SetTrigger("HideHUD");
+            else HUD_Animator.ResetTrigger("HideHUD");
 		}
 	}
 
