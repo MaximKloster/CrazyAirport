@@ -16,7 +16,11 @@ public class PlaneManager : MonoBehaviour
 	private MeshRenderer ampel01;
 	[SerializeField]
 	private MeshRenderer ampel02;
-	[SerializeField]
+    [SerializeField]
+    private GameObject AmpelSpawnR;
+    [SerializeField]
+    private GameObject AmpelSpawnL;
+    [SerializeField]
 	private Material[] ampelLights;
 	[SerializeField]
 	private GameObject[] planePrefab;
@@ -294,9 +298,11 @@ public class PlaneManager : MonoBehaviour
 				{
 					case 0:
 						ampel01.material = ampelLights[0];
+                        AmpelSpawnR.SetActive(false);
 						break;
 					case 1:
 						ampel02.material = ampelLights[0];
+                        AmpelSpawnL.SetActive(false);
 						break;
 				}
 
@@ -350,22 +356,26 @@ public class PlaneManager : MonoBehaviour
 					{
 						case 0:
 							ampel01.material = ampelLights[1];
-							break;
+                            AmpelSpawnR.SetActive(true);
+                            break;
 						case 1:
 							ampel02.material = ampelLights[1];
-							break;
+                            AmpelSpawnL.SetActive(true);
+                            break;
 					}
 				}
 				else if (startPlaneOnSpawnPoints[0])
 				{
 					spawnStartPlane = 1;
 					ampel02.material = ampelLights[1];
-				}
+                    AmpelSpawnL.SetActive(true);
+                }
 				else
 				{
 					spawnStartPlane = 0;
 					ampel01.material = ampelLights[1];
-				}
+                    AmpelSpawnR.SetActive(true);
+                }
 			}
 		}
 	}

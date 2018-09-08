@@ -785,11 +785,6 @@ Prefab:
       propertyPath: m_Name
       value: SceneSetup
       objectReference: {fileID: 0}
-    - target: {fileID: 215409280103475818, guid: e6239a2087023d44fb97bce1942f1438,
-        type: 2}
-      propertyPath: m_Mode
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6239a2087023d44fb97bce1942f1438, type: 2}
   m_IsPrefabAsset: 0
