@@ -1462,7 +1462,7 @@ GameObject:
   - component: {fileID: 95749658712771652}
   - component: {fileID: 114410477785603662}
   m_Layer: 5
-  m_Name: ShowResetAnimButton
+  m_Name: ShowSpawnsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3682,7 +3682,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 9be8d0ef6b584dc458cd9bcb93bb0ae7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8854ac85ac31def49928c150c254a65d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6782,10 +6782,10 @@ MonoBehaviour:
   musicOffIcon: {fileID: 21300000, guid: fbe955ab93d3f4645adca4dae87428d9, type: 3}
   soundOnIcon: {fileID: 21300000, guid: de1b90ac938d80c4caab678e99fe3662, type: 3}
   soundOffIcon: {fileID: 21300000, guid: 1d4328e4614e2a444991fef6bc8502d2, type: 3}
-  infoOnIcon: {fileID: 21300000, guid: 9be8d0ef6b584dc458cd9bcb93bb0ae7, type: 3}
-  InfoOffIcon: {fileID: 21300000, guid: 23de19bda3213ab4b9587954fd5f7e9d, type: 3}
-  nukeOnIcon: {fileID: 21300000, guid: 0b681f1f467dc1943abf265ac27c3724, type: 3}
-  nukeOffIcon: {fileID: 21300000, guid: b7258af7769d9c447a8ba4374b6182c0, type: 3}
+  infoOnIcon: {fileID: 21300000, guid: 8854ac85ac31def49928c150c254a65d, type: 3}
+  InfoOffIcon: {fileID: 21300000, guid: a538ef2a7bf4de24683ba0aa3cc39f5a, type: 3}
+  nukeOnIcon: {fileID: 21300000, guid: 622645561471fcf4a8564a053c506ea0, type: 3}
+  nukeOffIcon: {fileID: 21300000, guid: bd037ef0ed1aa8c42bd385860fdd40ea, type: 3}
 --- !u!114 &114883007163721986
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6910,7 +6910,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 0b681f1f467dc1943abf265ac27c3724, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 622645561471fcf4a8564a053c506ea0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -32492,7 +32492,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -150, y: -15.000015}
+  m_AnchoredPosition: {x: -150, y: -15}
   m_SizeDelta: {x: 667, y: 878}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224743270040221962
