@@ -268,7 +268,7 @@ public class GameHandler : MonoBehaviour
 		yield return new WaitForSeconds(showEndscreenDelay);
 		int bonusPoints = playerPoints - gL - yL * 2 - rL * 3;
 		uiMan.GameOver(planeMan.Turn - 1, bonusPoints, minusPoints, gL, yL, rL, pS, gRD, yRD, rRD, pLM, pStop, fClean, bRemoved);
-		settingsMan.ActivateDOF(true);
+		//settingsMan.ActivateDOF(true);
 	}
 
 	private void SupportRound()

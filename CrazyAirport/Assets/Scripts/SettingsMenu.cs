@@ -140,16 +140,16 @@ public class SettingsMenu : MonoBehaviour
 			if (!openMenu) gameMaster.SaveCameraSettings();
 			openMenu = !openMenu;
 			settingsMenu.SetActive(openMenu);
-			ActivateDOF(openMenu);
+			//ActivateDOF(openMenu);
             if (openMenu) HUD_Animator.SetTrigger("HideHUD");
             else HUD_Animator.ResetTrigger("HideHUD");
 		}
 	}
 
-	public void ActivateDOF(bool activate)
-	{
-		camMan.ActivateDOF(activate);
-	}
+	//public void ActivateDOF(bool activate)
+	//{
+	//	camMan.ActivateDOF(activate);
+	//}
 
 	public void MusicButtonClicked()
 	{

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.PostProcessing;
+//using UnityEngine.PostProcessing;
 
 public class CameraController : MonoBehaviour
 {
@@ -7,7 +7,7 @@ public class CameraController : MonoBehaviour
 	[SerializeField]
 	private GameObject[] cameras;
 	[SerializeField]
-	private PostProcessingBehaviour ppb;
+	//private PostProcessingBehaviour ppb;
 
 
 	private int currentCamera = 0;
@@ -47,10 +47,10 @@ public class CameraController : MonoBehaviour
 		cameras[currentCamera].SetActive(true);
 	}
 
-	public void ActivateDOF(bool activate)
-	{
-		ppb.profile.depthOfField.enabled = activate;
-	}
+	//public void ActivateDOF(bool activate)
+	//{
+	//	ppb.profile.depthOfField.enabled = activate;
+	//}
 
 	private void SetupCameras()
 	{
@@ -60,7 +60,7 @@ public class CameraController : MonoBehaviour
 		}
 		currentCamera = 0;
 		cameras[currentCamera].SetActive(true);
-		ppb.profile.depthOfField.enabled = false;
+		//ppb.profile.depthOfField.enabled = false;
 	}
 
 	public Camera GetCurrentCamera()
